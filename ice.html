@@ -238,28 +238,175 @@
             return dailyUsageCount >= USAGE_WARNING_THRESHOLD;
         }
 
-        // 檢查地區支援
+        // 檢查地區支援和服務可用性
         async function checkRegionSupport() {
             try {
+                console.log('🌍 檢查地區支援狀態...');
+                
                 const testEndpoints = [
                     'https://generativelanguage.googleapis.com/v1beta/models',
                     'https://generativelanguage.googleapis.com/v1/models'
                 ];
                 
+                const results = [];
+                
                 for (const endpoint of testEndpoints) {
                     try {
-                        const response = await fetch(endpoint, { method: 'GET' });
-                        if (response.status !== 404) {
-                            return { supported: true, endpoint: endpoint };
+                        const startTime = Date.now();
+                        const response = await fetch(endpoint, { 
+                            method: 'GET',
+                            headers: {
+                                'User-Agent': 'Mozilla/5.0'
+                            }
+                        });
+                        const responseTime = Date.now() - startTime;
+                        
+                        console.log(`📡 端點測試: ${endpoint} - 狀態: ${response.status} (${responseTime}ms)`);
+                        
+                        results.push({
+                            endpoint: endpoint,
+                            status: response.status,
+                            responseTime: responseTime,
+                            accessible: response.status !== 404 && response.status !== 403
+                        });
+                        
+                        if (response.status !== 404 && response.status !== 403) {
+                            return { 
+                                supported: true, 
+                                endpoint: endpoint,
+                                responseTime: responseTime,
+                                allResults: results
+                            };
                         }
                     } catch (error) {
+                        console.warn(`⚠️ 端點 ${endpoint} 測試失敗:`, error.message);
+                        results.push({
+                            endpoint: endpoint,
+                            status: 'error',
+                            error: error.message,
+                            accessible: false
+                        });
                         continue;
                     }
                 }
                 
-                return { supported: false, endpoint: null };
+                // 獲取用戶的大概地理位置信息（基於時區）
+                const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                const location = getLocationFromTimezone(timezone);
+                
+                console.log(`🌍 檢測到位置: ${location} (時區: ${timezone})`);
+                
+                return { 
+                    supported: false, 
+                    endpoint: null,
+                    location: location,
+                    timezone: timezone,
+                    allResults: results,
+                    suggestion: getSuggestionForLocation(location)
+                };
             } catch (error) {
-                return { supported: false, endpoint: null, error: error.message };
+                console.error('❌ 地區支援檢查失敗:', error);
+                return { 
+                    supported: false, 
+                    endpoint: null, 
+                    error: error.message,
+                    suggestion: '建議使用 VPN 連接到美國或歐洲地區'
+                };
+            }
+        }
+
+        // 根據時區推測大概位置
+        function getLocationFromTimezone(timezone) {
+            if (timezone.includes('Asia/Shanghai') || timezone.includes('Asia/Beijing')) {
+                return '中國大陸';
+            } else if (timezone.includes('Asia/Taipei')) {
+                return '台灣';
+            } else if (timezone.includes('Asia/Hong_Kong')) {
+                return '香港';
+            } else if (timezone.includes('Asia/')) {
+                return '亞洲地區';
+            } else if (timezone.includes('Europe/')) {
+                return '歐洲地區';
+            } else if (timezone.includes('America/')) {
+                return '美洲地區';
+            } else {
+                return '未知地區';
+            }
+        }
+
+        // 根據位置提供建議
+        function getSuggestionForLocation(location) {
+            if (location === '中國大陸') {
+                return '建議使用穩定的 VPN 連接到美國或歐洲節點，確保 Google 服務可正常訪問';
+            } else if (location === '台灣' || location === '香港') {
+                return '您的地區通常支援 Gemini API，如有問題可能是暫時性的網路問題';
+            } else if (location === '亞洲地區') {
+                return '部分亞洲地區可能需要 VPN，建議嘗試連接到支援的地區';
+            } else {
+                return '如果遇到 404 錯誤，請檢查網路連線或稍後重試';
+            }
+        }
+
+        // 生成詳細的診斷報告
+        async function generateDiagnosticReport(errorMessage) {
+            const now = new Date();
+            const timestamp = now.toLocaleString('zh-TW');
+            
+            console.log('🔍 生成診斷報告...');
+            
+            try {
+                // 檢查地區支援
+                const regionResult = await checkRegionSupport();
+                
+                let report = `\n📋 診斷報告 (${timestamp})\n`;
+                report += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+                
+                // 基本信息
+                report += `🌍 地區信息:\n`;
+                report += `   位置: ${regionResult.location || '未知'}\n`;
+                report += `   時區: ${regionResult.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}\n`;
+                report += `   地區支援: ${regionResult.supported ? '✅ 是' : '❌ 否'}\n\n`;
+                
+                // API 端點測試結果
+                if (regionResult.allResults && regionResult.allResults.length > 0) {
+                    report += `📡 API 端點測試結果:\n`;
+                    regionResult.allResults.forEach((result, index) => {
+                        const status = result.accessible ? '✅' : '❌';
+                        report += `   ${index + 1}. ${result.endpoint.split('/')[4]}: ${status} (${result.status})\n`;
+                    });
+                    report += `\n`;
+                }
+                
+                // 建議解決方案
+                report += `💡 建議解決方案:\n`;
+                if (regionResult.suggestion) {
+                    report += `   • ${regionResult.suggestion}\n`;
+                }
+                
+                if (errorMessage && errorMessage.includes('404')) {
+                    report += `   • 此為 API 端點不可用錯誤，通常是地區限制\n`;
+                    report += `   • 嘗試使用 VPN 連接到美國或歐洲節點\n`;
+                    report += `   • 確認 Google AI Studio 可正常訪問\n`;
+                    report += `   • 等待 10-15 分鐘後重試\n`;
+                }
+                
+                report += `   • 檢查服務狀態: https://status.cloud.google.com/\n`;
+                report += `   • 確認 API 金鑰有效性\n\n`;
+                
+                // 技術詳情
+                report += `🔧 技術詳情:\n`;
+                report += `   用戶代理: Mozilla/5.0\n`;
+                report += `   請求時間: ${timestamp}\n`;
+                if (regionResult.responseTime) {
+                    report += `   響應時間: ${regionResult.responseTime}ms\n`;
+                }
+                
+                console.log('✅ 診斷報告生成完成');
+                return report;
+                
+            } catch (diagError) {
+                console.error('❌ 診斷報告生成失敗:', diagError);
+                return `\n⚠️ 診斷信息收集失敗: ${diagError.message}\n建議手動檢查網路連線和 VPN 設定。`;
             }
         }
 
@@ -308,13 +455,14 @@
             });
 
             try {
-                // 使用最穩定的 API 端點配置
+                // 2025年1月 - 使用最新穩定的 API 端點配置
                 const endpoints = [
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=',
                     'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
                     'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key='
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=',
+                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
+                    'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key='
                 ];
 
                 let response = null;
@@ -359,7 +507,17 @@
                                 if (response.status === 403) {
                                     lastError = `🔑 API 金鑰無效或無權限\n\n可能原因：\n• API 金鑰錯誤或過期\n• 未啟用 Gemini API 服務\n• 超出使用額度`;
                                 } else if (response.status === 404) {
-                                    lastError = `❌ API 端點不存在 (404)\n\n錯誤詳情：\n• 模型端點無法訪問\n• 可能是地區限制或服務不可用\n• API 版本可能已更新\n\n解決方案：\n• 檢查您的地區是否支援 Gemini API\n• 嘗試使用 VPN 連接到支援的地區\n• 確認 Google AI Studio 服務狀態\n• 等待幾分鐘後重試\n\n💡 如果問題持續，可能需要聯繫 Google 支援`;
+                                    try {
+                                        const errorData = JSON.parse(errorText);
+                                        const errorId = errorData?.error?.details?.[0]?.metadata?.service || 
+                                                        errorData?.error?.message || 
+                                                        '未知錯誤ID';
+                                        lastError = `❌ API 端點不存在 (404)\n\n錯誤 ID: ${errorId}\n\n當前嘗試端點: ${endpoint.split('/models/')[1].split(':')[0]}\n\n🔍 診斷信息：\n• 此端點在您的地區可能不可用\n• API 服務可能正在維護或更新\n• 可能需要使用不同的模型版本\n\n💡 解決方案：\n• 檢查您是否在支援的地區（美國、歐洲等）\n• 嘗試使用 VPN 連接到支援的地區\n• 確認 Google AI Studio 可正常訪問\n• 等待 5-10 分鐘後重試\n• 檢查服務狀態: https://status.cloud.google.com/\n\n🌍 地區支援信息：\n• Gemini API 主要支援：美國、歐洲、日本\n• 部分地區可能需要 VPN 訪問\n• 中國大陸地區通常需要使用代理`;
+                                        console.error(`❌ 404 錯誤詳情:`, errorData);
+                                    } catch (parseErr) {
+                                        lastError = `❌ API 端點不存在 (404)\n\n當前嘗試端點: ${endpoint.split('/models/')[1].split(':')[0]}\n\n🔍 可能的原因：\n• 地區限制 - Gemini API 在某些地區不可用\n• 服務維護 - Google 可能正在更新服務\n• 模型版本變更 - 端點可能已更新\n\n💡 建議解決方案：\n• 使用 VPN 連接到美國或歐洲\n• 檢查 Google AI Studio 可用性\n• 等待 10-15 分鐘後重試\n• 確認您的 API 金鑰有效`;
+                                        console.error(`❌ 404 錯誤: 無法解析錯誤詳情`, parseErr);
+                                    }
                                 } else if (response.status === 503) {
                                     lastError = `🔄 AI 服務暫時繁忙中\n\n建議：\n• 等待 1-2 分鐘後重試`;
                                 } else if (response.status === 429) {
@@ -402,7 +560,9 @@
                 }
 
                 if (!response || !response.ok) {
-                    throw new Error(lastError || 'API 請求失敗');
+                    // 收集診斷信息
+                    const diagnosticInfo = await generateDiagnosticReport(lastError);
+                    throw new Error(lastError + '\n\n' + diagnosticInfo);
                 }
 
                 const data = await response.json();
