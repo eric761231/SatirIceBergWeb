@@ -455,15 +455,36 @@
             });
 
             try {
-                // 2025年1月 - 使用最新穩定的 API 端點配置
-                const endpoints = [
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key='
-                ];
+                // 檢測部署環境
+                const isVercel = window.location.hostname.includes('vercel.app');
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                
+                console.log(`🌐 部署環境: ${isVercel ? 'Vercel' : isLocal ? '本地' : '其他'}`);
+                
+                // 2025年1月 - 針對不同環境使用優化的 API 端點配置
+                let endpoints;
+                
+                if (isVercel) {
+                    // Vercel 環境使用更保守的端點配置
+                    endpoints = [
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key='
+                    ];
+                } else {
+                    // 本地或其他環境使用標準配置
+                    endpoints = [
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key='
+                    ];
+                }
 
                 let response = null;
                 let lastError = null;
@@ -485,7 +506,9 @@
                                 method: 'POST',
                                 headers: { 
                                     'Content-Type': 'application/json',
-                                    'User-Agent': 'Mozilla/5.0'
+                                    'User-Agent': isVercel ? 'Vercel-Deployment/1.0' : 'Mozilla/5.0',
+                                    'Accept': 'application/json',
+                                    'Cache-Control': 'no-cache'
                                 },
                                 body: JSON.stringify({
                                     contents: [{ parts: [{ text: getPrompt(message) }] }],

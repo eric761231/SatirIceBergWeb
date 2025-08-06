@@ -1,0 +1,24 @@
+{
+  "builds": [
+    {
+      "src": "ice.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/ice.html"
+    },
+    {
+      "src": "/ice.html",
+      "dest": "/ice.html"
+    },
+    {
+      "src": "/healing-config.js",
+      "dest": "/healing-config.js"
+    }
+  ],
+  "functions": {},
+  "trailingSlash": false
+}
