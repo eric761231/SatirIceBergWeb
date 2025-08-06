@@ -22,6 +22,7 @@
             background: rgba(0, 0, 0, 0.1);
             padding: 30px;
             border-radius: 20px;
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -61,6 +62,12 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .manual-redirect {
+            display: none;
+        }
+        .manual-redirect.show {
+            display: block;
+        }
     </style>
     <script>
         // 立即重定向到主應用
@@ -70,24 +77,26 @@
         
         // 頁面載入後立即重定向
         window.addEventListener('load', function() {
-            setTimeout(redirectToApp, 1000);
+            setTimeout(redirectToApp, 1500);
         });
         
-        // 如果 1 秒後還沒重定向，提供手動選項
+        // 如果 2 秒後還沒重定向，提供手動選項
         setTimeout(function() {
-            if (window.location.pathname === '/') {
-                document.getElementById('manual-redirect').style.display = 'block';
+            if (window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
+                const manualRedirect = document.getElementById('manual-redirect');
+                if (manualRedirect) {
+                    manualRedirect.classList.add('show');
+                }
             }
-        }, 2000);
+        }, 2500);
     </script>
-    <meta http-equiv="refresh" content="1;url=./ice.html">
 </head>
 <body>
     <div class="container">
         <h1>🧊 薩提爾冰山探索者</h1>
         <div class="spinner"></div>
         <p>正在啟動應用...</p>
-        <div id="manual-redirect" style="display: none;">
+        <div id="manual-redirect" class="manual-redirect">
             <p>如果沒有自動跳轉，請點擊下方按鈕：</p>
             <a href="./ice.html" class="btn">🚀 進入應用</a>
         </div>
