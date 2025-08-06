@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/",
-      "destination": "/ice.html",
+      "destination": "/index.html",
       "permanent": false
     }
   ],
