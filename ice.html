@@ -12,6 +12,59 @@
     <!-- 載入療癒功能設定檔 -->
     <script src="healing-config.js"></script>
     
+    <!-- 載入 API 配置檔 -->
+    <script>
+        // 載入 API 配置
+        let apiConfig = null;
+        
+        async function loadApiConfig() {
+            try {
+                const response = await fetch('./api-config.json');
+                if (response.ok) {
+                    apiConfig = await response.json();
+                    console.log('✅ API 配置檔已載入');
+                    return apiConfig;
+                } else {
+                    console.warn('⚠️ 無法載入 API 配置檔，使用預設設定');
+                    return getDefaultConfig();
+                }
+            } catch (error) {
+                console.warn('⚠️ API 配置檔載入失敗，使用預設設定:', error);
+                return getDefaultConfig();
+            }
+        }
+        
+        function getDefaultConfig() {
+            return {
+                apiConfig: {
+                    defaultApiKey: "",
+                    endpoints: {
+                        vercel: [
+                            "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=",
+                            "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key="
+                        ],
+                        local: [
+                            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=",
+                            "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key="
+                        ]
+                    },
+                    testEndpoints: [
+                        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key="
+                    ]
+                },
+                settings: {
+                    dailyFreeLimit: 50,
+                    usageWarningThreshold: 40,
+                    maxRetries: 2,
+                    generationConfig: {
+                        temperature: 0.7,
+                        maxOutputTokens: 1000
+                    }
+                }
+            };
+        }
+    </script>
+    
     <style>
         :root {
             --bg-primary: #131314;
@@ -195,13 +248,32 @@
 
         // API 設定和額度管理
         let apiKey = localStorage.getItem('gemini_api_key') || '';
+        let useCustomApiKey = localStorage.getItem('use_custom_api_key') === 'true';
         let currentKeyIndex = 0;
         let dailyUsageCount = 0;
         let lastUsageDate = '';
         
-        // 每日免費額度限制 (Gemini API 免費層通常為每日50-60次請求)
-        const DAILY_FREE_LIMIT = 50;
-        const USAGE_WARNING_THRESHOLD = 40; // 80% 時警告
+        // 動態設定值（從配置檔載入）
+        let DAILY_FREE_LIMIT = 50;
+        let USAGE_WARNING_THRESHOLD = 40;
+        let MAX_RETRIES = 2;
+        
+        // 獲取當前使用的 API 金鑰
+        function getCurrentApiKey() {
+            if (useCustomApiKey && apiKey && apiKey.length >= 20) {
+                return apiKey; // 使用用戶自定義金鑰
+            } else if (apiConfig && apiConfig.apiConfig.defaultApiKey) {
+                return apiConfig.apiConfig.defaultApiKey; // 使用預設金鑰
+            } else {
+                return ''; // 無可用金鑰
+            }
+        }
+        
+        // 檢查是否有可用的 API 金鑰
+        function hasValidApiKey() {
+            const currentKey = getCurrentApiKey();
+            return currentKey && currentKey.length >= 20;
+        }
 
         // 載入今日使用量
         function loadDailyUsage() {
@@ -420,7 +492,7 @@
             const message = userInput.value.trim();
             if (!message) return;
 
-            if (!apiKey || apiKey.length < 20) {
+            if (!hasValidApiKey()) {
                 alert('🔑 請先設定您的 Google Gemini API 金鑰！\n\n點擊右上角「⚙️ API 設定」來設定您的金鑰。');
                 showApiConfig();
                 return;
@@ -461,35 +533,35 @@
                 
                 console.log(`🌐 部署環境: ${isVercel ? 'Vercel' : isLocal ? '本地' : '其他'}`);
                 
-                // 2025年1月 - 針對不同環境使用優化的 API 端點配置
-                let endpoints;
+                // 獲取當前 API 金鑰
+                const currentApiKey = getCurrentApiKey();
+                console.log(`🔑 使用金鑰類型: ${useCustomApiKey && apiKey ? '用戶自定義' : '系統預設'}`);
                 
-                if (isVercel) {
-                    // Vercel 環境使用最穩定的端點配置（2025年1月優化版）
-                    endpoints = [
-                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key='
-                    ];
+                // 從配置檔獲取端點配置
+                let endpoints;
+                if (apiConfig && apiConfig.apiConfig.endpoints) {
+                    endpoints = isVercel ? 
+                        apiConfig.apiConfig.endpoints.vercel : 
+                        apiConfig.apiConfig.endpoints.local;
                 } else {
-                    // 本地或其他環境使用標準配置
-                    endpoints = [
-                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key='
-                    ];
+                    // 降級到預設配置
+                    if (isVercel) {
+                        endpoints = [
+                            'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
+                            'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key='
+                        ];
+                    } else {
+                        endpoints = [
+                            'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
+                            'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key='
+                        ];
+                    }
                 }
 
                 let response = null;
                 let lastError = null;
                 let retryCount = 0;
-                const maxRetries = 2;
+                const maxRetries = apiConfig ? apiConfig.settings.maxRetries : MAX_RETRIES;
 
                 for (const endpoint of endpoints) {
                     retryCount = 0;
@@ -502,7 +574,7 @@
                                 showThinking(true, `連線重試中... (${retryCount}/${maxRetries})`);
                             }
                             
-                            response = await fetch(endpoint + apiKey, {
+                            response = await fetch(endpoint + currentApiKey, {
                                 method: 'POST',
                                 headers: { 
                                     'Content-Type': 'application/json',
@@ -512,10 +584,9 @@
                                 },
                                 body: JSON.stringify({
                                     contents: [{ parts: [{ text: getPrompt(message) }] }],
-                                    generationConfig: {
-                                        temperature: 0.7,
-                                        maxOutputTokens: 1000
-                                    }
+                                    generationConfig: apiConfig ? 
+                                        apiConfig.settings.generationConfig : 
+                                        { temperature: 0.7, maxOutputTokens: 1000 }
                                 })
                             });
 
@@ -805,13 +876,12 @@
             try {
                 console.log('🧪 測試 API 金鑰...');
                 
-                // 使用最穩定的端點進行測試，優先使用 gemini-pro
-                const testEndpoints = [
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
-                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key='
-                ];
+                // 從配置檔獲取測試端點
+                const testEndpoints = apiConfig && apiConfig.apiConfig.testEndpoints ? 
+                    apiConfig.apiConfig.testEndpoints : [
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key='
+                    ];
                 
                 let lastTestError = null;
                 
@@ -912,10 +982,19 @@
         }
 
         function showApiConfig() {
+            const hasDefaultKey = apiConfig && apiConfig.apiConfig.defaultApiKey && apiConfig.apiConfig.defaultApiKey.length >= 20;
+            const hasCustomKey = apiKey && apiKey.length >= 20;
+            const currentKey = getCurrentApiKey();
+            
             const instructions = `🔑 Google Gemini API 金鑰設定
 
-📊 今日使用狀態：${dailyUsageCount}/${DAILY_FREE_LIMIT} 次
+${!hasValidApiKey() ? '⚠️ 請先設定您的 Google Gemini API 金鑰才能開始對話。\n' : ''}📊 今日使用狀態：${dailyUsageCount}/${DAILY_FREE_LIMIT} 次
 ${dailyUsageCount >= USAGE_WARNING_THRESHOLD ? '⚠️ 接近每日免費額度限制' : '✅ 使用狀態正常'}
+
+🔧 當前配置：
+• 系統預設金鑰：${hasDefaultKey ? '✅ 已配置' : '❌ 未配置'}
+• 用戶自定義金鑰：${hasCustomKey ? '✅ 已設定' : '❌ 未設定'}
+• 目前使用：${useCustomApiKey ? '用戶自定義金鑰' : '系統預設金鑰'}
 
 ⚠️ 如果遇到 404 錯誤，可能是地區限制問題
 
@@ -927,6 +1006,8 @@ ${dailyUsageCount >= USAGE_WARNING_THRESHOLD ? '⚠️ 接近每日免費額度�
 5. 複製生成的 API 金鑰
 6. 將 API 金鑰貼上到下方輸入框
 
+${hasDefaultKey ? '\n💡 提示：留空將使用系統預設金鑰，輸入新金鑰將覆蓋預設設定' : ''}
+
 🌍 如果持續遇到 404 錯誤：
 • 您的地區可能不支援 Gemini API
 • 嘗試使用 VPN 連接到美國或歐洲
@@ -934,33 +1015,50 @@ ${dailyUsageCount >= USAGE_WARNING_THRESHOLD ? '⚠️ 接近每日免費額度�
 
 💡 API 金鑰格式範例：AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-目前狀態：${apiKey ? '✅ 已設定API金鑰' : '❌ 尚未設定API金鑰'}`;
+目前狀態：${hasValidApiKey() ? '✅ 已設定有效金鑰' : '❌ 無可用金鑰'}`;
 
-            const key = prompt(instructions, '');
-            if (key !== null && key.trim() !== '') {
-                const newKey = key.trim();
-                
-                // 先檢查地區支援
-                checkRegionSupport().then(regionResult => {
-                    if (!regionResult.supported) {
-                        alert('⚠️ 地區限制警告\n\n您的地區可能不支援 Gemini API。\n建議使用 VPN 連接到支援的地區後再測試 API 金鑰。');
+            const key = prompt(instructions, hasCustomKey ? apiKey : '');
+            
+            if (key !== null) {
+                if (key.trim() === '') {
+                    // 用戶選擇使用預設金鑰
+                    if (hasDefaultKey) {
+                        useCustomApiKey = false;
+                        localStorage.setItem('use_custom_api_key', 'false');
+                        localStorage.removeItem('gemini_api_key');
+                        apiKey = '';
+                        alert('✅ 已切換到系統預設金鑰！');
+                    } else {
+                        alert('❌ 系統未配置預設金鑰，請輸入您的 API 金鑰。');
                     }
+                } else {
+                    // 用戶輸入自定義金鑰
+                    const newKey = key.trim();
                     
-                    // 測試新的 API 金鑰
-                    testApiKey(newKey).then(result => {
-                        if (result.success) {
-                            apiKey = newKey;
-                            localStorage.setItem('gemini_api_key', apiKey);
-                            alert('✅ API 金鑰設定成功並已通過測試！');
-                        } else {
-                            let errorMsg = `❌ ${result.message}\n\n請檢查您的 API 金鑰是否正確。`;
-                            if (result.statusCode === 404) {
-                                errorMsg += '\n\n🌍 如果持續出現 404 錯誤，可能是地區限制：\n• 嘗試使用 VPN\n• 檢查 Google AI Studio 地區可用性';
-                            }
-                            alert(errorMsg);
+                    // 先檢查地區支援
+                    checkRegionSupport().then(regionResult => {
+                        if (!regionResult.supported) {
+                            alert('⚠️ 地區限制警告\n\n您的地區可能不支援 Gemini API。\n建議使用 VPN 連接到支援的地區後再測試 API 金鑰。');
                         }
+                        
+                        // 測試新的 API 金鑰
+                        testApiKey(newKey).then(result => {
+                            if (result.success) {
+                                apiKey = newKey;
+                                useCustomApiKey = true;
+                                localStorage.setItem('gemini_api_key', apiKey);
+                                localStorage.setItem('use_custom_api_key', 'true');
+                                alert('✅ 自定義 API 金鑰設定成功並已通過測試！');
+                            } else {
+                                let errorMsg = `❌ ${result.message}\n\n請檢查您的 API 金鑰是否正確。`;
+                                if (result.statusCode === 404) {
+                                    errorMsg += '\n\n🌍 如果持續出現 404 錯誤，可能是地區限制：\n• 嘗試使用 VPN\n• 檢查 Google AI Studio 地區可用性';
+                                }
+                                alert(errorMsg);
+                            }
+                        });
                     });
-                });
+                }
             }
         }
 
@@ -970,7 +1068,17 @@ ${dailyUsageCount >= USAGE_WARNING_THRESHOLD ? '⚠️ 接近每日免費額度�
         });
 
         // === 初始化 ===
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 載入 API 配置
+            apiConfig = await loadApiConfig();
+            
+            // 從配置檔更新設定值
+            if (apiConfig && apiConfig.settings) {
+                DAILY_FREE_LIMIT = apiConfig.settings.dailyFreeLimit;
+                USAGE_WARNING_THRESHOLD = apiConfig.settings.usageWarningThreshold;
+                MAX_RETRIES = apiConfig.settings.maxRetries;
+            }
+            
             // 載入每日使用量
             loadDailyUsage();
             updateUsageDisplay();
@@ -978,14 +1086,12 @@ ${dailyUsageCount >= USAGE_WARNING_THRESHOLD ? '⚠️ 接近每日免費額度�
             toggleInput(true);
             
             // 檢查 API 金鑰
-            if (!apiKey || apiKey.length < 20) {
+            if (!hasValidApiKey()) {
                 console.warn('⚠️ 未設定有效的 API 金鑰');
-                
-                // 在初始訊息後面加入設定提示
-                setTimeout(() => {
-                    addMessageToChat('ai', `🔑 請先設定您的 Google Gemini API 金鑰才能開始對話。\n\n點擊右上角「⚙️ API 設定」來設定您的金鑰。\n\n📝 如何申請：前往 https://aistudio.google.com/app/apikey`, false);
-                }, 1000);
+                // API 金鑰提醒將在用戶點擊 API 設定按鈕時顯示
             } else {
+                console.log(`✅ 使用 ${useCustomApiKey ? '用戶自定義' : '系統預設'} API 金鑰`);
+                
                 // 檢查今日使用量狀態
                 if (checkUsageLimit()) {
                     setTimeout(() => {

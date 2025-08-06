@@ -1,0 +1,44 @@
+{
+  "apiConfig": {
+    "defaultApiKey": "AIzaSyAE-3xHxYldYfyi_geMG-QyL6cITk3F0es",
+    "endpoints": {
+      "vercel": [
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key="
+      ],
+      "local": [
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key="
+      ]
+    },
+    "testEndpoints": [
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=",
+      "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=",
+      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=",
+      "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key="
+    ]
+  },
+  "settings": {
+    "dailyFreeLimit": 50,
+    "usageWarningThreshold": 40,
+    "maxRetries": 2,
+    "generationConfig": {
+      "temperature": 0.7,
+      "maxOutputTokens": 1000
+    }
+  },
+  "messages": {
+    "noApiKey": "🔑 請先設定您的 Google Gemini API 金鑰才能開始對話。",
+    "dailyLimitReached": "⏰ 今日免費額度已用完！",
+    "usageWarning": "⚠️ 額度警告！",
+    "apiKeyInstructions": "📝 如何申請 Google Gemini API 金鑰：\n1. 前往 https://aistudio.google.com/app/apikey\n2. 登入您的 Google 帳號\n3. 點擊「Create API Key」\n4. 選擇「Create API key in new project」\n5. 複製生成的 API 金鑰"
+  }
+}
