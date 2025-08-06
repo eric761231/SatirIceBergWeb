@@ -22,14 +22,11 @@
                 const response = await fetch('./api-config.json');
                 if (response.ok) {
                     apiConfig = await response.json();
-                    console.log('✅ API 配置檔已載入');
                     return apiConfig;
                 } else {
-                    console.warn('⚠️ 無法載入 API 配置檔，使用預設設定');
                     return getDefaultConfig();
                 }
             } catch (error) {
-                console.warn('⚠️ API 配置檔載入失敗，使用預設設定:', error);
                 return getDefaultConfig();
             }
         }
@@ -190,6 +187,9 @@
         <div class="chat-header p-4 flex justify-between items-center">
             <h1 class="text-xl font-medium">薩提爾冰山探索者</h1>
             <div class="flex gap-2">
+                <button onclick="openGoogleApiPage()" class="text-sm bg-blue-600 hover:bg-blue-500 py-1 px-3 rounded-lg" title="申請 Google Gemini API 金鑰">
+                    🔑 申請 API
+                </button>
                 <button onclick="showApiConfig()" class="text-sm bg-gray-600 hover:bg-gray-500 py-1 px-3 rounded-lg">
                     ⚙️ API 設定
                 </button>
@@ -313,8 +313,6 @@
         // 檢查地區支援和服務可用性
         async function checkRegionSupport() {
             try {
-                console.log('🌍 檢查地區支援狀態...');
-                
                 const testEndpoints = [
                     'https://generativelanguage.googleapis.com/v1beta/models',
                     'https://generativelanguage.googleapis.com/v1/models'
@@ -333,8 +331,6 @@
                         });
                         const responseTime = Date.now() - startTime;
                         
-                        console.log(`📡 端點測試: ${endpoint} - 狀態: ${response.status} (${responseTime}ms)`);
-                        
                         results.push({
                             endpoint: endpoint,
                             status: response.status,
@@ -351,7 +347,6 @@
                             };
                         }
                     } catch (error) {
-                        console.warn(`⚠️ 端點 ${endpoint} 測試失敗:`, error.message);
                         results.push({
                             endpoint: endpoint,
                             status: 'error',
@@ -366,8 +361,6 @@
                 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
                 const location = getLocationFromTimezone(timezone);
                 
-                console.log(`🌍 檢測到位置: ${location} (時區: ${timezone})`);
-                
                 return { 
                     supported: false, 
                     endpoint: null,
@@ -377,7 +370,6 @@
                     suggestion: getSuggestionForLocation(location)
                 };
             } catch (error) {
-                console.error('❌ 地區支援檢查失敗:', error);
                 return { 
                     supported: false, 
                     endpoint: null, 
@@ -423,8 +415,6 @@
         async function generateDiagnosticReport(errorMessage) {
             const now = new Date();
             const timestamp = now.toLocaleString('zh-TW');
-            
-            console.log('🔍 生成診斷報告...');
             
             try {
                 // 檢查地區支援
@@ -473,11 +463,9 @@
                     report += `   響應時間: ${regionResult.responseTime}ms\n`;
                 }
                 
-                console.log('✅ 診斷報告生成完成');
                 return report;
                 
             } catch (diagError) {
-                console.error('❌ 診斷報告生成失敗:', diagError);
                 return `\n⚠️ 診斷信息收集失敗: ${diagError.message}\n建議手動檢查網路連線和 VPN 設定。`;
             }
         }
@@ -531,11 +519,8 @@
                 const isVercel = window.location.hostname.includes('vercel.app');
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 
-                console.log(`🌐 部署環境: ${isVercel ? 'Vercel' : isLocal ? '本地' : '其他'}`);
-                
                 // 獲取當前 API 金鑰
                 const currentApiKey = getCurrentApiKey();
-                console.log(`🔑 使用金鑰類型: ${useCustomApiKey && apiKey ? '用戶自定義' : '系統預設'}`);
                 
                 // 從配置檔獲取端點配置
                 let endpoints;
@@ -568,8 +553,6 @@
                     
                     while (retryCount <= maxRetries) {
                         try {
-                            console.log(`🔄 嘗試端點: ${endpoint.split('?')[0]} (重試 ${retryCount}/${maxRetries})`);
-                            
                             if (retryCount > 0) {
                                 showThinking(true, `連線重試中... (${retryCount}/${maxRetries})`);
                             }
@@ -591,12 +574,9 @@
                             });
 
                             if (response.ok) {
-                                console.log('✅ API 請求成功');
-                                console.log(`🎯 使用端點: ${endpoint.split('/models/')[1].split(':')[0]} (${endpoint.includes('v1beta') ? 'v1beta' : 'v1'})`);
                                 break;
                             } else {
                                 const errorText = await response.text();
-                                console.log(`❌ 端點 ${endpoint.split('/')[4]} 失敗:`, response.status);
                                 
                                 if (response.status === 403) {
                                     lastError = `🔑 API 金鑰無效或無權限\n\n可能原因：\n• API 金鑰錯誤或過期\n• 未啟用 Gemini API 服務\n• 超出使用額度`;
@@ -608,10 +588,8 @@
                                                         errorData?.error?.code ||
                                                         '未知錯誤ID';
                                         lastError = `❌ API 端點不存在 (404)\n\n錯誤 ID: ${errorId}\n當前端點: ${endpoint.split('/models/')[1].split(':')[0]}\n\n🔍 診斷信息：\n• 此模型端點在您的地區不可用\n• 可能是 Google API 地區限制\n• Gemini API 服務可能正在維護\n\n💡 解決方案：\n• 如在中國大陸，強烈建議使用 VPN\n• 嘗試連接到美國、歐洲或日本節點\n• 確認可正常訪問 Google 服務\n• 等待 10-15 分鐘後重試\n\n🌍 支援地區：\n• ✅ 美國、加拿大\n• ✅ 歐洲大部分國家\n• ✅ 日本、韓國、澳洲\n• ❌ 中國大陸（需 VPN）\n• ⚠️ 其他地區請檢查可用性\n\n📋 技術詳情：\n• 錯誤時間: ${new Date().toLocaleString('zh-TW')}\n• 用戶代理: ${isVercel ? 'Vercel-Deployment' : 'Browser'}\n• 請求來源: ${isVercel ? 'Vercel CDN' : 'Direct'}`;
-                                        console.error(`❌ 404 錯誤詳情:`, errorData);
                                     } catch (parseErr) {
                                         lastError = `❌ API 端點不存在 (404)\n\n當前端點: ${endpoint.split('/models/')[1].split(':')[0]}\n錯誤時間: ${new Date().toLocaleString('zh-TW')}\n\n🔍 可能原因：\n• 地區限制 - Gemini API 在部分地區不可用\n• 網路限制 - 無法訪問 Google 服務\n• 服務維護 - Google 可能正在更新 API\n\n💡 立即解決方案：\n• 使用穩定的 VPN 服務\n• 連接到美國或歐洲節點\n• 確認 DNS 設定正確\n• 檢查防火牆設定\n\n🆘 如果問題持續：\n• 檢查 https://status.cloud.google.com/\n• 確認 API 金鑰來源地區\n• 聯繫網路服務提供商`;
-                                        console.error(`❌ 404 錯誤: 無法解析錯誤詳情`, parseErr);
                                     }
                                 } else if (response.status === 503) {
                                     lastError = `🔄 AI 服務暫時繁忙中\n\n建議：\n• 等待 1-2 分鐘後重試`;
@@ -624,26 +602,20 @@
                                 }
                                 
                                 if (response.status === 503) {
-                                    console.warn('⚠️ 503 錯誤，等待後重試...');
                                     await new Promise(resolve => setTimeout(resolve, 2000)); // 等待2秒
                                 } else if (response.status === 429) {
-                                    console.warn('⚠️ 429 錯誤，等待後重試...');
                                     await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
                                 } else if (response.status === 404) {
-                                    console.error(`❌ 404 錯誤: 端點不存在，跳轉到下一個端點`);
                                     break; // 直接跳到下一個端點
                                 } else if (response.status === 400 || response.status === 403) {
-                                    console.error(`❌ ${response.status} 錯誤:`, errorText);
                                     break; // 這些錯誤不需要重試
                                 }
                             }
                             
                         } catch (err) {
                             lastError = `網路錯誤: ${err.message}`;
-                            console.error('❌ 網路錯誤:', err);
                             
                             if (retryCount < maxRetries) {
-                                console.log('⏳ 等待後重試...');
                                 await new Promise(resolve => setTimeout(resolve, 1000)); // 等待1秒
                             }
                         }
@@ -678,22 +650,11 @@
                     
                     // 如果檢測到迴圈，使用處理後的回應
                     if (processedResponse.wasLoop) {
-                        console.log('🔄 已防止迴圈回應');
-                        if (processedResponse.analysisResult) {
-                            console.log('🤖 AI 分析結果:', processedResponse.analysisResult);
-                        }
-                        if (processedResponse.loopType) {
-                            console.log('📊 檢測方式:', processedResponse.loopType);
-                        }
                         aiResponse = processedResponse.response;
-                        
-                        // 可選：在除錯模式下顯示資訊
-                        if (false) { // 設為 true 可啟用除錯模式
-                            console.log('原始回應:', processedResponse.originalResponse);
-                            console.log('防迴圈回應:', aiResponse);
-                        }
                     }
                 }
+
+                // 除錯模式已關閉以優化生產環境效能
 
                 addMessageToChat('ai', aiResponse, false);
 
@@ -712,7 +673,6 @@
                 }
 
             } catch (error) {
-                console.error('API Error:', error);
                 
                 let errorMessage = '';
                 if (error.message.includes('503')) {
@@ -872,10 +832,18 @@
         }
 
         // === API 設定功能 ===
+        
+        // 開啟 Google API 申請頁面
+        function openGoogleApiPage() {
+            const confirmed = confirm('🔑 即將開啟 Google AI Studio 申請頁面\n\n請按照以下步驟申請 API 金鑰：\n1. 登入您的 Google 帳號\n2. 點擊「Create API Key」\n3. 選擇「Create API key in new project」\n4. 複製生成的 API 金鑰\n5. 回到此頁面點擊「⚙️ API 設定」輸入金鑰\n\n是否要開啟申請頁面？');
+            
+            if (confirmed) {
+                window.open('https://aistudio.google.com/app/apikey', '_blank');
+            }
+        }
+        
         async function testApiKey(testKey) {
             try {
-                console.log('🧪 測試 API 金鑰...');
-                
                 // 從配置檔獲取測試端點
                 const testEndpoints = apiConfig && apiConfig.apiConfig.testEndpoints ? 
                     apiConfig.apiConfig.testEndpoints : [
@@ -887,8 +855,6 @@
                 
                 for (const testEndpoint of testEndpoints) {
                     try {
-                        console.log(`🔍 測試端點: ${testEndpoint.split('/models/')[1].split(':')[0]}`);
-                        
                         const response = await fetch(testEndpoint + testKey, {
                             method: 'POST',
                             headers: { 
@@ -905,7 +871,6 @@
                         });
                         
                         if (response.ok) {
-                            console.log(`✅ API 金鑰有效，使用端點: ${testEndpoint.split('/models/')[1].split(':')[0]}`);
                             return { 
                                 success: true, 
                                 message: `API 金鑰測試成功！\n使用端點: ${testEndpoint.split('/models/')[1].split(':')[0]}`,
@@ -913,7 +878,6 @@
                             };
                         } else {
                             const errorText = await response.text();
-                            console.log(`❌ 端點測試失敗: ${testEndpoint.split('/models/')[1].split(':')[0]} (${response.status})`);
                             
                             if (response.status === 404) {
                                 lastTestError = {
@@ -945,7 +909,6 @@
                             }
                         }
                     } catch (err) {
-                        console.warn(`⚠️ 端點 ${testEndpoint.split('/models/')[1].split(':')[0]} 測試異常:`, err.message);
                         lastTestError = {
                             status: 'network',
                             message: `網路錯誤: ${err.message}`,
@@ -972,7 +935,6 @@
                 }
                 
             } catch (error) {
-                console.log('❌ API 測試錯誤:', error);
                 return { 
                     success: false, 
                     message: `網路連線錯誤: ${error.name} - ${error.message}`,
@@ -998,13 +960,7 @@ ${dailyUsageCount >= USAGE_WARNING_THRESHOLD ? '⚠️ 接近每日免費額度�
 
 ⚠️ 如果遇到 404 錯誤，可能是地區限制問題
 
-📝 如何申請 Google Gemini API 金鑰：
-1. 前往 https://aistudio.google.com/app/apikey
-2. 登入您的 Google 帳號
-3. 點擊「Create API Key」
-4. 選擇「Create API key in new project」
-5. 複製生成的 API 金鑰
-6. 將 API 金鑰貼上到下方輸入框
+📝 需要申請 API 金鑰？點擊頁面右上角「🔑 申請 API」按鈕
 
 ${hasDefaultKey ? '\n💡 提示：留空將使用系統預設金鑰，輸入新金鑰將覆蓋預設設定' : ''}
 
@@ -1087,11 +1043,8 @@ ${hasDefaultKey ? '\n💡 提示：留空將使用系統預設金鑰，輸入新
             
             // 檢查 API 金鑰
             if (!hasValidApiKey()) {
-                console.warn('⚠️ 未設定有效的 API 金鑰');
                 // API 金鑰提醒將在用戶點擊 API 設定按鈕時顯示
             } else {
-                console.log(`✅ 使用 ${useCustomApiKey ? '用戶自定義' : '系統預設'} API 金鑰`);
-                
                 // 檢查今日使用量狀態
                 if (checkUsageLimit()) {
                     setTimeout(() => {
@@ -1107,11 +1060,8 @@ ${hasDefaultKey ? '\n💡 提示：留空將使用系統預設金鑰，輸入新
             
             // 檢查療癒設定檔是否載入並初始化
             if (typeof HealingConfig !== 'undefined') {
-                console.log('✅ 療癒功能設定檔已載入');
                 HealingConfig.functions.toggleHealingMode(true); // 預設啟用療癒模式
                 updatePhaseDisplay();
-            } else {
-                console.log('⚠️ 療癒功能設定檔未載入，將以基本療癒模式運行');
             }
         });
     </script>

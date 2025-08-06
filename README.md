@@ -41,7 +41,9 @@
 ```
 SatirIceBergWeb/
 ├── ice.html              # 主要 HTML 檔案
+├── index.html            # 入口頁面
 ├── healing-config.js     # 療癒系統配置檔
+├── api-config.json       # API 配置管理
 └── README.md            # 專案說明
 ```
 
