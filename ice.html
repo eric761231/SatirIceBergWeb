@@ -186,12 +186,20 @@
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center">
             <h1 class="text-xl font-medium">薩提爾冰山探索者</h1>
-            <div class="flex gap-2">
+            <div class="flex gap-2 items-center">
+                <!-- 用戶信息顯示 -->
+                <div id="user-display" class="text-sm text-gray-400 hidden">
+                    <span id="user-greeting"></span>
+                </div>
                 <button onclick="openApiKeyGuide()" class="text-sm bg-blue-600 hover:bg-blue-500 py-1 px-3 rounded-lg" title="申請 Google Gemini API 金鑰">
                     🔑 申請 API
                 </button>
                 <button onclick="showApiConfig()" class="text-sm bg-gray-600 hover:bg-gray-500 py-1 px-3 rounded-lg" title="設定 API 金鑰">
                     ⚙️ API 設定
+                </button>
+                <!-- 登出按鈕 -->
+                <button id="logout-btn" onclick="handleLogout()" class="text-sm bg-red-600 hover:bg-red-500 py-1 px-3 rounded-lg hidden" title="登出">
+                    🚪 登出
                 </button>
             </div>
         </div>
@@ -1039,6 +1047,52 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             }
         }
 
+        // === 用戶認證處理 ===
+        function checkUserAuth() {
+            const userInfo = localStorage.getItem('user_info');
+            const isGuest = localStorage.getItem('is_guest');
+            
+            if (userInfo) {
+                try {
+                    const user = JSON.parse(userInfo);
+                    displayUserInfo(user);
+                } catch (error) {
+                    console.warn('用戶信息解析失敗:', error);
+                    localStorage.removeItem('user_info');
+                }
+            } else if (isGuest === 'true') {
+                displayGuestInfo();
+            }
+        }
+        
+        function displayUserInfo(user) {
+            const userDisplay = document.getElementById('user-display');
+            const userGreeting = document.getElementById('user-greeting');
+            const logoutBtn = document.getElementById('logout-btn');
+            
+            userGreeting.textContent = `👋 ${user.name || user.email}`;
+            userDisplay.classList.remove('hidden');
+            logoutBtn.classList.remove('hidden');
+        }
+        
+        function displayGuestInfo() {
+            const userDisplay = document.getElementById('user-display');
+            const userGreeting = document.getElementById('user-greeting');
+            
+            userGreeting.textContent = '👤 訪客模式';
+            userDisplay.classList.remove('hidden');
+        }
+        
+        function handleLogout() {
+            if (confirm('確定要登出嗎？這將清除所有本地數據。')) {
+                // 清除所有用戶相關數據
+                localStorage.clear();
+                
+                // 重定向到首頁
+                window.location.href = './index.html';
+            }
+        }
+
         // === 事件監聽器 ===
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') sendMessage();
@@ -1046,6 +1100,9 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
         // === 初始化 ===
         document.addEventListener('DOMContentLoaded', async function() {
+            // 檢查用戶認證狀態
+            checkUserAuth();
+            
             // 載入 API 配置
             apiConfig = await loadApiConfig();
             

@@ -4,102 +4,388 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>薩提爾冰山探索者</title>
+    
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #4285f4, #ea4335, #fbbc04, #34a853);
-            color: white;
-            text-align: center;
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --bg-light: #ecf0f1;
+            --white: #ffffff;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        * {
             margin: 0;
-            padding: 50px 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
         }
+        
         .container {
-            background: rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            border-radius: 20px;
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            max-width: 480px;
+            width: 90%;
+            text-align: center;
         }
-        h1 { 
-            margin-bottom: 20px; 
-            font-size: 2.5em;
+        
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
         }
-        p { 
-            margin: 10px 0; 
-            font-size: 1.2em;
+        
+        h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 16px;
         }
-        .btn {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
+        
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+        
+        .auth-section {
+            margin-bottom: 24px;
+        }
+        
+        .login-btn {
+            background: var(--secondary-color);
+            color: var(--white);
+            border: none;
             padding: 12px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            margin: 10px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px;
+            text-decoration: none;
         }
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
+        
+        .login-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52,152,219,0.3);
         }
+        
+        .google-btn {
+            background: var(--white);
+            color: var(--text-dark);
+            border: 2px solid #ddd;
+        }
+        
+        .google-btn:hover {
+            background: #f8f9fa;
+            border-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .guest-section {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #eee;
+        }
+        
+        .guest-text {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+        }
+        
+        .features {
+            text-align: left;
+            margin: 24px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .features h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        
+        .feature-icon {
+            color: var(--secondary-color);
+            margin-right: 8px;
+            font-weight: bold;
+        }
+        
+        .loading {
+            display: none;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 16px;
+        }
+        
         .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid var(--secondary-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
             animation: spin 1s linear infinite;
-            margin: 20px auto;
+            margin-right: 8px;
         }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .manual-redirect {
+        
+        .user-info {
             display: none;
+            background: #e8f5e8;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #27ae60;
         }
-        .manual-redirect.show {
-            display: block;
+        
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin-bottom: 8px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px;
+                margin: 20px;
+            }
+            
+            h1 {
+                font-size: 1.75rem;
+            }
+            
+            .logo {
+                font-size: 3rem;
+            }
         }
     </style>
-    <script>
-        // 立即重定向到主應用
-        function redirectToApp() {
-            window.location.href = './ice.html';
-        }
-        
-        // 頁面載入後立即重定向
-        window.addEventListener('load', function() {
-            setTimeout(redirectToApp, 1500);
-        });
-        
-        // 如果 2 秒後還沒重定向，提供手動選項
-        setTimeout(function() {
-            if (window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
-                const manualRedirect = document.getElementById('manual-redirect');
-                if (manualRedirect) {
-                    manualRedirect.classList.add('show');
-                }
-            }
-        }, 2500);
-    </script>
 </head>
 <body>
     <div class="container">
-        <h1>🧊 薩提爾冰山探索者</h1>
-        <div class="spinner"></div>
-        <p>正在啟動應用...</p>
-        <div id="manual-redirect" class="manual-redirect">
-            <p>如果沒有自動跳轉，請點擊下方按鈕：</p>
-            <a href="./ice.html" class="btn">🚀 進入應用</a>
+        <div class="logo">🧊</div>
+        <h1>薩提爾冰山探索者</h1>
+        <p class="subtitle">深入探索內在世界，發現真實的自己</p>
+        
+        <!-- 用戶登入信息顯示 -->
+        <div id="user-info" class="user-info">
+            <img id="user-avatar" class="user-avatar" src="" alt="用戶頭像">
+            <div>歡迎回來，<span id="user-name"></span>！</div>
+        </div>
+        
+        <!-- 功能特色 -->
+        <div class="features">
+            <h3>✨ 探索功能</h3>
+            <div class="feature-item">
+                <span class="feature-icon">🎯</span>
+                <span>基於薩提爾冰山理論的深度對話</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🤖</span>
+                <span>AI 智能引導，安全探索內在</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🔒</span>
+                <span>隱私保護，所有對話僅存本地</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">💡</span>
+                <span>階段式療癒，逐步深入了解自我</span>
+            </div>
+        </div>
+        
+        <!-- 登入區域 -->
+        <div class="auth-section">
+            <div id="google-signin-btn"></div>
+            
+            <div class="guest-section">
+                <p class="guest-text">或者</p>
+                <button class="login-btn" onclick="proceedAsGuest()">
+                    🚀 繼續使用（訪客模式）
+                </button>
+            </div>
+        </div>
+        
+        <!-- 載入中顯示 -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            正在進入應用...
         </div>
     </div>
+
+    <script>
+        // Google 登入配置
+        let gapi_loaded = false;
+        let gsi_loaded = false;
+        
+        // 初始化 Google Identity Services
+        function initializeGoogleSignIn() {
+            google.accounts.id.initialize({
+                client_id: "YOUR_GOOGLE_CLIENT_ID", // 需要替換為實際的 Google Client ID
+                callback: handleGoogleSignIn,
+                auto_prompt: false
+            });
+            
+            google.accounts.id.renderButton(
+                document.getElementById("google-signin-btn"), {
+                    theme: "outline",
+                    size: "large",
+                    type: "standard",
+                    text: "signin_with",
+                    locale: "zh_TW",
+                    width: 280
+                }
+            );
+        }
+        
+        // 處理 Google 登入回調
+        function handleGoogleSignIn(response) {
+            try {
+                const payload = parseJWT(response.credential);
+                const user = {
+                    id: payload.sub,
+                    name: payload.name,
+                    email: payload.email,
+                    picture: payload.picture
+                };
+                
+                // 存儲用戶信息
+                localStorage.setItem('user_info', JSON.stringify(user));
+                
+                // 顯示用戶信息
+                showUserInfo(user);
+                
+                // 延遲跳轉
+                setTimeout(() => {
+                    proceedToApp();
+                }, 1500);
+                
+            } catch (error) {
+                console.error('Google 登入處理失敗:', error);
+                alert('登入失敗，請重試或使用訪客模式');
+            }
+        }
+        
+        // 解析 JWT Token
+        function parseJWT(token) {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+        
+        // 顯示用戶信息
+        function showUserInfo(user) {
+            document.getElementById('user-avatar').src = user.picture || '';
+            document.getElementById('user-name').textContent = user.name || user.email;
+            document.getElementById('user-info').style.display = 'block';
+            document.querySelector('.auth-section').style.display = 'none';
+        }
+        
+        // 訪客模式繼續
+        function proceedAsGuest() {
+            // 清除之前的用戶信息
+            localStorage.removeItem('user_info');
+            localStorage.setItem('is_guest', 'true');
+            proceedToApp();
+        }
+        
+        // 進入主應用
+        function proceedToApp() {
+            document.getElementById('loading').style.display = 'block';
+            setTimeout(() => {
+                window.location.href = './ice.html';
+            }, 800);
+        }
+        
+        // 檢查現有登入狀態
+        function checkExistingAuth() {
+            const userInfo = localStorage.getItem('user_info');
+            const isGuest = localStorage.getItem('is_guest');
+            
+            if (userInfo) {
+                try {
+                    const user = JSON.parse(userInfo);
+                    showUserInfo(user);
+                } catch (error) {
+                    localStorage.removeItem('user_info');
+                }
+            } else if (isGuest === 'true') {
+                // 訪客模式，顯示歡迎訊息
+                document.querySelector('.subtitle').textContent = '歡迎回來！繼續您的內在探索之旅';
+            }
+        }
+        
+        // 頁面載入完成後初始化
+        window.addEventListener('load', function() {
+            // 檢查現有認證狀態
+            checkExistingAuth();
+            
+            // 初始化 Google 登入（延遲載入以避免阻塞）
+            setTimeout(() => {
+                if (typeof google !== 'undefined' && google.accounts) {
+                    initializeGoogleSignIn();
+                } else {
+                    console.warn('Google Identity Services 載入失敗');
+                    // 隱藏 Google 登入按鈕
+                    document.getElementById('google-signin-btn').innerHTML = 
+                        '<p style="color: #7f8c8d; font-size: 0.9rem;">Google 登入暫時無法使用</p>';
+                }
+            }, 1000);
+        });
+        
+        // 登出功能（供之後使用）
+        function signOut() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.disableAutoSelect();
+            }
+            localStorage.removeItem('user_info');
+            localStorage.removeItem('is_guest');
+            location.reload();
+        }
+    </script>
 </body>
 </html>
