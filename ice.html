@@ -187,10 +187,10 @@
         <div class="chat-header p-4 flex justify-between items-center">
             <h1 class="text-xl font-medium">薩提爾冰山探索者</h1>
             <div class="flex gap-2">
-                <button onclick="openApiKeyApplication()" class="text-sm bg-blue-600 hover:bg-blue-500 py-1 px-3 rounded-lg" title="申請 Google Gemini API 金鑰">
+                <button onclick="openApiKeyGuide()" class="text-sm bg-blue-600 hover:bg-blue-500 py-1 px-3 rounded-lg" title="申請 Google Gemini API 金鑰">
                     🔑 申請 API
                 </button>
-                <button onclick="showApiConfig()" class="text-sm bg-gray-600 hover:bg-gray-500 py-1 px-3 rounded-lg">
+                <button onclick="showApiConfig()" class="text-sm bg-gray-600 hover:bg-gray-500 py-1 px-3 rounded-lg" title="設定 API 金鑰">
                     ⚙️ API 設定
                 </button>
             </div>
@@ -481,7 +481,7 @@
             if (!message) return;
 
             if (!hasValidApiKey()) {
-                alert('🔑 請先設定您的 Google Gemini API 金鑰！\n\n點擊右上角「⚙️ API 設定」來設定您的金鑰。');
+                alert('🔑 請先設定您的 Google Gemini API 金鑰！\n\n📋 快速開始：\n1. 點擊右上角「🔑 申請 API」查看申請指南\n2. 取得金鑰後點擊「⚙️ API 設定」進行設定');
                 showApiConfig();
                 return;
             }
@@ -832,35 +832,36 @@
         }
 
         // === API 設定功能 ===
-        function openApiKeyApplication() {
-            const instructions = `🔑 申請 Google Gemini API 金鑰
+        
+        // 開啟 Google API 申請指南
+        function openApiKeyGuide() {
+            const guideMessage = `🔑 Google Gemini API 金鑰申請指南
 
 📋 申請步驟：
-1. 點擊下方連結前往 Google AI Studio
-2. 登入您的 Google 帳號  
-3. 點擊「Create API Key」
+1. 點擊下方「前往申請」按鈕開啟 Google AI Studio
+2. 使用您的 Google 帳號登入
+3. 點擊「Create API Key」按鈕
 4. 選擇「Create API key in new project」
 5. 複製生成的 API 金鑰
-6. 回到本頁面點擊「⚙️ API 設定」輸入金鑰
+6. 回到本頁面點擊「⚙️ API 設定」
+7. 將 API 金鑰貼上到輸入框中
 
-💡 提示：
-• 申請完全免費
-• 每日有一定的免費使用額度
-• 金鑰僅在您的瀏覽器本地保存
+💡 重要提醒：
+• API 金鑰格式：AIzaSy開頭的39字元字串
+• 請妥善保管您的 API 金鑰
+• 不要在公開場合分享金鑰
 
-是否要開啟 Google AI Studio 申請頁面？`;
+🌍 地區支援：
+• ✅ 美國、加拿大、歐洲大部分國家
+• ✅ 日本、韓國、澳洲、台灣
+• ❌ 中國大陸（需要 VPN）
 
-            if (confirm(instructions)) {
-                // 在新視窗開啟 Google AI Studio
+⚠️ 如果無法訪問，可能需要：
+• 使用 VPN 連接到支援地區
+• 確認網路連線正常`;
+
+            if (confirm(guideMessage + '\n\n是否要開啟 Google AI Studio 申請頁面？')) {
                 window.open('https://aistudio.google.com/app/apikey', '_blank');
-                
-                // 2秒後顯示設定提醒
-                setTimeout(() => {
-                    const shouldOpenConfig = confirm('🔑 已開啟申請頁面！\n\n申請完成後，點擊「確定」來設定您的 API 金鑰。');
-                    if (shouldOpenConfig) {
-                        showApiConfig();
-                    }
-                }, 2000);
             }
         }
 
@@ -980,11 +981,16 @@ ${dailyUsageCount >= USAGE_WARNING_THRESHOLD ? '⚠️ 接近每日免費額度�
 • 用戶自定義金鑰：${hasCustomKey ? '✅ 已設定' : '❌ 未設定'}
 • 目前使用：${useCustomApiKey ? '用戶自定義金鑰' : '系統預設金鑰'}
 
-${!hasCustomKey ? '📝 還沒有 API 金鑰？點擊頁面右上角「🔑 申請 API」按鈕\n' : ''}
-${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新金鑰將覆蓋預設設定\n' : ''}
-🌍 如果遇到 404 錯誤，可能是地區限制問題，建議使用 VPN
+${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新金鑰將覆蓋預設設定' : ''}
+
+🔑 如何取得 API 金鑰：
+點擊右上角「🔑 申請 API」按鈕查看詳細申請指南
 
 💡 API 金鑰格式範例：AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+⚠️ 如果遇到問題：
+• 404 錯誤 → 可能是地區限制，建議使用 VPN
+• 403 錯誤 → 檢查 API 金鑰權限設定
 
 目前狀態：${hasValidApiKey() ? '✅ 已設定有效金鑰' : '❌ 無可用金鑰'}`;
 
