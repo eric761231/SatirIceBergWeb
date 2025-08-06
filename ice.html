@@ -187,7 +187,7 @@
         <div class="chat-header p-4 flex justify-between items-center">
             <h1 class="text-xl font-medium">薩提爾冰山探索者</h1>
             <div class="flex gap-2">
-                <button onclick="openGoogleApiPage()" class="text-sm bg-blue-600 hover:bg-blue-500 py-1 px-3 rounded-lg" title="申請 Google Gemini API 金鑰">
+                <button onclick="openApiKeyApplication()" class="text-sm bg-blue-600 hover:bg-blue-500 py-1 px-3 rounded-lg" title="申請 Google Gemini API 金鑰">
                     🔑 申請 API
                 </button>
                 <button onclick="showApiConfig()" class="text-sm bg-gray-600 hover:bg-gray-500 py-1 px-3 rounded-lg">
@@ -832,16 +832,38 @@
         }
 
         // === API 設定功能 ===
-        
-        // 開啟 Google API 申請頁面
-        function openGoogleApiPage() {
-            const confirmed = confirm('🔑 即將開啟 Google AI Studio 申請頁面\n\n請按照以下步驟申請 API 金鑰：\n1. 登入您的 Google 帳號\n2. 點擊「Create API Key」\n3. 選擇「Create API key in new project」\n4. 複製生成的 API 金鑰\n5. 回到此頁面點擊「⚙️ API 設定」輸入金鑰\n\n是否要開啟申請頁面？');
-            
-            if (confirmed) {
+        function openApiKeyApplication() {
+            const instructions = `🔑 申請 Google Gemini API 金鑰
+
+📋 申請步驟：
+1. 點擊下方連結前往 Google AI Studio
+2. 登入您的 Google 帳號  
+3. 點擊「Create API Key」
+4. 選擇「Create API key in new project」
+5. 複製生成的 API 金鑰
+6. 回到本頁面點擊「⚙️ API 設定」輸入金鑰
+
+💡 提示：
+• 申請完全免費
+• 每日有一定的免費使用額度
+• 金鑰僅在您的瀏覽器本地保存
+
+是否要開啟 Google AI Studio 申請頁面？`;
+
+            if (confirm(instructions)) {
+                // 在新視窗開啟 Google AI Studio
                 window.open('https://aistudio.google.com/app/apikey', '_blank');
+                
+                // 2秒後顯示設定提醒
+                setTimeout(() => {
+                    const shouldOpenConfig = confirm('🔑 已開啟申請頁面！\n\n申請完成後，點擊「確定」來設定您的 API 金鑰。');
+                    if (shouldOpenConfig) {
+                        showApiConfig();
+                    }
+                }, 2000);
             }
         }
-        
+
         async function testApiKey(testKey) {
             try {
                 // 從配置檔獲取測試端點
@@ -958,16 +980,9 @@ ${dailyUsageCount >= USAGE_WARNING_THRESHOLD ? '⚠️ 接近每日免費額度�
 • 用戶自定義金鑰：${hasCustomKey ? '✅ 已設定' : '❌ 未設定'}
 • 目前使用：${useCustomApiKey ? '用戶自定義金鑰' : '系統預設金鑰'}
 
-⚠️ 如果遇到 404 錯誤，可能是地區限制問題
-
-📝 需要申請 API 金鑰？點擊頁面右上角「🔑 申請 API」按鈕
-
-${hasDefaultKey ? '\n💡 提示：留空將使用系統預設金鑰，輸入新金鑰將覆蓋預設設定' : ''}
-
-🌍 如果持續遇到 404 錯誤：
-• 您的地區可能不支援 Gemini API
-• 嘗試使用 VPN 連接到美國或歐洲
-• 檢查 Google AI Studio 的地區可用性
+${!hasCustomKey ? '📝 還沒有 API 金鑰？點擊頁面右上角「🔑 申請 API」按鈕\n' : ''}
+${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新金鑰將覆蓋預設設定\n' : ''}
+🌍 如果遇到 404 錯誤，可能是地區限制問題，建議使用 VPN
 
 💡 API 金鑰格式範例：AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
