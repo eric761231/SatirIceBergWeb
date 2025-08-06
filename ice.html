@@ -465,14 +465,14 @@
                 let endpoints;
                 
                 if (isVercel) {
-                    // Vercel 環境使用更保守的端點配置
+                    // Vercel 環境使用最穩定的端點配置（2025年1月優化版）
                     endpoints = [
-                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=',
                         'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
                         'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=',
-                        'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key='
+                        'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=',
+                        'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key='
                     ];
                 } else {
                     // 本地或其他環境使用標準配置
@@ -534,11 +534,12 @@
                                         const errorData = JSON.parse(errorText);
                                         const errorId = errorData?.error?.details?.[0]?.metadata?.service || 
                                                         errorData?.error?.message || 
+                                                        errorData?.error?.code ||
                                                         '未知錯誤ID';
-                                        lastError = `❌ API 端點不存在 (404)\n\n錯誤 ID: ${errorId}\n\n當前嘗試端點: ${endpoint.split('/models/')[1].split(':')[0]}\n\n🔍 診斷信息：\n• 此端點在您的地區可能不可用\n• API 服務可能正在維護或更新\n• 可能需要使用不同的模型版本\n\n💡 解決方案：\n• 檢查您是否在支援的地區（美國、歐洲等）\n• 嘗試使用 VPN 連接到支援的地區\n• 確認 Google AI Studio 可正常訪問\n• 等待 5-10 分鐘後重試\n• 檢查服務狀態: https://status.cloud.google.com/\n\n🌍 地區支援信息：\n• Gemini API 主要支援：美國、歐洲、日本\n• 部分地區可能需要 VPN 訪問\n• 中國大陸地區通常需要使用代理`;
+                                        lastError = `❌ API 端點不存在 (404)\n\n錯誤 ID: ${errorId}\n當前端點: ${endpoint.split('/models/')[1].split(':')[0]}\n\n🔍 診斷信息：\n• 此模型端點在您的地區不可用\n• 可能是 Google API 地區限制\n• Gemini API 服務可能正在維護\n\n💡 解決方案：\n• 如在中國大陸，強烈建議使用 VPN\n• 嘗試連接到美國、歐洲或日本節點\n• 確認可正常訪問 Google 服務\n• 等待 10-15 分鐘後重試\n\n🌍 支援地區：\n• ✅ 美國、加拿大\n• ✅ 歐洲大部分國家\n• ✅ 日本、韓國、澳洲\n• ❌ 中國大陸（需 VPN）\n• ⚠️ 其他地區請檢查可用性\n\n📋 技術詳情：\n• 錯誤時間: ${new Date().toLocaleString('zh-TW')}\n• 用戶代理: ${isVercel ? 'Vercel-Deployment' : 'Browser'}\n• 請求來源: ${isVercel ? 'Vercel CDN' : 'Direct'}`;
                                         console.error(`❌ 404 錯誤詳情:`, errorData);
                                     } catch (parseErr) {
-                                        lastError = `❌ API 端點不存在 (404)\n\n當前嘗試端點: ${endpoint.split('/models/')[1].split(':')[0]}\n\n🔍 可能的原因：\n• 地區限制 - Gemini API 在某些地區不可用\n• 服務維護 - Google 可能正在更新服務\n• 模型版本變更 - 端點可能已更新\n\n💡 建議解決方案：\n• 使用 VPN 連接到美國或歐洲\n• 檢查 Google AI Studio 可用性\n• 等待 10-15 分鐘後重試\n• 確認您的 API 金鑰有效`;
+                                        lastError = `❌ API 端點不存在 (404)\n\n當前端點: ${endpoint.split('/models/')[1].split(':')[0]}\n錯誤時間: ${new Date().toLocaleString('zh-TW')}\n\n🔍 可能原因：\n• 地區限制 - Gemini API 在部分地區不可用\n• 網路限制 - 無法訪問 Google 服務\n• 服務維護 - Google 可能正在更新 API\n\n💡 立即解決方案：\n• 使用穩定的 VPN 服務\n• 連接到美國或歐洲節點\n• 確認 DNS 設定正確\n• 檢查防火牆設定\n\n🆘 如果問題持續：\n• 檢查 https://status.cloud.google.com/\n• 確認 API 金鑰來源地區\n• 聯繫網路服務提供商`;
                                         console.error(`❌ 404 錯誤: 無法解析錯誤詳情`, parseErr);
                                     }
                                 } else if (response.status === 503) {
@@ -803,60 +804,103 @@
         async function testApiKey(testKey) {
             try {
                 console.log('🧪 測試 API 金鑰...');
-                // 使用最穩定的端點進行測試
-                const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=' + testKey, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: '測試' }] }],
-                        generationConfig: {
-                            temperature: 0.7,
-                            maxOutputTokens: 100
-                        }
-                    })
-                });
                 
-                if (response.ok) {
-                    console.log('✅ API 金鑰有效');
-                    return { success: true, message: 'API 金鑰測試成功！' };
-                } else {
-                    const errorText = await response.text();
-                    console.log('❌ API 測試失敗:', response.status, errorText);
-                    
-                    let errorMessage = '';
-                    switch (response.status) {
-                        case 400:
-                            errorMessage = '請求格式錯誤或金鑰格式不正確';
-                            break;
-                        case 401:
-                            errorMessage = 'API 金鑰無效或未授權';
-                            break;
-                        case 403:
-                            errorMessage = 'API 金鑰無權限或服務未啟用';
-                            break;
-                        case 404:
-                            errorMessage = 'API 端點不存在或模型不可用';
-                            break;
-                        case 429:
-                            errorMessage = '請求頻率過高，請稍後再試';
-                            break;
-                        case 500:
-                            errorMessage = 'Google 服務器內部錯誤';
-                            break;
-                        case 503:
-                            errorMessage = 'Google 服務暫時不可用';
-                            break;
-                        default:
-                            errorMessage = `HTTP ${response.status} 錯誤`;
+                // 使用最穩定的端點進行測試，優先使用 gemini-pro
+                const testEndpoints = [
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=',
+                    'https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=',
+                    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=',
+                    'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key='
+                ];
+                
+                let lastTestError = null;
+                
+                for (const testEndpoint of testEndpoints) {
+                    try {
+                        console.log(`🔍 測試端點: ${testEndpoint.split('/models/')[1].split(':')[0]}`);
+                        
+                        const response = await fetch(testEndpoint + testKey, {
+                            method: 'POST',
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'User-Agent': 'Mozilla/5.0'
+                            },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: '測試' }] }],
+                                generationConfig: {
+                                    temperature: 0.7,
+                                    maxOutputTokens: 50
+                                }
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            console.log(`✅ API 金鑰有效，使用端點: ${testEndpoint.split('/models/')[1].split(':')[0]}`);
+                            return { 
+                                success: true, 
+                                message: `API 金鑰測試成功！\n使用端點: ${testEndpoint.split('/models/')[1].split(':')[0]}`,
+                                workingEndpoint: testEndpoint
+                            };
+                        } else {
+                            const errorText = await response.text();
+                            console.log(`❌ 端點測試失敗: ${testEndpoint.split('/models/')[1].split(':')[0]} (${response.status})`);
+                            
+                            if (response.status === 404) {
+                                lastTestError = {
+                                    status: 404,
+                                    message: '地區限制：此地區無法訪問 Gemini API，建議使用 VPN',
+                                    suggestion: '嘗試連接到美國或歐洲的 VPN 節點'
+                                };
+                                continue; // 嘗試下一個端點
+                            } else if (response.status === 403) {
+                                return { 
+                                    success: false, 
+                                    message: 'API 金鑰無權限或服務未啟用',
+                                    statusCode: response.status,
+                                    details: errorText
+                                };
+                            } else if (response.status === 401) {
+                                return { 
+                                    success: false, 
+                                    message: 'API 金鑰無效或未授權',
+                                    statusCode: response.status,
+                                    details: errorText
+                                };
+                            } else {
+                                lastTestError = {
+                                    status: response.status,
+                                    message: `HTTP ${response.status} 錯誤`,
+                                    details: errorText
+                                };
+                            }
+                        }
+                    } catch (err) {
+                        console.warn(`⚠️ 端點 ${testEndpoint.split('/models/')[1].split(':')[0]} 測試異常:`, err.message);
+                        lastTestError = {
+                            status: 'network',
+                            message: `網路錯誤: ${err.message}`,
+                            details: err.toString()
+                        };
+                        continue;
                     }
-                    
+                }
+                
+                // 所有端點都失敗了
+                if (lastTestError && lastTestError.status === 404) {
                     return { 
                         success: false, 
-                        message: errorMessage,
-                        statusCode: response.status,
-                        details: errorText
+                        message: lastTestError.message,
+                        suggestion: lastTestError.suggestion,
+                        statusCode: 404
+                    };
+                } else {
+                    return { 
+                        success: false, 
+                        message: lastTestError ? lastTestError.message : 'API 測試失敗',
+                        details: lastTestError ? lastTestError.details : '未知錯誤'
                     };
                 }
+                
             } catch (error) {
                 console.log('❌ API 測試錯誤:', error);
                 return { 

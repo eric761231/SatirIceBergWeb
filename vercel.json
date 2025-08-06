@@ -1,24 +1,28 @@
 {
-  "builds": [
+  "redirects": [
     {
-      "src": "ice.html",
-      "use": "@vercel/static"
+      "source": "/",
+      "destination": "/ice.html",
+      "permanent": false
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/",
-      "dest": "/ice.html"
-    },
-    {
-      "src": "/ice.html",
-      "dest": "/ice.html"
-    },
-    {
-      "src": "/healing-config.js",
-      "dest": "/healing-config.js"
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
     }
-  ],
-  "functions": {},
-  "trailingSlash": false
+  ]
 }

@@ -3,18 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>薩提爾冰山探索者 - 重定向中</title>
+    <title>薩提爾冰山探索者</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #4285f4, #ea4335, #fbbc04, #34a853);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 50px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 { 
+            margin-bottom: 20px; 
+            font-size: 2.5em;
+        }
+        p { 
+            margin: 10px 0; 
+            font-size: 1.2em;
+        }
+        .btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin: 10px;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
     <script>
         // 立即重定向到主應用
-        window.location.replace('./ice.html');
+        function redirectToApp() {
+            window.location.href = './ice.html';
+        }
+        
+        // 頁面載入後立即重定向
+        window.addEventListener('load', function() {
+            setTimeout(redirectToApp, 1000);
+        });
+        
+        // 如果 1 秒後還沒重定向，提供手動選項
+        setTimeout(function() {
+            if (window.location.pathname === '/') {
+                document.getElementById('manual-redirect').style.display = 'block';
+            }
+        }, 2000);
     </script>
-    <meta http-equiv="refresh" content="0;url=./ice.html">
+    <meta http-equiv="refresh" content="1;url=./ice.html">
 </head>
 <body>
-    <div style="text-align: center; margin-top: 50px; font-family: Arial, sans-serif;">
-        <h2>🔄 重定向中...</h2>
-        <p>正在跳轉到薩提爾冰山探索者</p>
-        <p>如果沒有自動跳轉，請<a href="./ice.html">點擊這裡</a></p>
+    <div class="container">
+        <h1>🧊 薩提爾冰山探索者</h1>
+        <div class="spinner"></div>
+        <p>正在啟動應用...</p>
+        <div id="manual-redirect" style="display: none;">
+            <p>如果沒有自動跳轉，請點擊下方按鈕：</p>
+            <a href="./ice.html" class="btn">🚀 進入應用</a>
+        </div>
     </div>
 </body>
 </html>
