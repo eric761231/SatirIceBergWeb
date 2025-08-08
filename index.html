@@ -155,16 +155,7 @@
             box-shadow: none;
             transform: none;
         }
-        .guest-section {
-            margin-top: 24px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border-color);
-        }
-        .guest-text {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 16px;
-        }
+
         .user-info {
             display: none;
             background: var(--bg-tertiary);
@@ -245,10 +236,7 @@
             <div id="google-signin-btn"></div>
         </div>
         
-        <div class="guest-section">
-            <p class="guest-text">或</p>
-            <button class="login-btn" onclick="proceedAsGuest()">以訪客身份繼續</button>
-        </div>
+
         
         <div id="loading" class="loading">
             <div class="spinner"></div>
@@ -480,7 +468,6 @@
             const userAvatar = document.getElementById('user-avatar');
             const userName = document.getElementById('user-name');
             const authSection = document.querySelector('.auth-section');
-            const guestSection = document.querySelector('.guest-section');
             
             if (userAvatar && userName && userInfo) {
                 userAvatar.src = user.picture || '';
@@ -491,19 +478,9 @@
             if (authSection) {
                 authSection.style.display = 'none';
             }
-            
-            if (guestSection) {
-                guestSection.style.display = 'none';
-            }
         }
         
-        // 訪客模式繼續
-        function proceedAsGuest() {
-            // 清除之前的用戶信息
-            localStorage.removeItem('user_info');
-            localStorage.setItem('is_guest', 'true');
-            proceedToApp();
-        }
+
         
         // 進入主應用
         function proceedToApp() {
@@ -519,7 +496,6 @@
         // 檢查現有登入狀態
         function checkExistingAuth() {
             const userInfo = localStorage.getItem('user_info');
-            const isGuest = localStorage.getItem('is_guest');
             
             if (userInfo) {
                 try {
@@ -528,12 +504,6 @@
                 } catch (error) {
                     console.error('解析用戶信息失敗:', error);
                     localStorage.removeItem('user_info');
-                }
-            } else if (isGuest === 'true') {
-                // 訪客模式，顯示歡迎訊息
-                const subtitle = document.querySelector('.subtitle');
-                if (subtitle) {
-                    subtitle.textContent = '歡迎回來！繼續您的內在探索之旅';
                 }
             }
         }
@@ -565,7 +535,6 @@
                 google.accounts.id.disableAutoSelect();
             }
             localStorage.removeItem('user_info');
-            localStorage.removeItem('is_guest');
             location.reload();
         }
     </script>
