@@ -237,11 +237,16 @@
         <div class="auth-section">
             <div id="google-signin-btn"></div>
             <div id="debug-info" style="margin-top: 16px; font-size: 0.8rem; color: var(--text-secondary);">
-                <p>如果 Google 登入無法使用，請檢查：</p>
+                <p>如果 Google 登入出現 origin_mismatch 錯誤，請檢查：</p>
                 <ul style="text-align: left; margin: 8px 0;">
                     <li>Google Cloud Console 中的授權來源設定</li>
-                    <li>確保已添加：http://localhost:8000</li>
+                    <li>確保已添加以下網址：</li>
+                    <li style="margin-left: 16px;">• http://localhost:8000</li>
+                    <li style="margin-left: 16px;">• http://127.0.0.1:8000</li>
+                    <li style="margin-left: 16px;">• https://satir-ice-berg-web.vercel.app</li>
+                    <li style="margin-left: 16px;">• https://satir-ice-berg-web-git-main-eric761231s-projects.vercel.app</li>
                 </ul>
+                <p style="margin-top: 8px; font-size: 0.75rem;">當前網址：<span id="current-url"></span></p>
             </div>
         </div>
         
@@ -411,22 +416,42 @@
             console.log('初始化 Google 登入...');
             console.log('當前網址:', window.location.origin);
             
-            google.accounts.id.initialize({
-                client_id: "28263511849-3rk0avke93rn8rfdi5hq0boffkp6gm0j.apps.googleusercontent.com",
-                callback: handleGoogleSignIn,
-                auto_prompt: false
-            });
-            
-            google.accounts.id.renderButton(
-                document.getElementById("google-signin-btn"), {
-                    theme: "outline",
-                    size: "large",
-                    type: "standard",
-                    text: "signin_with",
-                    locale: "zh_TW",
-                    width: 280
-                }
-            );
+            try {
+                google.accounts.id.initialize({
+                    client_id: "28263511849-3rk0avke93rn8rfdi5hq0boffkp6gm0j.apps.googleusercontent.com",
+                    callback: handleGoogleSignIn,
+                    auto_prompt: false
+                });
+                
+                google.accounts.id.renderButton(
+                    document.getElementById("google-signin-btn"), {
+                        theme: "outline",
+                        size: "large",
+                        type: "standard",
+                        text: "signin_with",
+                        locale: "zh_TW",
+                        width: 280
+                    }
+                );
+                
+                console.log('✅ Google 登入按鈕初始化成功');
+            } catch (error) {
+                console.error('❌ Google 登入初始化失敗:', error);
+                showGoogleLoginError('Google 登入初始化失敗，請檢查網址設定');
+            }
+        }
+        
+        // 顯示 Google 登入錯誤訊息
+        function showGoogleLoginError(message) {
+            const googleSigninBtn = document.getElementById('google-signin-btn');
+            if (googleSigninBtn) {
+                googleSigninBtn.innerHTML = `
+                    <div style="text-align: center; padding: 16px; color: #e74c3c;">
+                        <p style="margin: 0 0 8px 0; font-size: 0.9rem;">${message}</p>
+                        <p style="margin: 0; font-size: 0.8rem; color: #95a5a6;">請檢查 Google Cloud Console 設定</p>
+                    </div>
+                `;
+            }
         }
         
         // 處理 Google 登入回調
@@ -522,6 +547,12 @@
         
         // 頁面載入完成後初始化
         window.addEventListener('load', function() {
+            // 顯示當前網址
+            const currentUrlSpan = document.getElementById('current-url');
+            if (currentUrlSpan) {
+                currentUrlSpan.textContent = window.location.origin;
+            }
+            
             // 檢查現有認證狀態
             checkExistingAuth();
             
