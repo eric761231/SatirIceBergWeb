@@ -6,19 +6,12 @@
     <title>SKOPOS</title>
     <meta name="application-name" content="SKOPOS">
     <meta name="description" content="基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界">
+    <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
     <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
     <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
     <link rel="shortcut icon" href="/icons/icon-192x192.png">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <title>SKOPOS</title>
-    <meta name="application-name" content="SKOPOS">
-    <meta name="description" content="基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -180,11 +173,17 @@
             margin-bottom: 20px;
             border-left: 4px solid var(--accent-blue);
         }
+        #user-name {
+            text-align: center;
+        }
         .user-avatar {
             width: 48px;
             height: 48px;
             border-radius: 50%;
             margin-bottom: 8px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .loading {
             display: none;
@@ -219,29 +218,38 @@
             }
         }
     </style>
+</head>
+<body>
     <div class="container">
         <button class="settings-btn" id="settingsBtn" title="設定">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
-            <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
-            <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
-        </svg>
-    </button>
-    <div class="settings-menu" id="settingsMenu">
-        <button class="login-btn" id="installHardBtn">安裝應用</button>
-    </div>
-    <!-- 用戶資訊區塊，供 Google 登入顯示使用 -->
-    <div id="user-info" class="user-info" style="display:none;">
-        <img id="user-avatar" class="user-avatar" src="" alt="使用者頭像" style="display:block;margin:0 auto 8px;">
-        <div id="user-name" style="text-align:center;"></div>
-    </div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+            </svg>
+        </button>
+        <div class="settings-menu" id="settingsMenu">
+            <button class="login-btn" id="installHardBtn">安裝應用</button>
+        </div>
+        
+        <div id="user-info" class="user-info">
+            <img id="user-avatar" class="user-avatar" src="" alt="使用者頭像">
+            <div id="user-name"></div>
+        </div>
+        
         <span class="logo">🧊</span>
         <h1>SKOPOS</h1>
         <p class="subtitle">探索內心深處,看到更真實的自我</p>
+        
         <div class="auth-section">
             <div id="google-signin-btn"></div>
         </div>
-        <div class="guest-section"></div>
+        
+        <div class="guest-section">
+            <p class="guest-text">或</p>
+            <button class="login-btn" onclick="proceedAsGuest()">以訪客身份繼續</button>
+        </div>
+        
         <div id="loading" class="loading">
             <div class="spinner"></div>
             正在進入應用...
@@ -271,6 +279,7 @@
             }
             // installHardBtn 的點擊事件由 showInstallButton() 控制
         });
+        
         // PWA 安裝支援
         let deferredPrompt;
         let installButton;
@@ -325,17 +334,6 @@
             hideInstallButton();
             
             // 顯示安裝成功訊息彈出視窗
-            // CSS 設定：
-            // position: fixed;         // 固定在視窗上方
-            // top: 20px;               // 距離視窗頂端 20px
-            // left: 50%;               // 水平置中
-            // transform: translateX(-50%); // 讓視窗真正置中
-            // background: #27ae60;     // 綠色背景，代表成功
-            // color: white;            // 白色文字
-            // padding: 12px 24px;      // 內距，讓文字不貼邊
-            // border-radius: 8px;      // 圓角 8px
-            // z-index: 1000;           // 保證在最上層
-            // font-size: 14px;         // 字體大小
             const successMsg = document.createElement('div');
             successMsg.style.cssText = `
                 position: fixed;
@@ -408,6 +406,11 @@
         
         // 初始化 Google Identity Services
         function initializeGoogleSignIn() {
+            if (typeof google === 'undefined' || !google.accounts) {
+                console.warn('Google Identity Services 尚未載入');
+                return;
+            }
+            
             google.accounts.id.initialize({
                 client_id: "28263511849-3rk0avke93rn8rfdi5hq0boffkp6gm0j.apps.googleusercontent.com",
                 callback: handleGoogleSignIn,
@@ -428,60 +431,70 @@
         
         // 處理 Google 登入回調
         function handleGoogleSignIn(response) {
+            console.log('Google 登入成功，處理回應...');
             const jwt = response.credential;
-            // 將 JWT 傳送到後端 API 進行驗證
-            fetch('/api/auth/google', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ credential: jwt })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.user) {
-                    // 後端回傳 user profile，儲存到 localStorage
-                    localStorage.setItem('user_info', JSON.stringify(data.user));
-                    showUserInfo(data.user);
-                    setTimeout(proceedToApp, 1500);
-                } else {
-                    throw new Error('後端驗證失敗');
-                }
-            })
-            .catch(error => {
-                // 前端僅作測試用途，直接解析 JWT
-                try {
-                    const payload = parseJWT(jwt);
-                    const user = {
-                        id: payload.sub,
-                        name: payload.name,
-                        email: payload.email,
-                        picture: payload.picture
-                    };
-                    localStorage.setItem('user_info', JSON.stringify(user));
-                    showUserInfo(user);
-                    setTimeout(proceedToApp, 1500);
-                } catch (err) {
-                    console.error('Google 登入處理失敗:', err);
-                    alert('登入失敗，請重試或使用訪客模式');
-                }
-            });
+            
+            try {
+                // 直接解析 JWT 獲取用戶信息
+                const payload = parseJWT(jwt);
+                const user = {
+                    id: payload.sub,
+                    name: payload.name,
+                    email: payload.email,
+                    picture: payload.picture
+                };
+                
+                console.log('用戶信息:', user);
+                
+                // 儲存用戶信息到 localStorage
+                localStorage.setItem('user_info', JSON.stringify(user));
+                showUserInfo(user);
+                
+                // 延遲進入應用
+                setTimeout(proceedToApp, 1500);
+                
+            } catch (err) {
+                console.error('Google 登入處理失敗:', err);
+                alert('登入處理失敗，請重試或使用訪客模式');
+            }
         }
         
         // 解析 JWT Token
         function parseJWT(token) {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                console.error('JWT 解析失敗:', error);
+                throw new Error('無法解析登入憑證');
+            }
         }
         
         // 顯示用戶信息
         function showUserInfo(user) {
-            document.getElementById('user-avatar').src = user.picture || '';
-            document.getElementById('user-name').textContent = user.name || user.email;
-            document.getElementById('user-info').style.display = 'block';
-            document.querySelector('.auth-section').style.display = 'none';
+            const userInfo = document.getElementById('user-info');
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            const authSection = document.querySelector('.auth-section');
+            const guestSection = document.querySelector('.guest-section');
+            
+            if (userAvatar && userName && userInfo) {
+                userAvatar.src = user.picture || '';
+                userName.textContent = user.name || user.email;
+                userInfo.style.display = 'block';
+            }
+            
+            if (authSection) {
+                authSection.style.display = 'none';
+            }
+            
+            if (guestSection) {
+                guestSection.style.display = 'none';
+            }
         }
         
         // 訪客模式繼續
@@ -494,7 +507,10 @@
         
         // 進入主應用
         function proceedToApp() {
-            document.getElementById('loading').style.display = 'block';
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.display = 'block';
+            }
             setTimeout(() => {
                 window.location.href = './ice.html';
             }, 800);
@@ -510,11 +526,15 @@
                     const user = JSON.parse(userInfo);
                     showUserInfo(user);
                 } catch (error) {
+                    console.error('解析用戶信息失敗:', error);
                     localStorage.removeItem('user_info');
                 }
             } else if (isGuest === 'true') {
                 // 訪客模式，顯示歡迎訊息
-                document.querySelector('.subtitle').textContent = '歡迎回來！繼續您的內在探索之旅';
+                const subtitle = document.querySelector('.subtitle');
+                if (subtitle) {
+                    subtitle.textContent = '歡迎回來！繼續您的內在探索之旅';
+                }
             }
         }
         
@@ -529,9 +549,12 @@
                     initializeGoogleSignIn();
                 } else {
                     console.warn('Google Identity Services 載入失敗');
-                    // 隱藏 Google 登入按鈕
-                    document.getElementById('google-signin-btn').innerHTML = 
-                        '<p style="color: #7f8c8d; font-size: 0.9rem;">Google 登入暫時無法使用</p>';
+                    // 隱藏 Google 登入按鈕並顯示錯誤訊息
+                    const googleSigninBtn = document.getElementById('google-signin-btn');
+                    if (googleSigninBtn) {
+                        googleSigninBtn.innerHTML = 
+                            '<p style="color: #7f8c8d; font-size: 0.9rem;">Google 登入暫時無法使用</p>';
+                    }
                 }
             }, 1000);
         });
