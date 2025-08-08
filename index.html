@@ -39,21 +39,22 @@
             box-shadow: 0 4px 32px rgba(0,0,0,0.18);
             position: relative;
         }
+        /* === 設定按鈕樣式 === */
         .settings-btn {
-            position: absolute;
-            top: 18px;
-            left: 18px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            transition: color 0.2s;
-            z-index: 10;
+            position: absolute; /* 絕對定位，相對於 container */
+            top: 18px; /* 距離頂部 18px */
+            left: 18px; /* 距離左側 18px */
+            background: none; /* 透明背景 */
+            border: none; /* 無邊框 */
+            cursor: pointer; /* 滑鼠指標變為手型 */
+            font-size: 1.5rem; /* 圖標大小 */
+            color: var(--text-secondary); /* 次要文字顏色 */
+            transition: color 0.2s; /* 顏色過渡動畫 */
+            z-index: 10; /* 確保在適當層級 */
         }
         .settings-btn:hover {
-        color: var(--accent-blue);
-    }
+            color: var(--accent-blue); /* 懸停時變為強調色 */
+        }
         .logo {
             font-size: 3rem;
             margin-bottom: 18px;
@@ -109,6 +110,7 @@
             border: none;
             text-align: left;
         }
+        /* === 設定選單樣式 === */
         .settings-menu {
             /* 選單初始隱藏，由 JS 控制顯示 */
             display: none;
@@ -122,32 +124,33 @@
             border: 1px solid var(--border-color);
             /* 圓角 4px，讓選單略微圓潤 */
             border-radius: 4px;
-            /* 最小寬度 70px，最大寬度 120px，確保內容不擠壓 */
+            /* 最小寬度 80px，最大寬度 90px，確保內容不擠壓 */
             min-width: 80px;
             max-width: 90px;
             /* 陰影 0 4px 16px，讓選單浮起來 */
             box-shadow: 0 4px 16px rgba(0,0,0,0.18);
             /* z-index 100，確保在最上層 */
             z-index: 100;
-            /* 上下 padding 2px，讓選單內容不貼邊 */
+            /* 上下 padding 0px，讓選單內容不貼邊 */
             padding: 0px 0;
         }
+        /* === 設定選單按鈕樣式 === */
         .settings-menu button {
             width: 100%;      /* 按鈕寬度填滿選單，與選單寬度一致 */
-            padding: 0 12px;  /* 左右內距 18px，讓文字不貼邊 */
-            height: 24px;     /* 固定高度 24px，讓按鈕更一致，建議 24~32px */
-            font-size: 0.98rem;
-            color: #fff !important;
-            background: transparent !important;
-            border: none;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 2px;
+            padding: 0 12px;  /* 左右內距 12px，讓文字不貼邊 */
+            height: 24px;     /* 固定高度 24px，讓按鈕更一致 */
+            font-size: 0.98rem; /* 字體大小 */
+            color: #fff !important; /* 白色文字 */
+            background: transparent !important; /* 透明背景 */
+            border: none; /* 無邊框 */
+            text-align: center; /* 文字置中 */
+            cursor: pointer; /* 滑鼠指標變為手型 */
+            border-radius: 2px; /* 輕微圓角 */
         }
         .settings-menu button:hover {
-            background: var(--accent-blue);
-            color: #131314 !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+            background: var(--accent-blue); /* 懸停時背景變為強調色 */
+            color: #131314 !important; /* 懸停時文字變為深色 */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10); /* 懸停時添加陰影 */
         }
         .login-btn:hover {
             /* 安裝應用按鈕保持透明，不受 hover 影響 */
@@ -242,23 +245,35 @@
     </div>
 
     <script>
-        // 設定按鈕與下拉選單
+        // === 設定選單系統 ===
+        /**
+         * 初始化設定按鈕和下拉選單功能
+         * 控制設定按鈕的點擊事件和選單的顯示/隱藏
+         * 
+         * 功能說明：
+         * - 點擊設定按鈕切換選單顯示狀態
+         * - 點擊外部區域自動隱藏選單
+         * - 防止事件冒泡，避免意外觸發其他事件
+         */
         document.addEventListener('DOMContentLoaded', function() {
             const settingsBtn = document.getElementById('settingsBtn');
             const settingsMenu = document.getElementById('settingsMenu');
             const installHardBtn = document.getElementById('installHardBtn');
-            let menuVisible = false;
+            let menuVisible = false; // 追蹤選單顯示狀態
+            
             if (settingsBtn && settingsMenu) {
+                // 設定按鈕點擊事件 - 切換選單顯示/隱藏
                 settingsBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    menuVisible = !menuVisible;
-                    settingsMenu.style.display = menuVisible ? 'block' : 'none';
+                    e.stopPropagation(); // 防止事件冒泡
+                    menuVisible = !menuVisible; // 切換顯示狀態
+                    settingsMenu.style.display = menuVisible ? 'block' : 'none'; // 控制選單顯示
                 });
-                // 點擊外部隱藏選單
+                
+                // 點擊外部區域隱藏選單 - 提升用戶體驗
                 document.addEventListener('click', function(e) {
                     if (menuVisible && !settingsMenu.contains(e.target) && e.target !== settingsBtn) {
-                        settingsMenu.style.display = 'none';
-                        menuVisible = false;
+                        settingsMenu.style.display = 'none'; // 隱藏選單
+                        menuVisible = false; // 更新狀態
                     }
                 });
             }
