@@ -182,7 +182,16 @@
 </head>
 <body class="p-4 md:p-8">
 
-    <!-- 側邊欄切換按鈕 -->
+    <!-- ===== 側邊欄系統 ===== -->
+    <!-- 
+    側邊欄位置說明：
+    - 切換按鈕：固定在左上角 (top-4 left-4)，z-index: 50 確保在最上層
+    - 側邊欄面板：固定在左側 (top-0 left-0)，寬度 320px (w-80)，初始位置在螢幕外 (-translate-x-full)
+    - 遮罩層：覆蓋整個螢幕 (inset-0)，z-index: 30 低於側邊欄但高於其他內容
+    - 側邊欄 z-index: 40，確保在遮罩層之上但在切換按鈕之下
+    -->
+    
+    <!-- 側邊欄切換按鈕 - 固定在左上角位置 -->
     <div class="fixed top-4 left-4 z-50">
         <button id="sidebar-toggle" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 bg-gray-800 border border-gray-600" title="設定選單">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -193,10 +202,10 @@
         </button>
     </div>
 
-    <!-- 側邊欄設定面板 -->
+    <!-- 側邊欄設定面板 - 左側滑動式面板 -->
     <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-gray-800 border-r border-gray-600 transform -translate-x-full transition-transform duration-300 ease-in-out z-40">
         <div class="p-4 h-full flex flex-col">
-            <!-- 側邊欄標題 -->
+            <!-- 側邊欄標題區域 -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-lg font-medium text-white">設定</h2>
                 <button id="sidebar-close" class="text-gray-400 hover:text-white p-1 rounded">
@@ -206,7 +215,7 @@
                 </button>
             </div>
             
-            <!-- 設定選單項目 -->
+            <!-- 設定選單項目區域 -->
             <div class="flex-1 space-y-2">
                 <button onclick="openApiKeyGuide()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="申請 Google Gemini API 金鑰">
                     <div class="flex items-center space-x-3">
@@ -239,7 +248,7 @@
                 </button>
             </div>
             
-            <!-- 底部資訊 -->
+            <!-- 底部資訊區域 -->
             <div class="mt-auto pt-4 border-t border-gray-600">
                 <div class="text-xs text-gray-500 text-center">
                     SKOPOS 療癒系統
@@ -248,7 +257,7 @@
         </div>
     </div>
 
-    <!-- 遮罩層 -->
+    <!-- 遮罩層 - 背景變暗效果，點擊可關閉側邊欄 -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
 
     <div class="max-w-3xl mx-auto gemini-container">
@@ -1232,7 +1241,17 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             if (e.key === 'Enter') sendMessage();
         });
 
-        // === 側邊欄控制 ===
+        // === 側邊欄控制系統 ===
+        /**
+         * 初始化側邊欄功能
+         * 控制側邊欄的開啟、關閉和互動行為
+         * 
+         * 側邊欄位置控制：
+         * - 開啟：移除 -translate-x-full 類別，讓側邊欄從左側滑入
+         * - 關閉：添加 -translate-x-full 類別，讓側邊欄滑出到螢幕左側外
+         * - 遮罩層：控制背景變暗效果和點擊關閉功能
+         * - 背景滾動：側邊欄開啟時禁用背景滾動，關閉時恢復
+         */
         function initializeSidebar() {
             const sidebarToggle = document.getElementById('sidebar-toggle');
             const sidebar = document.getElementById('sidebar');
@@ -1240,36 +1259,36 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const sidebarOverlay = document.getElementById('sidebar-overlay');
             
             if (sidebarToggle && sidebar) {
-                // 開啟側邊欄
+                // 開啟側邊欄 - 從左側滑入並顯示遮罩層
                 sidebarToggle.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    sidebar.classList.remove('-translate-x-full');
-                    sidebarOverlay.classList.remove('hidden');
+                    sidebar.classList.remove('-translate-x-full'); // 移除位移，讓側邊欄滑入
+                    sidebarOverlay.classList.remove('hidden'); // 顯示背景遮罩
                     document.body.style.overflow = 'hidden'; // 防止背景滾動
                 });
                 
-                // 關閉側邊欄
+                // 關閉側邊欄 - 滑出到左側並隱藏遮罩層
                 sidebarClose.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    sidebar.classList.add('-translate-x-full');
-                    sidebarOverlay.classList.add('hidden');
+                    sidebar.classList.add('-translate-x-full'); // 添加位移，讓側邊欄滑出
+                    sidebarOverlay.classList.add('hidden'); // 隱藏背景遮罩
                     document.body.style.overflow = ''; // 恢復背景滾動
                 });
                 
-                // 點擊遮罩層關閉側邊欄
+                // 點擊遮罩層關閉側邊欄 - 提供額外的關閉方式
                 sidebarOverlay.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    sidebar.classList.add('-translate-x-full');
-                    sidebarOverlay.classList.add('hidden');
-                    document.body.style.overflow = '';
+                    sidebar.classList.add('-translate-x-full'); // 滑出側邊欄
+                    sidebarOverlay.classList.add('hidden'); // 隱藏遮罩層
+                    document.body.style.overflow = ''; // 恢復滾動
                 });
                 
-                // ESC 鍵關閉側邊欄
+                // ESC 鍵關閉側邊欄 - 鍵盤快捷鍵支援
                 document.addEventListener('keydown', function(e) {
                     if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
-                        sidebar.classList.add('-translate-x-full');
-                        sidebarOverlay.classList.add('hidden');
-                        document.body.style.overflow = '';
+                        sidebar.classList.add('-translate-x-full'); // 滑出側邊欄
+                        sidebarOverlay.classList.add('hidden'); // 隱藏遮罩層
+                        document.body.style.overflow = ''; // 恢復滾動
                     }
                 });
             }
