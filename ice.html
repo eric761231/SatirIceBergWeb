@@ -182,41 +182,79 @@
 </head>
 <body class="p-4 md:p-8">
 
+    <!-- 側邊欄切換按鈕 -->
+    <div class="fixed top-4 left-4 z-50">
+        <button id="sidebar-toggle" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 bg-gray-800 border border-gray-600" title="設定選單">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- 側邊欄設定面板 -->
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-gray-800 border-r border-gray-600 transform -translate-x-full transition-transform duration-300 ease-in-out z-40">
+        <div class="p-4 h-full flex flex-col">
+            <!-- 側邊欄標題 -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-lg font-medium text-white">設定</h2>
+                <button id="sidebar-close" class="text-gray-400 hover:text-white p-1 rounded">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- 設定選單項目 -->
+            <div class="flex-1 space-y-2">
+                <button onclick="openApiKeyGuide()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="申請 Google Gemini API 金鑰">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">🔑</span>
+                        <div>
+                            <div class="font-medium">申請 API</div>
+                            <div class="text-xs text-gray-500">申請 Google Gemini API 金鑰</div>
+                        </div>
+                    </div>
+                </button>
+                
+                <button onclick="showApiConfig()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="設定 API 金鑰">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">⚙️</span>
+                        <div>
+                            <div class="font-medium">API 設定</div>
+                            <div class="text-xs text-gray-500">設定和管理 API 金鑰</div>
+                        </div>
+                    </div>
+                </button>
+                
+                <button id="logout-btn" onclick="handleLogout()" class="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 rounded-lg transition-colors hidden" title="登出">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">🚪</span>
+                        <div>
+                            <div class="font-medium">登出</div>
+                            <div class="text-xs text-gray-500">登出當前帳戶</div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+            
+            <!-- 底部資訊 -->
+            <div class="mt-auto pt-4 border-t border-gray-600">
+                <div class="text-xs text-gray-500 text-center">
+                    SKOPOS 療癒系統
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 遮罩層 -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+
     <div class="max-w-3xl mx-auto gemini-container">
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center">
             <h1 class="text-xl font-medium">SKOPOS</h1>
-            <div class="relative">
-                <!-- 設定按鈕 -->
-                <button id="settings-btn" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700" title="設定">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
-                        <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
-                        <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
-                    </svg>
-                </button>
-                
-                <!-- 下拉選單 -->
-                <div id="settings-menu" class="absolute right-0 top-full mt-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-50 hidden min-w-[200px]">
-                    <!-- 用戶信息顯示 -->
-                    <div id="user-display" class="px-4 py-2 text-sm text-gray-400 border-b border-gray-600 hidden">
-                        <span id="user-greeting"></span>
-                    </div>
-                    
-                    <!-- 選單項目 -->
-                    <div class="py-1">
-                        <button onclick="openApiKeyGuide()" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white" title="申請 Google Gemini API 金鑰">
-                            🔑 申請 API
-                        </button>
-                        <button onclick="showApiConfig()" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white" title="設定 API 金鑰">
-                            ⚙️ API 設定
-                        </button>
-                        <button id="logout-btn" onclick="handleLogout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 hidden" title="登出">
-                            🚪 登出
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Phase Indicator -->
@@ -236,7 +274,6 @@
             <!-- Initial AI Message -->
             <div class="chat-message ai-message">
                 <div class="message-content" id="initial-message">
-                    <p>歡迎來到內在探索的安全空間。</p>
                     <p class="mt-2" id="user-greeting-message">最近有什麼讓您感到困擾的事件或行為嗎？</p>
                 </div>
             </div>
@@ -1168,7 +1205,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             
             // 更新 Initial AI Message 中的用戶問候語
             if (userGreetingMessage) {
-                userGreetingMessage.textContent = `hi ${user.name || user.email}，最近有什麼讓您感到困擾的事件或行為嗎？`;
+                userGreetingMessage.textContent = `你好 ${user.name || user.email}，最近有什麼讓您感到困擾的事件或行為嗎？`;
             }
         }
         
@@ -1195,24 +1232,44 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             if (e.key === 'Enter') sendMessage();
         });
 
-        // === 設定選單控制 ===
-        function initializeSettingsMenu() {
-            const settingsBtn = document.getElementById('settings-btn');
-            const settingsMenu = document.getElementById('settings-menu');
-            let menuVisible = false;
+        // === 側邊欄控制 ===
+        function initializeSidebar() {
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarClose = document.getElementById('sidebar-close');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
             
-            if (settingsBtn && settingsMenu) {
-                settingsBtn.addEventListener('click', function(e) {
+            if (sidebarToggle && sidebar) {
+                // 開啟側邊欄
+                sidebarToggle.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    menuVisible = !menuVisible;
-                    settingsMenu.classList.toggle('hidden', !menuVisible);
+                    sidebar.classList.remove('-translate-x-full');
+                    sidebarOverlay.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden'; // 防止背景滾動
                 });
                 
-                // 點擊外部隱藏選單
-                document.addEventListener('click', function(e) {
-                    if (menuVisible && !settingsMenu.contains(e.target) && e.target !== settingsBtn) {
-                        settingsMenu.classList.add('hidden');
-                        menuVisible = false;
+                // 關閉側邊欄
+                sidebarClose.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarOverlay.classList.add('hidden');
+                    document.body.style.overflow = ''; // 恢復背景滾動
+                });
+                
+                // 點擊遮罩層關閉側邊欄
+                sidebarOverlay.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.add('-translate-x-full');
+                    sidebarOverlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                });
+                
+                // ESC 鍵關閉側邊欄
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
+                        sidebar.classList.add('-translate-x-full');
+                        sidebarOverlay.classList.add('hidden');
+                        document.body.style.overflow = '';
                     }
                 });
             }
@@ -1220,8 +1277,8 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
         
         // === 初始化 ===
         document.addEventListener('DOMContentLoaded', async function() {
-            // 初始化設定選單
-            initializeSettingsMenu();
+            // 初始化側邊欄
+            initializeSidebar();
             
             // 檢查測試模式
             checkTestMode();
