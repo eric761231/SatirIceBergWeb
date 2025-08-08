@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 互動介面</title>
+    <title>SKOPOS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -185,22 +185,37 @@
     <div class="max-w-3xl mx-auto gemini-container">
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center">
-            <h1 class="text-xl font-medium">薩提爾冰山探索者</h1>
-            <div class="flex gap-2 items-center">
-                <!-- 用戶信息顯示 -->
-                <div id="user-display" class="text-sm text-gray-400 hidden">
-                    <span id="user-greeting"></span>
+            <h1 class="text-xl font-medium">SKOPOS</h1>
+            <div class="relative">
+                <!-- 設定按鈕 -->
+                <button id="settings-btn" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700" title="設定">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+                        <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                        <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+                    </svg>
+                </button>
+                
+                <!-- 下拉選單 -->
+                <div id="settings-menu" class="absolute right-0 top-full mt-2 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-50 hidden min-w-[200px]">
+                    <!-- 用戶信息顯示 -->
+                    <div id="user-display" class="px-4 py-2 text-sm text-gray-400 border-b border-gray-600 hidden">
+                        <span id="user-greeting"></span>
+                    </div>
+                    
+                    <!-- 選單項目 -->
+                    <div class="py-1">
+                        <button onclick="openApiKeyGuide()" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white" title="申請 Google Gemini API 金鑰">
+                            🔑 申請 API
+                        </button>
+                        <button onclick="showApiConfig()" class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white" title="設定 API 金鑰">
+                            ⚙️ API 設定
+                        </button>
+                        <button id="logout-btn" onclick="handleLogout()" class="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 hidden" title="登出">
+                            🚪 登出
+                        </button>
+                    </div>
                 </div>
-                <button onclick="openApiKeyGuide()" class="text-sm bg-blue-600 hover:bg-blue-500 py-1 px-3 rounded-lg" title="申請 Google Gemini API 金鑰">
-                    🔑 申請 API
-                </button>
-                <button onclick="showApiConfig()" class="text-sm bg-gray-600 hover:bg-gray-500 py-1 px-3 rounded-lg" title="設定 API 金鑰">
-                    ⚙️ API 設定
-                </button>
-                <!-- 登出按鈕 -->
-                <button id="logout-btn" onclick="handleLogout()" class="text-sm bg-red-600 hover:bg-red-500 py-1 px-3 rounded-lg hidden" title="登出">
-                    🚪 登出
-                </button>
             </div>
         </div>
 
@@ -222,7 +237,7 @@
             <div class="chat-message ai-message">
                 <div class="message-content" id="initial-message">
                     <p>歡迎來到內在探索的安全空間。</p>
-                    <p class="mt-2">最近有什麼讓您感到困擾的事件或行為嗎？</p>
+                    <p class="mt-2" id="user-greeting-message">最近有什麼讓您感到困擾的事件或行為嗎？</p>
                 </div>
             </div>
              <!-- Thinking Indicator -->
@@ -1145,10 +1160,16 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const userDisplay = document.getElementById('user-display');
             const userGreeting = document.getElementById('user-greeting');
             const logoutBtn = document.getElementById('logout-btn');
+            const userGreetingMessage = document.getElementById('user-greeting-message');
             
             userGreeting.textContent = `👋 ${user.name || user.email}`;
             userDisplay.classList.remove('hidden');
             logoutBtn.classList.remove('hidden');
+            
+            // 更新 Initial AI Message 中的用戶問候語
+            if (userGreetingMessage) {
+                userGreetingMessage.textContent = `hi ${user.name || user.email}，最近有什麼讓您感到困擾的事件或行為嗎？`;
+            }
         }
         
         function displayGuestInfo() {
@@ -1174,8 +1195,34 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             if (e.key === 'Enter') sendMessage();
         });
 
+        // === 設定選單控制 ===
+        function initializeSettingsMenu() {
+            const settingsBtn = document.getElementById('settings-btn');
+            const settingsMenu = document.getElementById('settings-menu');
+            let menuVisible = false;
+            
+            if (settingsBtn && settingsMenu) {
+                settingsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menuVisible = !menuVisible;
+                    settingsMenu.classList.toggle('hidden', !menuVisible);
+                });
+                
+                // 點擊外部隱藏選單
+                document.addEventListener('click', function(e) {
+                    if (menuVisible && !settingsMenu.contains(e.target) && e.target !== settingsBtn) {
+                        settingsMenu.classList.add('hidden');
+                        menuVisible = false;
+                    }
+                });
+            }
+        }
+        
         // === 初始化 ===
         document.addEventListener('DOMContentLoaded', async function() {
+            // 初始化設定選單
+            initializeSettingsMenu();
+            
             // 檢查測試模式
             checkTestMode();
             
