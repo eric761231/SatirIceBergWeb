@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>薩提爾冰山探索者</title>
     
+    <!-- PWA Meta Tags -->
+    <meta name="application-name" content="薩提爾冰山探索者">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="冰山探索">
+    <meta name="description" content="基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    <meta name="msapplication-TileColor" content="#2c3e50">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="theme-color" content="#2c3e50">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- PWA Icons -->
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="shortcut icon" href="/icons/icon-192x192.png">
+    
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
@@ -255,6 +278,131 @@
     </div>
 
     <script>
+        // PWA 安裝支援
+        let deferredPrompt;
+        let installButton;
+        
+        // 檢測 PWA 安裝提示
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('💫 PWA 安裝提示可用');
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallButton();
+        });
+        
+        // 顯示安裝按鈕
+        function showInstallButton() {
+            if (!installButton) {
+                installButton = document.createElement('button');
+                installButton.className = 'login-btn';
+                installButton.innerHTML = '📱 安裝應用';
+                installButton.style.marginTop = '16px';
+                installButton.onclick = installPWA;
+                
+                const guestSection = document.querySelector('.guest-section');
+                guestSection.appendChild(installButton);
+            }
+        }
+        
+        // 安裝 PWA
+        async function installPWA() {
+            if (!deferredPrompt) {
+                alert('此瀏覽器不支援應用安裝，請使用 Chrome、Edge 或 Safari');
+                return;
+            }
+            
+            const result = await deferredPrompt.prompt();
+            console.log('🚀 PWA 安裝結果:', result.outcome);
+            
+            if (result.outcome === 'accepted') {
+                console.log('✅ 用戶接受安裝');
+                hideInstallButton();
+            } else {
+                console.log('❌ 用戶拒絕安裝');
+            }
+            
+            deferredPrompt = null;
+        }
+        
+        // 隱藏安裝按鈕
+        function hideInstallButton() {
+            if (installButton) {
+                installButton.style.display = 'none';
+            }
+        }
+        
+        // 檢測 PWA 安裝狀態
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('🎉 PWA 安裝成功');
+            hideInstallButton();
+            
+            // 顯示安裝成功訊息
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #27ae60;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 1000;
+                font-size: 14px;
+            `;
+            successMsg.textContent = '🎉 應用安裝成功！現在可以從桌面啟動';
+            document.body.appendChild(successMsg);
+            
+            setTimeout(() => {
+                document.body.removeChild(successMsg);
+            }, 3000);
+        });
+        
+        // 註冊 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker 註冊成功:', registration.scope);
+                        
+                        // 檢查更新
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('🔄 發現新版本，準備更新');
+                                    showUpdateNotification();
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker 註冊失敗:', error);
+                    });
+            });
+        }
+        
+        // 顯示更新通知
+        function showUpdateNotification() {
+            const updateMsg = document.createElement('div');
+            updateMsg.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #3498db;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 1000;
+                font-size: 14px;
+                cursor: pointer;
+            `;
+            updateMsg.innerHTML = '🔄 發現新版本，點擊重新載入';
+            updateMsg.onclick = () => window.location.reload();
+            document.body.appendChild(updateMsg);
+        }
+        
         // Google 登入配置
         let gapi_loaded = false;
         let gsi_loaded = false;
@@ -281,30 +429,42 @@
         
         // 處理 Google 登入回調
         function handleGoogleSignIn(response) {
-            try {
-                const payload = parseJWT(response.credential);
-                const user = {
-                    id: payload.sub,
-                    name: payload.name,
-                    email: payload.email,
-                    picture: payload.picture
-                };
-                
-                // 存儲用戶信息
-                localStorage.setItem('user_info', JSON.stringify(user));
-                
-                // 顯示用戶信息
-                showUserInfo(user);
-                
-                // 延遲跳轉
-                setTimeout(() => {
-                    proceedToApp();
-                }, 1500);
-                
-            } catch (error) {
-                console.error('Google 登入處理失敗:', error);
-                alert('登入失敗，請重試或使用訪客模式');
-            }
+            const jwt = response.credential;
+            // 將 JWT 傳送到後端 API 進行驗證
+            fetch('/api/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ credential: jwt })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.user) {
+                    // 後端回傳 user profile，儲存到 localStorage
+                    localStorage.setItem('user_info', JSON.stringify(data.user));
+                    showUserInfo(data.user);
+                    setTimeout(proceedToApp, 1500);
+                } else {
+                    throw new Error('後端驗證失敗');
+                }
+            })
+            .catch(error => {
+                // 前端僅作測試用途，直接解析 JWT
+                try {
+                    const payload = parseJWT(jwt);
+                    const user = {
+                        id: payload.sub,
+                        name: payload.name,
+                        email: payload.email,
+                        picture: payload.picture
+                    };
+                    localStorage.setItem('user_info', JSON.stringify(user));
+                    showUserInfo(user);
+                    setTimeout(proceedToApp, 1500);
+                } catch (err) {
+                    console.error('Google 登入處理失敗:', err);
+                    alert('登入失敗，請重試或使用訪客模式');
+                }
+            });
         }
         
         // 解析 JWT Token

@@ -1047,6 +1047,82 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             }
         }
 
+        // === 測試模式處理 ===
+        function checkTestMode() {
+            const isTestMode = localStorage.getItem('testMode');
+            const testUserData = localStorage.getItem('userData');
+            
+            if (isTestMode === 'true' && testUserData) {
+                try {
+                    const testUser = JSON.parse(testUserData);
+                    console.log('🧪 測試模式啟用，用戶:', testUser.name);
+                    
+                    // 顯示測試模式橫幅
+                    showTestModeBanner();
+                    
+                    // 設定測試用戶資訊
+                    localStorage.setItem('user_info', JSON.stringify({
+                        name: testUser.name,
+                        email: testUser.email,
+                        picture: testUser.picture || '🧑‍💻'
+                    }));
+                    
+                    return true;
+                } catch (error) {
+                    console.warn('測試用戶資料解析失敗:', error);
+                    localStorage.removeItem('testMode');
+                    localStorage.removeItem('userData');
+                }
+            }
+            return false;
+        }
+        
+        function showTestModeBanner() {
+            // 建立測試模式橫幅
+            const banner = document.createElement('div');
+            banner.id = 'test-mode-banner';
+            banner.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+                color: white;
+                text-align: center;
+                padding: 8px 16px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 10000;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            `;
+            banner.innerHTML = `
+                🧪 測試模式 | 
+                <span style="opacity: 0.9;">跳過登入，直接體驗功能</span> | 
+                <button onclick="exitTestMode()" style="
+                    background: rgba(255, 255, 255, 0.2);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    color: white;
+                    padding: 4px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    margin-left: 10px;
+                ">退出測試</button>
+            `;
+            
+            document.body.insertBefore(banner, document.body.firstChild);
+            
+            // 調整頁面內容避免被橫幅遮擋
+            document.body.style.paddingTop = '40px';
+        }
+        
+        function exitTestMode() {
+            localStorage.removeItem('testMode');
+            localStorage.removeItem('userData');
+            localStorage.removeItem('user_info');
+            window.location.href = '/';
+        }
+
         // === 用戶認證處理 ===
         function checkUserAuth() {
             const userInfo = localStorage.getItem('user_info');
@@ -1100,6 +1176,9 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
         // === 初始化 ===
         document.addEventListener('DOMContentLoaded', async function() {
+            // 檢查測試模式
+            checkTestMode();
+            
             // 檢查用戶認證狀態
             checkUserAuth();
             
