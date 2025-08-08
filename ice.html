@@ -208,11 +208,6 @@
             <!-- 側邊欄標題區域 -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-lg font-medium text-white"></h2>
-                <button id="sidebar-close" class="text-gray-400 hover:text-white p-1 rounded">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
             </div>
             
             <!-- 設定選單項目區域 -->
@@ -247,15 +242,7 @@
                     </div>
                 </button>
                 
-                <button id="logout-btn" onclick="handleLogout()" class="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 rounded-lg transition-colors hidden" title="登出">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-lg">🚪</span>
-                        <div>
-                            <div class="font-medium">登出</div>
-                            <div class="text-xs text-gray-500">登出當前帳戶</div>
-                        </div>
-                    </div>
-                </button>
+
             </div>
             
             <!-- 底部資訊區域 -->
@@ -1314,12 +1301,22 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const sidebarOverlay = document.getElementById('sidebar-overlay');
             
             if (sidebarToggle && sidebar) {
-                // 開啟側邊欄 - 從左側滑入並顯示遮罩層
+                // 切換側邊欄 - 按一下開啟，再按一下關閉
                 sidebarToggle.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    sidebar.classList.remove('-translate-x-full'); // 移除位移，讓側邊欄滑入
-                    sidebarOverlay.classList.remove('hidden'); // 顯示背景遮罩
-                    document.body.style.overflow = 'hidden'; // 防止背景滾動
+                    
+                    // 檢查側邊欄當前狀態
+                    const isOpen = !sidebar.classList.contains('-translate-x-full');
+                    
+                    if (isOpen) {
+                        // 如果側邊欄是開啟的，則關閉它
+                        sidebar.classList.add('-translate-x-full'); // 添加位移，讓側邊欄滑出
+                        sidebarOverlay.classList.add('hidden'); // 隱藏背景遮罩
+                    } else {
+                        // 如果側邊欄是關閉的，則開啟它
+                        sidebar.classList.remove('-translate-x-full'); // 移除位移，讓側邊欄滑入
+                        sidebarOverlay.classList.remove('hidden'); // 顯示背景遮罩
+                    }
                 });
                 
                 // 關閉側邊欄 - 滑出到左側並隱藏遮罩層
@@ -1327,7 +1324,6 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     e.stopPropagation();
                     sidebar.classList.add('-translate-x-full'); // 添加位移，讓側邊欄滑出
                     sidebarOverlay.classList.add('hidden'); // 隱藏背景遮罩
-                    document.body.style.overflow = ''; // 恢復背景滾動
                 });
                 
                 // 點擊遮罩層關閉側邊欄 - 提供額外的關閉方式
@@ -1335,7 +1331,6 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     e.stopPropagation();
                     sidebar.classList.add('-translate-x-full'); // 滑出側邊欄
                     sidebarOverlay.classList.add('hidden'); // 隱藏遮罩層
-                    document.body.style.overflow = ''; // 恢復滾動
                 });
                 
                 // ESC 鍵關閉側邊欄 - 鍵盤快捷鍵支援
@@ -1345,7 +1340,6 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                         if (!sidebar.classList.contains('-translate-x-full')) {
                             sidebar.classList.add('-translate-x-full'); // 滑出側邊欄
                             sidebarOverlay.classList.add('hidden'); // 隱藏遮罩層
-                            document.body.style.overflow = ''; // 恢復滾動
                         }
                         
                         // 關閉對話記錄彈出視窗
@@ -1368,13 +1362,11 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             
             // 顯示彈出視窗
             modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
         }
 
         function closeConversationHistory() {
             const modal = document.getElementById('conversation-history-modal');
             modal.classList.add('hidden');
-            document.body.style.overflow = '';
         }
 
         function loadConversationHistory(container) {
