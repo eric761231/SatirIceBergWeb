@@ -207,7 +207,7 @@
         <div class="p-4 h-full flex flex-col">
             <!-- 側邊欄標題區域 -->
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-lg font-medium text-white">設定</h2>
+                <h2 class="text-lg font-medium text-white"></h2>
                 <button id="sidebar-close" class="text-gray-400 hover:text-white p-1 rounded">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -237,6 +237,16 @@
                     </div>
                 </button>
                 
+                <button onclick="showConversationHistory()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="查看過往對話">
+                    <div class="flex items-center space-x-3">
+                        <span class="text-lg">📝</span>
+                        <div>
+                            <div class="font-medium">對話記錄</div>
+                            <div class="text-xs text-gray-500">查看過往的對話內容</div>
+                        </div>
+                    </div>
+                </button>
+                
                 <button id="logout-btn" onclick="handleLogout()" class="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 rounded-lg transition-colors hidden" title="登出">
                     <div class="flex items-center space-x-3">
                         <span class="text-lg">🚪</span>
@@ -259,6 +269,40 @@
 
     <!-- 遮罩層 - 背景變暗效果，點擊可關閉側邊欄 -->
     <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
+
+    <!-- 對話記錄彈出視窗 -->
+    <div id="conversation-history-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col">
+                <!-- 標題欄 -->
+                <div class="flex justify-between items-center p-6 border-b border-gray-200">
+                    <h2 class="text-xl font-semibold text-gray-800">對話記錄</h2>
+                    <button onclick="closeConversationHistory()" class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- 內容區域 -->
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div id="conversation-history-content" class="space-y-4">
+                        <!-- 對話記錄將在這裡動態載入 -->
+                    </div>
+                </div>
+                
+                <!-- 底部按鈕 -->
+                <div class="flex justify-between items-center p-6 border-t border-gray-200">
+                    <button onclick="exportConversationHistory()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        匯出記錄
+                    </button>
+                    <button onclick="clearConversationHistory()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        清除記錄
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="max-w-3xl mx-auto gemini-container">
         <!-- Header -->
@@ -779,7 +823,7 @@
         }
 
         // === UI 輔助功能 ===
-        function addMessageToChat(sender, message, isError = false) {
+        function addMessageToChat(sender, message, isError = false, saveToHistory = true) {
             const messageWrapper = document.createElement('div');
             messageWrapper.className = `chat-message ${sender}-message`;
             const messageContent = document.createElement('div');
@@ -847,6 +891,17 @@
             messageWrapper.appendChild(messageContent);
             chatBox.insertBefore(messageWrapper, thinkingIndicator);
             chatBox.scrollTop = chatBox.scrollHeight;
+            
+            // 保存到對話記錄（不保存錯誤訊息）
+            if (saveToHistory && !isError) {
+                const history = JSON.parse(localStorage.getItem('conversation_history') || '[]');
+                history.push({
+                    role: sender,
+                    content: message,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('conversation_history', JSON.stringify(history));
+            }
         }
 
         function toggleInput(enabled) {
@@ -1285,14 +1340,133 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 
                 // ESC 鍵關閉側邊欄 - 鍵盤快捷鍵支援
                 document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
-                        sidebar.classList.add('-translate-x-full'); // 滑出側邊欄
-                        sidebarOverlay.classList.add('hidden'); // 隱藏遮罩層
-                        document.body.style.overflow = ''; // 恢復滾動
+                    if (e.key === 'Escape') {
+                        // 關閉側邊欄
+                        if (!sidebar.classList.contains('-translate-x-full')) {
+                            sidebar.classList.add('-translate-x-full'); // 滑出側邊欄
+                            sidebarOverlay.classList.add('hidden'); // 隱藏遮罩層
+                            document.body.style.overflow = ''; // 恢復滾動
+                        }
+                        
+                        // 關閉對話記錄彈出視窗
+                        const historyModal = document.getElementById('conversation-history-modal');
+                        if (!historyModal.classList.contains('hidden')) {
+                            closeConversationHistory();
+                        }
                     }
                 });
             }
         }
+
+        // === 對話記錄功能 ===
+        function showConversationHistory() {
+            const modal = document.getElementById('conversation-history-modal');
+            const content = document.getElementById('conversation-history-content');
+            
+            // 載入對話記錄
+            loadConversationHistory(content);
+            
+            // 顯示彈出視窗
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeConversationHistory() {
+            const modal = document.getElementById('conversation-history-modal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function loadConversationHistory(container) {
+            const history = JSON.parse(localStorage.getItem('conversation_history') || '[]');
+            
+            if (history.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="text-4xl mb-4">📝</div>
+                        <p class="text-lg">尚無對話記錄</p>
+                        <p class="text-sm mt-2">開始對話後，您的對話內容將顯示在這裡</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            history.forEach((entry, index) => {
+                const timestamp = new Date(entry.timestamp).toLocaleString('zh-TW');
+                const isUser = entry.role === 'user';
+                
+                html += `
+                    <div class="border rounded-lg p-4 ${isUser ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium ${isUser ? 'text-blue-600' : 'text-gray-600'}">
+                                    ${isUser ? '👤 您' : '🤖 AI'}
+                                </span>
+                                <span class="text-xs text-gray-500">${timestamp}</span>
+                            </div>
+                            <button onclick="deleteConversationEntry(${index})" class="text-red-400 hover:text-red-600 text-sm">
+                                刪除
+                            </button>
+                        </div>
+                        <div class="text-gray-800 whitespace-pre-wrap">${entry.content}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function deleteConversationEntry(index) {
+            if (confirm('確定要刪除這條對話記錄嗎？')) {
+                const history = JSON.parse(localStorage.getItem('conversation_history') || '[]');
+                history.splice(index, 1);
+                localStorage.setItem('conversation_history', JSON.stringify(history));
+                
+                // 重新載入對話記錄
+                const content = document.getElementById('conversation-history-content');
+                loadConversationHistory(content);
+            }
+        }
+
+        function exportConversationHistory() {
+            const history = JSON.parse(localStorage.getItem('conversation_history') || '[]');
+            
+            if (history.length === 0) {
+                alert('尚無對話記錄可匯出');
+                return;
+            }
+
+            let exportText = 'SKOPOS 療癒系統 - 對話記錄\n';
+            exportText += '='.repeat(50) + '\n\n';
+            
+            history.forEach(entry => {
+                const timestamp = new Date(entry.timestamp).toLocaleString('zh-TW');
+                const role = entry.role === 'user' ? '您' : 'AI';
+                exportText += `[${timestamp}] ${role}：\n${entry.content}\n\n`;
+            });
+
+            // 創建下載連結
+            const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `對話記錄_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function clearConversationHistory() {
+            if (confirm('確定要清除所有對話記錄嗎？此操作無法復原。')) {
+                localStorage.removeItem('conversation_history');
+                const content = document.getElementById('conversation-history-content');
+                loadConversationHistory(content);
+            }
+        }
+
+
         
         // === 初始化 ===
         document.addEventListener('DOMContentLoaded', async function() {
