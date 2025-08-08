@@ -211,7 +211,7 @@
             </div>
             
             <!-- 設定選單項目區域 -->
-            <div class="flex-1 space-y-2">
+            <div class="flex-1 space-y-2 mt-8">
                 <button onclick="openApiKeyGuide()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="申請 Google Gemini API 金鑰">
                     <div class="flex items-center space-x-3">
                         <span class="text-lg">🔑</span>
@@ -260,11 +260,11 @@
     <!-- 對話記錄彈出視窗 -->
     <div id="conversation-history-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col">
+            <div class="bg-gray-800 border border-gray-600 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col">
                 <!-- 標題欄 -->
-                <div class="flex justify-between items-center p-6 border-b border-gray-200">
-                    <h2 class="text-xl font-semibold text-gray-800">對話記錄</h2>
-                    <button onclick="closeConversationHistory()" class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100">
+                <div class="flex justify-between items-center p-6 border-b border-gray-600">
+                    <h2 class="text-xl font-semibold text-white">對話記錄</h2>
+                    <button onclick="closeConversationHistory()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
@@ -279,7 +279,7 @@
                 </div>
                 
                 <!-- 底部按鈕 -->
-                <div class="flex justify-between items-center p-6 border-t border-gray-200">
+                <div class="flex justify-between items-center p-6 border-t border-gray-600">
                     <button onclick="exportConversationHistory()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
                         匯出記錄
                     </button>
@@ -1374,10 +1374,10 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             
             if (history.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
+                    <div class="text-center py-8 text-gray-400">
                         <div class="text-4xl mb-4">📝</div>
-                        <p class="text-lg">尚無對話記錄</p>
-                        <p class="text-sm mt-2">開始對話後，您的對話內容將顯示在這裡</p>
+                        <p class="text-lg text-white">尚無對話記錄</p>
+                        <p class="text-sm mt-2 text-gray-400">開始對話後，您的對話內容將顯示在這裡</p>
                     </div>
                 `;
                 return;
@@ -1385,23 +1385,30 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
             let html = '';
             history.forEach((entry, index) => {
-                const timestamp = new Date(entry.timestamp).toLocaleString('zh-TW');
+                const date = new Date(entry.timestamp).toLocaleDateString('zh-TW');
+                const time = new Date(entry.timestamp).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' });
                 const isUser = entry.role === 'user';
                 
+                // 提取內容主題（取前30個字符作為主題）
+                const contentTopic = entry.content.length > 30 ? entry.content.substring(0, 30) + '...' : entry.content;
+                
                 html += `
-                    <div class="border rounded-lg p-4 ${isUser ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}">
+                    <div class="border border-gray-600 rounded-lg p-4 ${isUser ? 'bg-gray-700' : 'bg-gray-600'}">
                         <div class="flex justify-between items-start mb-2">
                             <div class="flex items-center space-x-2">
-                                <span class="text-sm font-medium ${isUser ? 'text-blue-600' : 'text-gray-600'}">
+                                <span class="text-sm font-medium ${isUser ? 'text-blue-400' : 'text-gray-300'}">
                                     ${isUser ? '👤 您' : '🤖 AI'}
                                 </span>
-                                <span class="text-xs text-gray-500">${timestamp}</span>
+                                <span class="text-xs text-gray-400">${date} ${time}</span>
                             </div>
-                            <button onclick="deleteConversationEntry(${index})" class="text-red-400 hover:text-red-600 text-sm">
+                            <button onclick="deleteConversationEntry(${index})" class="text-red-400 hover:text-red-300 text-sm">
                                 刪除
                             </button>
                         </div>
-                        <div class="text-gray-800 whitespace-pre-wrap">${entry.content}</div>
+                        <div class="text-gray-300 whitespace-pre-wrap">
+                            <div class="font-medium text-white mb-1">${contentTopic}</div>
+                            <div class="text-sm">${entry.content}</div>
+                        </div>
                     </div>
                 `;
             });
