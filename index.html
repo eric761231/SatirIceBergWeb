@@ -3,100 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>薩提爾冰山探索者</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="application-name" content="薩提爾冰山探索者">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="冰山探索">
+    <title>SKOPOS</title>
+    <meta name="application-name" content="SKOPOS">
     <meta name="description" content="基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="msapplication-config" content="/browserconfig.xml">
-    <meta name="msapplication-TileColor" content="#2c3e50">
-    <meta name="msapplication-tap-highlight" content="no">
-    <meta name="theme-color" content="#2c3e50">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    
-    <!-- PWA Icons -->
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
     <link rel="shortcut icon" href="/icons/icon-192x192.png">
-    
-    <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>SKOPOS</title>
+    <meta name="application-name" content="SKOPOS">
+    <meta name="description" content="基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --text-dark: #2c3e50;
-            --text-light: #7f8c8d;
-            --bg-light: #ecf0f1;
-            --white: #ffffff;
-            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --bg-primary: #131314;
+            --bg-secondary: #1e1f20;
+            --bg-tertiary: #2a2b2c;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --border-color: #3c4043;
+            --accent-blue: #8ab4f8;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: 'Google Sans', 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
         }
-        
         .container {
-            background: var(--white);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            max-width: 480px;
-            width: 90%;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 400px;
+            margin: 48px auto;
+            padding: 32px 24px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+            position: relative;
+        }
+        .settings-btn {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            transition: color 0.2s;
+            z-index: 10;
+        }
+        .settings-btn:hover {
+        color: var(--accent-blue);
+    }
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 18px;
+            display: block;
             text-align: center;
         }
-        
-        .logo {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            display: block;
-        }
-        
         h1 {
-            color: var(--primary-color);
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 16px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            text-align: center;
         }
-        
         .subtitle {
-            color: var(--text-light);
-            font-size: 1.1rem;
-            margin-bottom: 32px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 28px;
             line-height: 1.5;
+            text-align: center;
         }
-        
         .auth-section {
             margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        
         .login-btn {
-            background: var(--secondary-color);
-            color: var(--white);
+            background: transparent !important;
+            /* 移除 color，交由 #installHardBtn 控制 */
             border: none;
             padding: 12px 24px;
             border-radius: 8px;
@@ -110,167 +104,139 @@
             margin: 8px;
             text-decoration: none;
         }
-        
+        /* installHardBtn 尺寸與定位：絕對定位於左上角，寬度 160~220px，padding 12px 10px */
+        #installHardBtn {
+            width: 100%;
+            min-width: 90px;
+            max-width: 120px;
+            padding: 6px 8px;
+            font-size: 0.95rem;
+            color: #fff !important;
+            background: transparent !important;
+            border: none;
+            text-align: left;
+        }
+        .settings-menu {
+            /* 選單初始隱藏，由 JS 控制顯示 */
+            display: none;
+            /* 絕對定位於設定按鈕下方 */
+            position: absolute;
+            top: 44px;      /* 距離 container 上方 44px，與設定按鈕對齊 */
+            left: 18px;     /* 與設定按鈕左側對齊 */
+            /* 背景色與主題一致 */
+            background: var(--bg-tertiary);
+            /* 邊框顏色與主題一致 */
+            border: 1px solid var(--border-color);
+            /* 圓角 4px，讓選單略微圓潤 */
+            border-radius: 4px;
+            /* 最小寬度 70px，最大寬度 120px，確保內容不擠壓 */
+            min-width: 80px;
+            max-width: 90px;
+            /* 陰影 0 4px 16px，讓選單浮起來 */
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            /* z-index 100，確保在最上層 */
+            z-index: 100;
+            /* 上下 padding 2px，讓選單內容不貼邊 */
+            padding: 0px 0;
+        }
+        .settings-menu button {
+            width: 100%;      /* 按鈕寬度填滿選單，與選單寬度一致 */
+            padding: 0 12px;  /* 左右內距 18px，讓文字不貼邊 */
+            height: 24px;     /* 固定高度 24px，讓按鈕更一致，建議 24~32px */
+            font-size: 0.98rem;
+            color: #fff !important;
+            background: transparent !important;
+            border: none;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+        .settings-menu button:hover {
+            background: var(--accent-blue);
+            color: #131314 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+        }
         .login-btn:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52,152,219,0.3);
+            /* 安裝應用按鈕保持透明，不受 hover 影響 */
+            background: transparent !important;
+            box-shadow: none;
+            transform: none;
         }
-        
-        .google-btn {
-            background: var(--white);
-            color: var(--text-dark);
-            border: 2px solid #ddd;
-        }
-        
-        .google-btn:hover {
-            background: #f8f9fa;
-            border-color: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        
         .guest-section {
             margin-top: 24px;
             padding-top: 24px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--border-color);
         }
-        
         .guest-text {
-            color: var(--text-light);
+            color: var(--text-secondary);
             font-size: 0.9rem;
             margin-bottom: 16px;
         }
-        
-        .features {
-            text-align: left;
-            margin: 24px 0;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 8px;
-        }
-        
-        .features h3 {
-            color: var(--primary-color);
-            font-size: 1.1rem;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-        
-        .feature-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-        
-        .feature-icon {
-            color: var(--secondary-color);
-            margin-right: 8px;
-            font-weight: bold;
-        }
-        
-        .loading {
-            display: none;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            margin-top: 16px;
-        }
-        
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--secondary-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
         .user-info {
             display: none;
-            background: #e8f5e8;
+            background: var(--bg-tertiary);
             padding: 16px;
             border-radius: 8px;
             margin-bottom: 20px;
-            border-left: 4px solid #27ae60;
+            border-left: 4px solid var(--accent-blue);
         }
-        
         .user-avatar {
             width: 48px;
             height: 48px;
             border-radius: 50%;
             margin-bottom: 8px;
         }
-        
+        .loading {
+            display: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 16px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #3c4043;
+            border-top: 2px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         @media (max-width: 600px) {
             .container {
-                padding: 24px;
-                margin: 20px;
+                padding: 16px;
+                margin: 10px;
             }
-            
             h1 {
-                font-size: 1.75rem;
+                font-size: 1.2rem;
             }
-            
             .logo {
-                font-size: 3rem;
+                font-size: 2rem;
             }
         }
     </style>
-</head>
-<body>
     <div class="container">
-        <div class="logo">🧊</div>
-        <h1>薩提爾冰山探索者</h1>
-        <p class="subtitle">深入探索內在世界，發現真實的自己</p>
-        
-        <!-- 用戶登入信息顯示 -->
-        <div id="user-info" class="user-info">
-            <img id="user-avatar" class="user-avatar" src="" alt="用戶頭像">
-            <div>歡迎回來，<span id="user-name"></span>！</div>
-        </div>
-        
-        <!-- 功能特色 -->
-        <div class="features">
-            <h3>✨ 探索功能</h3>
-            <div class="feature-item">
-                <span class="feature-icon">🎯</span>
-                <span>基於薩提爾冰山理論的深度對話</span>
-            </div>
-            <div class="feature-item">
-                <span class="feature-icon">🤖</span>
-                <span>AI 智能引導，安全探索內在</span>
-            </div>
-            <div class="feature-item">
-                <span class="feature-icon">🔒</span>
-                <span>隱私保護，所有對話僅存本地</span>
-            </div>
-            <div class="feature-item">
-                <span class="feature-icon">💡</span>
-                <span>階段式療癒，逐步深入了解自我</span>
-            </div>
-        </div>
-        
-        <!-- 登入區域 -->
+        <button class="settings-btn" id="settingsBtn" title="設定">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+            <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+            <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+        </svg>
+    </button>
+    <div class="settings-menu" id="settingsMenu">
+        <button class="login-btn" id="installHardBtn">安裝應用</button>
+    </div>
+        <span class="logo">🧊</span>
+        <h1>SKOPOS</h1>
+        <p class="subtitle">探索內心深處,看到更真實的自我</p>
         <div class="auth-section">
             <div id="google-signin-btn"></div>
-            
-            <div class="guest-section">
-                <p class="guest-text">或者</p>
-                <button class="login-btn" onclick="proceedAsGuest()">
-                    🚀 繼續使用（訪客模式）
-                </button>
-            </div>
         </div>
-        
-        <!-- 載入中顯示 -->
+        <div class="guest-section"></div>
         <div id="loading" class="loading">
             <div class="spinner"></div>
             正在進入應用...
@@ -278,6 +244,28 @@
     </div>
 
     <script>
+        // 設定按鈕與下拉選單
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsMenu = document.getElementById('settingsMenu');
+            const installHardBtn = document.getElementById('installHardBtn');
+            let menuVisible = false;
+            if (settingsBtn && settingsMenu) {
+                settingsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    menuVisible = !menuVisible;
+                    settingsMenu.style.display = menuVisible ? 'block' : 'none';
+                });
+                // 點擊外部隱藏選單
+                document.addEventListener('click', function(e) {
+                    if (menuVisible && !settingsMenu.contains(e.target) && e.target !== settingsBtn) {
+                        settingsMenu.style.display = 'none';
+                        menuVisible = false;
+                    }
+                });
+            }
+            // installHardBtn 的點擊事件由 showInstallButton() 控制
+        });
         // PWA 安裝支援
         let deferredPrompt;
         let installButton;
@@ -292,15 +280,10 @@
         
         // 顯示安裝按鈕
         function showInstallButton() {
-            if (!installButton) {
-                installButton = document.createElement('button');
-                installButton.className = 'login-btn';
-                installButton.innerHTML = '📱 安裝應用';
-                installButton.style.marginTop = '16px';
-                installButton.onclick = installPWA;
-                
-                const guestSection = document.querySelector('.guest-section');
-                guestSection.appendChild(installButton);
+            // 僅在支援 PWA 並觸發 beforeinstallprompt 時才設定 installHardBtn 的 onclick
+            const installHardBtn = document.getElementById('installHardBtn');
+            if (installHardBtn) {
+                installHardBtn.onclick = installPWA;
             }
         }
         
@@ -336,7 +319,18 @@
             console.log('🎉 PWA 安裝成功');
             hideInstallButton();
             
-            // 顯示安裝成功訊息
+            // 顯示安裝成功訊息彈出視窗
+            // CSS 設定：
+            // position: fixed;         // 固定在視窗上方
+            // top: 20px;               // 距離視窗頂端 20px
+            // left: 50%;               // 水平置中
+            // transform: translateX(-50%); // 讓視窗真正置中
+            // background: #27ae60;     // 綠色背景，代表成功
+            // color: white;            // 白色文字
+            // padding: 12px 24px;      // 內距，讓文字不貼邊
+            // border-radius: 8px;      // 圓角 8px
+            // z-index: 1000;           // 保證在最上層
+            // font-size: 14px;         // 字體大小
             const successMsg = document.createElement('div');
             successMsg.style.cssText = `
                 position: fixed;
@@ -352,7 +346,7 @@
             `;
             successMsg.textContent = '🎉 應用安裝成功！現在可以從桌面啟動';
             document.body.appendChild(successMsg);
-            
+            // 3 秒後自動移除彈窗
             setTimeout(() => {
                 document.body.removeChild(successMsg);
             }, 3000);
