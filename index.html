@@ -234,6 +234,13 @@
         
         <div class="auth-section">
             <div id="google-signin-btn"></div>
+            <div id="debug-info" style="margin-top: 16px; font-size: 0.8rem; color: var(--text-secondary);">
+                <p>如果 Google 登入無法使用，請檢查：</p>
+                <ul style="text-align: left; margin: 8px 0;">
+                    <li>Google Cloud Console 中的授權來源設定</li>
+                    <li>確保已添加：http://localhost:8000</li>
+                </ul>
+            </div>
         </div>
         
 
@@ -399,6 +406,9 @@
                 return;
             }
             
+            console.log('初始化 Google 登入...');
+            console.log('當前網址:', window.location.origin);
+            
             google.accounts.id.initialize({
                 client_id: "28263511849-3rk0avke93rn8rfdi5hq0boffkp6gm0j.apps.googleusercontent.com",
                 callback: handleGoogleSignIn,
@@ -443,7 +453,7 @@
                 
             } catch (err) {
                 console.error('Google 登入處理失敗:', err);
-                alert('登入處理失敗，請重試或使用訪客模式');
+                alert('登入處理失敗，請檢查 Google Cloud Console 設定');
             }
         }
         
