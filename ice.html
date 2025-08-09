@@ -222,6 +222,14 @@
             <!-- 側邊欄標題區域 -->
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-lg font-medium text-white"></h2>
+                <!-- 桌面版：側欄右上角收合按鈕（三條橫線） -->
+                <button id="sidebar-collapse-btn" class="hidden md:inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700" title="收合側欄">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                        <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+                        <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                        <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+                    </svg>
+                </button>
             </div>
             
             <!-- 設定選單項目區域 -->
@@ -298,12 +306,7 @@
     <div class="max-w-3xl mx-auto md:max-w-none md:mx-0 gemini-container relative z-30 md:h-full md:flex md:flex-col md:min-h-0">
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <button id="sidebar-collapse-btn" class="hidden md:inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700" title="收合/展開側欄">
-                    <span id="sidebar-collapse-icon">⟨</span>
-                </button>
-                <h1 class="text-xl font-medium">SKOPOS</h1>
-            </div>
+            <h1 class="text-xl font-medium">SKOPOS</h1>
         </div>
 
         <!-- Phase Indicator -->
@@ -1315,7 +1318,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const sidebarClose = document.getElementById('sidebar-close');
             const sidebarOverlay = document.getElementById('sidebar-overlay');
             const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
-            const sidebarCollapseIcon = document.getElementById('sidebar-collapse-icon');
+            const sidebarCollapseIcon = null; // 改用三條橫線圖示，不再切換方向
             const rootHtml = document.documentElement;
             
             // 以 Tailwind md 斷點為準（768px）判斷桌面/小螢幕
@@ -1342,9 +1345,8 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             }
 
             function updateCollapseIcon() {
-                if (!sidebarCollapseIcon) return;
-                const collapsed = rootHtml.classList.contains('sidebar-collapsed');
-                sidebarCollapseIcon.textContent = collapsed ? '⟩' : '⟨';
+                // 保留函式以兼容呼叫，但不需要切換圖示
+                return;
             }
             
             if (sidebarToggle && sidebar) {
