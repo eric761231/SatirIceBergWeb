@@ -190,6 +190,9 @@
                 overflow: hidden !important;
                 border-right: 0 !important;
             }
+            /* 桌面：收合時顯示展開按鈕（固定在左上角） */
+            #desktop-expand-btn { display: none; }
+            .sidebar-collapsed #desktop-expand-btn { display: inline-flex; }
         }
     </style>
 </head>
@@ -278,6 +281,15 @@
 
             <!-- 遮罩層 - 背景變暗效果，點擊可關閉側邊欄 -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
+
+        <!-- 桌面：收合狀態下的展開按鈕（固定左上角） -->
+        <button id="desktop-expand-btn" class="hidden md:fixed md:top-4 md:left-4 md:z-50 items-center justify-center w-8 h-8 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 bg-gray-800" title="展開側欄">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+            </svg>
+        </button>
 
     <!-- 對話記錄彈出視窗 -->
     <div id="conversation-history-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
@@ -1320,6 +1332,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
             const sidebarCollapseIcon = null; // 改用三條橫線圖示，不再切換方向
             const rootHtml = document.documentElement;
+            const desktopExpandBtn = document.getElementById('desktop-expand-btn');
             
             // 以 Tailwind md 斷點為準（768px）判斷桌面/小螢幕
             function isDesktop() {
@@ -1417,6 +1430,16 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                         e.stopPropagation();
                         if (!isDesktop()) return; // 僅桌面可收合
                         rootHtml.classList.toggle('sidebar-collapsed');
+                        applyLayoutMode();
+                    });
+                }
+
+                // 桌面：收合狀態下的展開按鈕
+                if (desktopExpandBtn) {
+                    desktopExpandBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (!isDesktop()) return;
+                        rootHtml.classList.remove('sidebar-collapsed');
                         applyLayoutMode();
                     });
                 }
