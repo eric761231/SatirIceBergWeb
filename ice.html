@@ -221,7 +221,7 @@
     </div>
 
     <!-- 側邊欄設定面板 - 左側滑動式面板 -->
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-gray-800 border-r border-gray-600 transform -translate-x-full transition-transform duration-300 ease-in-out z-40 md:static md:h-auto md:min-h-screen md:translate-x-0 md:transform-none md:resize-x md:overflow-auto md:min-w-[240px] md:max-w-[480px]">
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-gray-800 border-r border-gray-600 transform -translate-x-full transition-all duration-300 ease-in-out z-40 md:static md:h-auto md:min-h-screen md:translate-x-0 md:transform-none md:resize-x md:overflow-auto md:min-w-[240px] md:max-w-[480px]">
         <div class="p-4 h-full flex flex-col">
             <!-- 側邊欄標題區域 -->
             <div class="flex justify-between items-center mb-6 expanded-only">
@@ -236,8 +236,8 @@
                 </button>
             </div>
             <!-- 收合時：僅顯示窄條與展開按鈕置頂置中 -->
-            <div class="collapsed-only md:flex-col md:items-center md:justify-start md:pt-3 md:gap-3">
-                <button id="desktop-expand-btn-mini" class="hidden md:inline-flex mx-auto items-center justify-center w-8 h-8 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 bg-gray-800" title="展開側欄">
+            <div class="collapsed-only md:flex-col md:items-start md:justify-start md:pt-2 md:gap-2 md:pl-1">
+                <button id="desktop-expand-btn-mini" class="hidden md:inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 bg-gray-800 transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400/50" title="展開側欄">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                         <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
                         <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
@@ -247,7 +247,7 @@
             </div>
             
             <!-- 設定選單項目區域 -->
-            <div class="flex-1 space-y-2 mt-8">
+            <div class="flex-1 space-y-2 mt-8 expanded-only">
                 <button onclick="openApiKeyGuide()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="申請 Google Gemini API 金鑰">
                     <div class="flex items-center space-x-3">
                         <span class="text-lg">🔑</span>
@@ -282,7 +282,7 @@
             </div>
             
             <!-- 底部資訊區域 -->
-            <div class="mt-auto pt-4 border-t border-gray-600">
+            <div class="mt-auto pt-4 border-t border-gray-600 expanded-only">
                 <div class="text-xs text-gray-500 text-center">
                     SKOPOS 療癒系統
                 </div>
