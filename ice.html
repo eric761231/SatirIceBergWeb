@@ -178,6 +178,19 @@
             background-color: var(--text-primary) !important;
             transform: scale(1.1);
         }
+        /* 桌面版：側欄收合狀態樣式 */
+        @media (min-width: 768px) {
+            .sidebar-collapsed .app {
+                grid-template-columns: 0 1fr !important;
+            }
+            .sidebar-collapsed #sidebar {
+                width: 0 !important;
+                min-width: 0 !important;
+                max-width: 0 !important;
+                overflow: hidden !important;
+                border-right: 0 !important;
+            }
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -285,7 +298,12 @@
     <div class="max-w-3xl mx-auto md:max-w-none md:mx-0 gemini-container relative z-30 md:h-full md:flex md:flex-col md:min-h-0">
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center">
-            <h1 class="text-xl font-medium">SKOPOS</h1>
+            <div class="flex items-center gap-2">
+                <button id="sidebar-collapse-btn" class="hidden md:inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700" title="收合/展開側欄">
+                    <span id="sidebar-collapse-icon">⟨</span>
+                </button>
+                <h1 class="text-xl font-medium">SKOPOS</h1>
+            </div>
         </div>
 
         <!-- Phase Indicator -->
@@ -1296,6 +1314,9 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const sidebar = document.getElementById('sidebar');
             const sidebarClose = document.getElementById('sidebar-close');
             const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarCollapseBtn = document.getElementById('sidebar-collapse-btn');
+            const sidebarCollapseIcon = document.getElementById('sidebar-collapse-icon');
+            const rootHtml = document.documentElement;
             
             // 以 Tailwind md 斷點為準（768px）判斷桌面/小螢幕
             function isDesktop() {
@@ -1306,7 +1327,9 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 if (!sidebar || !sidebarOverlay) return;
                 if (isDesktop()) {
                     // 桌面：常駐顯示側欄，遮罩關閉且不可互動
-                    sidebar.classList.remove('-translate-x-full');
+                    if (!rootHtml.classList.contains('sidebar-collapsed')) {
+                        sidebar.classList.remove('-translate-x-full');
+                    }
                     sidebarOverlay.classList.add('hidden');
                     sidebarOverlay.style.pointerEvents = 'none';
                 } else {
@@ -1315,6 +1338,13 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     sidebarOverlay.classList.add('hidden');
                     sidebarOverlay.style.pointerEvents = 'none';
                 }
+                updateCollapseIcon();
+            }
+
+            function updateCollapseIcon() {
+                if (!sidebarCollapseIcon) return;
+                const collapsed = rootHtml.classList.contains('sidebar-collapsed');
+                sidebarCollapseIcon.textContent = collapsed ? '⟩' : '⟨';
             }
             
             if (sidebarToggle && sidebar) {
@@ -1378,6 +1408,16 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 applyLayoutMode();
                 window.addEventListener('resize', applyLayoutMode);
                 window.addEventListener('orientationchange', applyLayoutMode);
+
+                // 桌面收合/展開側欄
+                if (sidebarCollapseBtn) {
+                    sidebarCollapseBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (!isDesktop()) return; // 僅桌面可收合
+                        rootHtml.classList.toggle('sidebar-collapsed');
+                        applyLayoutMode();
+                    });
+                }
             }
         }
 
