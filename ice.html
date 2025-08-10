@@ -2134,6 +2134,16 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                                         <div class="text-sm text-red-800">
                                             <p class="font-medium mb-1">為什麼必須使用 Safari？</p>
                                             <p>由於 iOS 的安全政策，只有 Safari 瀏覽器支援「加入主畫面」功能。其他瀏覽器（如 Chrome、Firefox）在 iOS 上無法安裝 PWA。</p>
+                                            
+                                            <div class="mt-3 p-3 bg-red-100 rounded border-l-4 border-red-400">
+                                                <p class="font-medium text-red-800 mb-2">🔍 技術說明：</p>
+                                                <ul class="text-xs text-red-700 space-y-1">
+                                                    <li>• iOS 系統限制：只有 Safari 可以調用「加入主畫面」API</li>
+                                                    <li>• Chrome iOS 版本：雖然功能強大，但無法繞過系統限制</li>
+                                                    <li>• 安全考量：Apple 要求所有 PWA 安裝必須通過 Safari 進行</li>
+                                                    <li>• 解決方案：必須使用 Safari 瀏覽器才能安裝</li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -2226,6 +2236,17 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                                 <div class="text-sm text-blue-800">
                                     <p class="font-medium mb-1">為什麼需要手動安裝？</p>
                                     <p>由於 iOS 的安全政策，PWA 無法自動安裝。這是為了保護您的設備安全，請按照上述步驟手動安裝。</p>
+                                    
+                                    <div class="mt-3 p-3 bg-blue-100 rounded border-l-4 border-blue-400">
+                                        <p class="font-medium text-blue-800 mb-2">📱 瀏覽器相容性：</p>
+                                        <ul class="text-xs text-blue-700 space-y-1">
+                                            <li>✅ Safari：完全支援，可以安裝 PWA</li>
+                                            <li>❌ Chrome iOS：無法安裝 PWA（系統限制）</li>
+                                            <li>❌ Firefox iOS：無法安裝 PWA（系統限制）</li>
+                                            <li>❌ Edge iOS：無法安裝 PWA（系統限制）</li>
+                                            <li>💡 建議：在 iOS 上使用 Safari 來安裝 PWA</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2657,7 +2678,10 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
             </svg>
             安裝到主畫面
-            <span class="text-xs opacity-75">(需Safari)</span>
+            <div class="flex flex-col items-start">
+                <span class="text-xs opacity-75">(需Safari)</span>
+                <span class="text-xs text-yellow-200">Chrome無法安裝</span>
+            </div>
         </button>
     </div>
 
@@ -2671,7 +2695,10 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 <div>
                     <p class="font-semibold">🚀 將 Skopos 安裝到主畫面</p>
                     <p class="text-sm opacity-90">享受更快的啟動速度和離線功能</p>
-                    <p class="text-xs opacity-75 mt-1">⚠️ 必須使用 Safari 瀏覽器</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-xs opacity-75">⚠️ 必須使用 Safari 瀏覽器</span>
+                        <span class="text-xs bg-yellow-500 bg-opacity-20 px-2 py-0.5 rounded">Chrome 無法安裝</span>
+                    </div>
                 </div>
             </div>
             <div class="flex items-center gap-2">
