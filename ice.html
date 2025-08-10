@@ -203,6 +203,9 @@
         /* 用戶頭像和個人資料樣式 */
         .user-avatar-container {
             flex-shrink: 0;
+            display: flex;
+            justify-content: center;
+            width: 100%;
         }
         
         .user-avatar-circle {
@@ -226,6 +229,8 @@
         
         .user-profile-info {
             flex: 1;
+            text-align: center;
+            width: 100%;
         }
         
         .user-name {
@@ -306,13 +311,13 @@
             </div>
             
             <!-- 用戶個人資料區域 -->
-            <div class="flex items-center gap-3 mb-6 expanded-only">
+            <div class="flex flex-col items-center gap-3 mb-6 expanded-only">
                 <div class="user-avatar-container">
                     <div class="user-avatar-circle">
                         <span class="user-avatar-text">S</span>
                     </div>
                 </div>
-                <div class="user-profile-info">
+                <div class="user-profile-info text-center">
                     <div class="user-name">shiro Yama</div>
                 </div>
             </div>
