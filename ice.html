@@ -99,6 +99,24 @@
             75% { transform: translateX(2px); }
         }
 
+        @keyframes install-bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0,-30px,0); }
+            70% { transform: translate3d(0,-15px,0); }
+            90% { transform: translate3d(0,-4px,0); }
+        }
+
+        @keyframes install-slide-in {
+            0% { transform: translateY(-100%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes install-celebration {
+            0% { transform: scale(0) rotate(0deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 1; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
         .install-pulse {
             animation: install-pulse 2s infinite;
         }
@@ -106,6 +124,76 @@
         .install-shake {
             animation: install-shake 0.5s ease-in-out;
         }
+
+        .install-bounce {
+            animation: install-bounce 1s ease-in-out;
+        }
+
+        .install-slide-in {
+            animation: install-slide-in 0.5s ease-out;
+        }
+
+        .install-celebration {
+            animation: install-celebration 0.8s ease-out;
+        }
+
+        /* 智能安裝提示樣式 */
+        #ios-install-banner {
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        #ios-install-banner:hover {
+            transform: translateY(0) scale(1.02);
+            transition: all 0.3s ease;
+        }
+
+        #ios-install-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        #ios-install-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        #ios-install-btn:hover::before {
+            left: 100%;
+        }
+
+        /* 安裝成功慶祝動畫容器 */
+        .celebration-container {
+            animation: install-celebration 0.8s ease-out;
+        }
+
+        /* 響應式安裝提示 */
+        @media (max-width: 640px) {
+            #ios-install-banner {
+                padding: 0.75rem;
+            }
+            
+            #ios-install-banner .flex {
+                flex-direction: column;
+                gap: 0.75rem;
+                text-align: center;
+            }
+            
+            #ios-install-banner .flex > div:first-child {
+                order: 2;
+            }
+            
+            #ios-install-banner .flex > div:last-child {
+                order: 1;
+            }
+        }
+
         body {
             font-family: 'Google Sans', 'Noto Sans TC', sans-serif;
             background-color: var(--bg-primary);
@@ -1846,6 +1934,18 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const closeModal = document.getElementById('close-install-modal');
             const tryInstallBtn = document.getElementById('try-install-now');
 
+            // 用戶行為追蹤和偏好設定
+            let userBehavior = {
+                scrollCount: 0,
+                clickCount: 0,
+                touchCount: 0,
+                timeSpent: 0,
+                lastInteraction: Date.now(),
+                preferredPromptType: null, // 'banner' 或 'button'
+                dismissedCount: 0,
+                installAttempts: 0
+            };
+
             // 檢測是否為 iOS 設備（iPhone、iPad、iPod）
             function isIOS() {
                 return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -1867,15 +1967,36 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                        window.matchMedia('(display-mode: standalone)').matches;
             }
 
+            // 智能選擇安裝提示類型
+            function getOptimalPromptType() {
+                // 如果用戶有偏好，使用偏好
+                if (userBehavior.preferredPromptType) {
+                    return userBehavior.preferredPromptType;
+                }
+                
+                // 根據設備類型選擇
+                if (isIPad()) {
+                    // iPad 用戶通常更喜歡橫幅
+                    return Math.random() < 0.8 ? 'banner' : 'button';
+                } else {
+                    // iPhone 用戶隨機選擇
+                    return Math.random() < 0.7 ? 'banner' : 'button';
+                }
+            }
+
             // 顯示安裝提示
             function showInstallPrompt() {
                 if (isIOS() && !isPWAInstalled()) {
-                    // 隨機選擇顯示方式：橫幅或按鈕
-                    if (Math.random() < 0.7) { // 70% 機率顯示橫幅
+                    const promptType = getOptimalPromptType();
+                    
+                    if (promptType === 'banner') {
                         showBanner();
                     } else {
                         showButton();
                     }
+                    
+                    // 記錄用戶偏好
+                    userBehavior.preferredPromptType = promptType;
                 }
             }
 
@@ -1887,6 +2008,9 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     setTimeout(() => {
                         installBanner.classList.remove('-translate-y-full');
                     }, 100);
+                    
+                    // 添加吸引注意的動畫
+                    installBanner.style.animation = 'install-pulse 2s infinite';
                 }
             }
 
@@ -1894,7 +2018,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             function showButton() {
                 if (installPrompt) {
                     installPrompt.classList.remove('hidden');
-                    // 添加動畫效果
+                    // 添加彈跳動畫效果
                     installPrompt.classList.add('animate-bounce');
                     setTimeout(() => {
                         installPrompt.classList.remove('animate-bounce');
@@ -1911,12 +2035,18 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                         installBanner.classList.add('hidden');
                     }, 500);
                 }
+                
+                // 記錄用戶關閉次數
+                userBehavior.dismissedCount++;
             }
 
             // 顯示安裝模態框
             function showInstallModal() {
                 installModal.classList.remove('hidden');
                 hideInstallPrompt();
+                
+                // 記錄安裝嘗試次數
+                userBehavior.installAttempts++;
             }
 
             // 隱藏安裝模態框
@@ -1944,6 +2074,44 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 hideInstallModal();
             }
 
+            // 智能觸發安裝提示
+            function triggerInstallPrompt() {
+                if (isIOS() && !isPWAInstalled()) {
+                    // 根據用戶行為調整觸發策略
+                    const shouldShow = shouldTriggerPrompt();
+                    
+                    if (shouldShow) {
+                        showInstallPrompt();
+                    }
+                }
+            }
+
+            // 判斷是否應該觸發提示
+            function shouldTriggerPrompt() {
+                const now = Date.now();
+                const timeSinceLastInteraction = now - userBehavior.lastInteraction;
+                
+                // 如果用戶剛關閉提示，延遲顯示
+                if (userBehavior.dismissedCount > 0) {
+                    const delayMinutes = Math.min(userBehavior.dismissedCount * 2, 10); // 最多延遲10分鐘
+                    if (timeSinceLastInteraction < delayMinutes * 60 * 1000) {
+                        return false;
+                    }
+                }
+                
+                // 如果用戶多次嘗試安裝，增加觸發頻率
+                if (userBehavior.installAttempts > 2) {
+                    return true;
+                }
+                
+                // 根據時間間隔判斷
+                if (timeSinceLastInteraction < 30000) { // 30秒內不重複顯示
+                    return false;
+                }
+                
+                return true;
+            }
+
             // 事件監聽器
             installBtn.addEventListener('click', showInstallModal);
             bannerInstallBtn.addEventListener('click', showInstallModal);
@@ -1961,8 +2129,106 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             // 多種觸發安裝提示的方式
             function triggerInstallPrompt() {
                 if (isIOS() && !isPWAInstalled()) {
-                    showInstallPrompt();
+                    // 根據用戶行為調整觸發策略
+                    const shouldShow = shouldTriggerPrompt();
+                    
+                    if (shouldShow) {
+                        showInstallPrompt();
+                    }
                 }
+            }
+
+            // 智能安裝進度追蹤
+            function trackInstallProgress() {
+                const progress = {
+                    step1: userBehavior.installAttempts > 0, // 用戶嘗試安裝
+                    step2: userBehavior.installAttempts > 1, // 用戶多次嘗試
+                    step3: userBehavior.installAttempts > 2, // 用戶持續嘗試
+                    step4: userBehavior.timeSpent > 300,    // 用戶停留超過5分鐘
+                    step5: userBehavior.scrollCount > 20    // 用戶積極瀏覽
+                };
+                
+                // 根據進度提供個性化提示
+                if (progress.step1 && !progress.step2) {
+                    showPersonalizedTip('first-attempt');
+                } else if (progress.step2 && !progress.step3) {
+                    showPersonalizedTip('second-attempt');
+                } else if (progress.step3) {
+                    showPersonalizedTip('persistent-user');
+                } else if (progress.step4) {
+                    showPersonalizedTip('engaged-user');
+                } else if (progress.step5) {
+                    showPersonalizedTip('active-browser');
+                }
+            }
+
+            // 顯示個性化安裝提示
+            function showPersonalizedTip(tipType) {
+                const tips = {
+                    'first-attempt': {
+                        title: '🎯 第一次嘗試安裝？',
+                        message: '我們會引導您完成整個過程，別擔心！',
+                        color: 'blue'
+                    },
+                    'second-attempt': {
+                        title: '🔄 再次嘗試安裝',
+                        message: '看起來您對 Skopos 很感興趣，讓我們一起完成安裝！',
+                        color: 'green'
+                    },
+                    'persistent-user': {
+                        title: '💪 堅持就是勝利！',
+                        message: '您的堅持讓我們感動，讓我們一起解決安裝問題！',
+                        color: 'purple'
+                    },
+                    'engaged-user': {
+                        title: '⏰ 您已經停留很久了',
+                        message: '既然您這麼喜歡 Skopos，不如安裝到主畫面隨時使用？',
+                        color: 'orange'
+                    },
+                    'active-browser': {
+                        title: '📱 積極的瀏覽者',
+                        message: '您對內容很感興趣，安裝後可以離線閱讀哦！',
+                        color: 'teal'
+                    }
+                };
+                
+                const tip = tips[tipType];
+                if (!tip) return;
+                
+                // 創建個性化提示橫幅
+                const tipBanner = document.createElement('div');
+                tipBanner.className = `fixed top-20 left-4 right-4 bg-${tip.color}-500 text-white p-4 rounded-lg shadow-lg z-30 transform translate-x-full transition-transform duration-500`;
+                tipBanner.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="text-2xl">${tip.title.split(' ')[0]}</div>
+                            <div>
+                                <p class="font-semibold">${tip.title.split(' ').slice(1).join(' ')}</p>
+                                <p class="text-sm opacity-90">${tip.message}</p>
+                            </div>
+                        </div>
+                        <button class="text-white hover:text-gray-200 transition-colors" onclick="this.parentElement.parentElement.remove()">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+                
+                document.body.appendChild(tipBanner);
+                
+                // 滑入動畫
+                setTimeout(() => {
+                    tipBanner.classList.remove('translate-x-full');
+                }, 100);
+                
+                // 5秒後自動滑出
+                setTimeout(() => {
+                    tipBanner.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        tipBanner.remove();
+                    }, 500);
+                }, 5000);
             }
 
             // 1. 頁面載入後立即顯示（縮短延遲）
@@ -1971,22 +2237,24 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             // 2. 頁面載入完成後再次檢查
             setTimeout(triggerInstallPrompt, 3000);
 
-            // 3. 用戶滾動頁面時觸發
-            let scrollCount = 0;
+            // 3. 用戶積極瀏覽時觸發
             window.addEventListener('scroll', () => {
-                scrollCount++;
-                if (scrollCount === 5 || scrollCount === 15 || scrollCount === 30) {
+                userBehavior.scrollCount++;
+                userBehavior.lastInteraction = Date.now();
+                
+                if (userBehavior.scrollCount === 5 || userBehavior.scrollCount === 15 || userBehavior.scrollCount === 30) {
                     triggerInstallPrompt();
                 }
             });
 
-            // 4. 用戶點擊頁面時觸發（點擊3次後）
-            let clickCount = 0;
+            // 4. 用戶點擊頁面時觸發
             document.addEventListener('click', (e) => {
                 // 排除安裝相關按鈕的點擊
-                if (!e.target.closest('#ios-install-prompt') && !e.target.closest('#ios-install-modal')) {
-                    clickCount++;
-                    if (clickCount === 3 || clickCount === 8) {
+                if (!e.target.closest('#ios-install-prompt') && !e.target.closest('#ios-install-modal') && !e.target.closest('#ios-install-banner')) {
+                    userBehavior.clickCount++;
+                    userBehavior.lastInteraction = Date.now();
+                    
+                    if (userBehavior.clickCount === 3 || userBehavior.clickCount === 8) {
                         triggerInstallPrompt();
                     }
                 }
@@ -2010,6 +2278,8 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             setInterval(() => {
                 if (isPWAInstalled()) {
                     hideInstallPrompt();
+                    // 顯示安裝成功慶祝動畫
+                    showInstallSuccessCelebration();
                 } else if (isIOS()) {
                     // 如果還沒安裝，再次顯示提示
                     triggerInstallPrompt();
@@ -2017,10 +2287,11 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             }, 60000);
 
             // 9. 用戶觸摸螢幕時觸發（移動設備）
-            let touchCount = 0;
             document.addEventListener('touchstart', () => {
-                touchCount++;
-                if (touchCount === 2 || touchCount === 5 || touchCount === 10) {
+                userBehavior.touchCount++;
+                userBehavior.lastInteraction = Date.now();
+                
+                if (userBehavior.touchCount === 2 || userBehavior.touchCount === 5 || userBehavior.touchCount === 10) {
                     triggerInstallPrompt();
                 }
             });
@@ -2038,6 +2309,102 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     setTimeout(triggerInstallPrompt, 3000);
                 }
             });
+
+            // 12. 追蹤用戶在頁面的時間
+            setInterval(() => {
+                userBehavior.timeSpent += 1;
+                
+                // 每分鐘檢查一次是否應該觸發提示
+                if (userBehavior.timeSpent % 60 === 0) {
+                    triggerInstallPrompt();
+                    // 同時檢查安裝進度
+                    trackInstallProgress();
+                }
+            }, 1000);
+
+            // 13. 安裝成功慶祝動畫
+            function showInstallSuccessCelebration() {
+                // 創建慶祝動畫元素
+                const celebration = document.createElement('div');
+                celebration.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50';
+                celebration.innerHTML = `
+                    <div class="celebration-container bg-white rounded-2xl p-8 text-center max-w-sm mx-4 shadow-2xl">
+                        <div class="text-6xl mb-4 install-celebration">🎉</div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">安裝成功！</h3>
+                        <p class="text-gray-600 mb-6">Skopos 已成功安裝到您的主畫面</p>
+                        <div class="flex gap-3">
+                            <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+                                開始使用
+                            </button>
+                            <button class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
+                                了解更多
+                            </button>
+                        </div>
+                        <div class="mt-4 text-xs text-gray-500">
+                            💡 提示：從主畫面啟動會更快更流暢
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(celebration);
+                
+                // 添加粒子效果
+                createCelebrationParticles();
+                
+                // 3秒後自動關閉
+                setTimeout(() => {
+                    celebration.style.opacity = '0';
+                    celebration.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        celebration.remove();
+                    }, 300);
+                }, 3000);
+                
+                // 點擊關閉
+                celebration.addEventListener('click', (e) => {
+                    if (e.target === celebration) {
+                        celebration.style.opacity = '0';
+                        celebration.style.transform = 'scale(0.8)';
+                        setTimeout(() => {
+                            celebration.remove();
+                        }, 300);
+                    }
+                });
+            }
+
+            // 創建慶祝粒子效果
+            function createCelebrationParticles() {
+                const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+                
+                for (let i = 0; i < 20; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = 'fixed z-40 w-2 h-2 rounded-full pointer-events-none';
+                        particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        particle.style.left = Math.random() * window.innerWidth + 'px';
+                        particle.style.top = window.innerHeight + 'px';
+                        
+                        document.body.appendChild(particle);
+                        
+                        // 粒子動畫
+                        const animation = particle.animate([
+                            { 
+                                transform: 'translateY(0) scale(1)',
+                                opacity: 1
+                            },
+                            { 
+                                transform: `translateY(-${window.innerHeight + 100}px) scale(0)`,
+                                opacity: 0
+                            }
+                        ], {
+                            duration: 2000 + Math.random() * 1000,
+                            easing: 'ease-out'
+                        });
+                        
+                        animation.onfinish = () => particle.remove();
+                    }, i * 100);
+                }
+            }
         }
 
         // 頁面載入完成後初始化
