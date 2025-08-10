@@ -1,6 +1,6 @@
 {
-  "name": "SKOPOS",
-  "short_name": "冰山探索",
+  "name": "Skopos",
+  "short_name": "Skopos",
   "description": "基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界",
   "start_url": "/",
   "display": "standalone",

@@ -226,7 +226,7 @@ self.addEventListener('push', event => {
   };
   
   event.waitUntil(
-    self.registration.showNotification(data.title || '薩提爾冰山探索者', options)
+    self.registration.showNotification(data.title || 'Skopos', options)
   );
 });
 
