@@ -322,7 +322,7 @@
     <div class="max-w-3xl mx-auto md:max-w-none md:mx-0 gemini-container relative z-30 md:h-full md:flex md:flex-col md:min-h-0">
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center">
-            <h1 class="text-xl font-medium">SKOPOS</h1>
+            <h1 class="text-xl font-medium md:ml-12">SKOPOS</h1>
         </div>
 
         <!-- Phase Indicator -->
@@ -366,7 +366,10 @@
                 </button>
                 <input type="text" id="user-input" class="message-input px-3" placeholder="輸入您的訊息...">
                 <button id="send-btn" onclick="sendMessage()" class="send-button" title="傳送訊息">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 2L11 13"/>
+                        <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+                    </svg>
                 </button>
             </div>
         </div>
