@@ -137,6 +137,10 @@
             justify-content: center;
             cursor: pointer;
             border: none;
+            /* 確保手機版 SVG 圖標正常顯示 */
+            min-width: 40px;
+            min-height: 40px;
+            flex-shrink: 0;
         }
         .send-button:disabled {
             background-color: var(--border-color);
@@ -194,6 +198,20 @@
             #sidebar .collapsed-only { display: none; }
             .sidebar-collapsed #sidebar .collapsed-only { display: flex; }
             .sidebar-collapsed #sidebar .expanded-only { display: none; }
+        }
+        
+        /* 手機版：優化佈局和間距 */
+        @media (max-width: 767px) {
+            .input-area {
+                gap: 8px;
+            }
+            .send-button svg {
+                width: 20px;
+                height: 20px;
+            }
+            .chat-header h1 {
+                margin-left: 4rem;
+            }
         }
     </style>
 </head>
@@ -322,7 +340,7 @@
     <div class="max-w-3xl mx-auto md:max-w-none md:mx-0 gemini-container relative z-30 md:h-full md:flex md:flex-col md:min-h-0">
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center">
-            <h1 class="text-xl font-medium md:ml-12">SKOPOS</h1>
+            <h1 class="text-xl font-medium md:ml-12 ml-16">SKOPOS</h1>
         </div>
 
         <!-- Phase Indicator -->
@@ -358,8 +376,8 @@
 
         <!-- Input Area -->
         <div class="p-4 md:shrink-0">
-            <div class="input-area p-2 flex items-center">
-                <button id="new-chat-btn" onclick="startNewChat()" class="mr-3 text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors" title="開始新對話">
+            <div class="input-area p-2 flex items-center gap-2">
+                <button id="new-chat-btn" onclick="startNewChat()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors" title="開始新對話">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
