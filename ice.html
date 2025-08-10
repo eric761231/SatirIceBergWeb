@@ -1800,7 +1800,161 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 updatePhaseDisplay();
             }
         });
+
+        // 處理側邊欄收合/展開
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('expanded');
+            } else {
+                sidebar.classList.remove('expanded');
+                sidebar.classList.add('collapsed');
+            }
+        }
+
+        // iOS 安裝引導功能
+        function initIOSInstallGuide() {
+            const installPrompt = document.getElementById('ios-install-prompt');
+            const installModal = document.getElementById('ios-install-modal');
+            const installBtn = document.getElementById('ios-install-btn');
+            const closeModal = document.getElementById('close-install-modal');
+            const tryInstallBtn = document.getElementById('try-install-now');
+
+            // 檢測是否為 iOS 設備
+            function isIOS() {
+                return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            }
+
+            // 檢測是否已安裝 PWA
+            function isPWAInstalled() {
+                return window.navigator.standalone === true || 
+                       window.matchMedia('(display-mode: standalone)').matches;
+            }
+
+            // 顯示安裝提示
+            function showInstallPrompt() {
+                if (isIOS() && !isPWAInstalled()) {
+                    installPrompt.classList.remove('hidden');
+                }
+            }
+
+            // 隱藏安裝提示
+            function hideInstallPrompt() {
+                installPrompt.classList.add('hidden');
+            }
+
+            // 顯示安裝模態框
+            function showInstallModal() {
+                installModal.classList.remove('hidden');
+                hideInstallPrompt();
+            }
+
+            // 隱藏安裝模態框
+            function hideInstallModal() {
+                installModal.classList.add('hidden');
+            }
+
+            // 嘗試觸發安裝（雖然無法自動安裝，但可以引導用戶）
+            function tryInstall() {
+                // 在 iOS 上，我們無法自動觸發安裝
+                // 但可以顯示更詳細的說明
+                alert('請按照以下步驟安裝：\n\n1. 點擊 Safari 底部分享按鈕\n2. 選擇「加入主畫面」\n3. 點擊「新增」\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！');
+                hideInstallModal();
+            }
+
+            // 事件監聽器
+            installBtn.addEventListener('click', showInstallModal);
+            closeModal.addEventListener('click', hideInstallModal);
+            tryInstallBtn.addEventListener('click', tryInstall);
+
+            // 點擊模態框外部關閉
+            installModal.addEventListener('click', (e) => {
+                if (e.target === installModal) {
+                    hideInstallModal();
+                }
+            });
+
+            // 頁面載入後檢查是否顯示安裝提示
+            setTimeout(showInstallPrompt, 2000);
+
+            // 監聽 PWA 安裝狀態變化
+            window.addEventListener('beforeinstallprompt', () => {
+                hideInstallPrompt();
+            });
+
+            // 如果已經安裝，隱藏提示
+            if (isPWAInstalled()) {
+                hideInstallPrompt();
+            }
+        }
+
+        // 頁面載入完成後初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initResponsiveSidebar();
+            initIOSInstallGuide();
+        });
     </script>
+
+    <!-- iOS 安裝引導按鈕 -->
+    <div id="ios-install-prompt" class="fixed top-4 right-4 z-50 hidden">
+        <button id="ios-install-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+            </svg>
+            安裝 Skopos
+        </button>
+    </div>
+
+    <!-- iOS 安裝引導模態框 -->
+    <div id="ios-install-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">安裝 Skopos 到主畫面</h3>
+                <p class="text-gray-600">按照以下步驟將 Skopos 安裝到您的主畫面</p>
+            </div>
+            
+            <div class="space-y-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
+                    <div>
+                        <p class="font-medium text-gray-800">點擊底部分享按鈕</p>
+                        <p class="text-sm text-gray-600">在 Safari 底部找到方塊加箭頭圖示</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
+                    <div>
+                        <p class="font-medium text-gray-800">選擇「加入主畫面」</p>
+                        <p class="text-sm text-gray-600">在分享選單中找到此選項</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">3</div>
+                    <div>
+                        <p class="font-medium text-gray-800">點擊「新增」</p>
+                        <p class="text-sm text-gray-600">完成安裝，應用程式將出現在主畫面</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button id="close-install-modal" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg transition-colors">
+                    關閉
+                </button>
+                <button id="try-install-now" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors">
+                    立即嘗試
+                </button>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
