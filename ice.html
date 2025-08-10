@@ -1948,23 +1948,60 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
             // 檢測是否為 iOS 設備（iPhone、iPad、iPod）
             function isIOS() {
-                return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                const userAgent = navigator.userAgent;
+                const isIOSDevice = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+                
+                console.log('🔍 iOS 檢測:', {
+                    userAgent: userAgent,
+                    isIOS: isIOSDevice,
+                    hasIPad: /iPad/.test(userAgent),
+                    hasIPhone: /iPhone/.test(userAgent),
+                    hasIPod: /iPod/.test(userAgent)
+                });
+                
+                return isIOSDevice;
             }
 
             // 檢測是否為 iPad
             function isIPad() {
-                return /iPad/.test(navigator.userAgent) && !window.MSStream;
+                const userAgent = navigator.userAgent;
+                const isIPadDevice = /iPad/.test(userAgent) && !window.MSStream;
+                
+                console.log('📱 iPad 檢測:', {
+                    userAgent: userAgent,
+                    isIPad: isIPadDevice
+                });
+                
+                return isIPadDevice;
             }
 
             // 檢測是否為 iPhone
             function isIPhone() {
-                return /iPhone/.test(navigator.userAgent) && !window.MSStream;
+                const userAgent = navigator.userAgent;
+                const isIPhoneDevice = /iPhone/.test(userAgent) && !window.MSStream;
+                
+                console.log('📱 iPhone 檢測:', {
+                    userAgent: userAgent,
+                    isIPhone: isIPhoneDevice
+                });
+                
+                return isIPhoneDevice;
             }
 
             // 檢測是否已安裝 PWA
             function isPWAInstalled() {
-                return window.navigator.standalone === true || 
-                       window.matchMedia('(display-mode: standalone)').matches;
+                const standalone = window.navigator.standalone === true;
+                const displayMode = window.matchMedia('(display-mode: standalone)').matches;
+                const isInstalled = standalone || displayMode;
+                
+                console.log('📱 PWA 安裝檢測:', {
+                    navigator_standalone: standalone,
+                    display_mode_standalone: displayMode,
+                    isInstalled: isInstalled,
+                    userAgent: navigator.userAgent
+                });
+                
+                return isInstalled;
             }
 
             // 智能選擇安裝提示類型
@@ -1986,8 +2023,15 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
             // 顯示安裝提示
             function showInstallPrompt() {
+                console.log('🎯 顯示安裝提示:', {
+                    isIOS: isIOS(),
+                    isPWAInstalled: isPWAInstalled(),
+                    promptType: getOptimalPromptType()
+                });
+                
                 if (isIOS() && !isPWAInstalled()) {
                     const promptType = getOptimalPromptType();
+                    console.log('📱 選擇提示類型:', promptType);
                     
                     if (promptType === 'banner') {
                         showBanner();
@@ -1997,6 +2041,11 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     
                     // 記錄用戶偏好
                     userBehavior.preferredPromptType = promptType;
+                } else {
+                    console.log('❌ 無法顯示安裝提示:', {
+                        isIOS: isIOS(),
+                        isPWAInstalled: isPWAInstalled()
+                    });
                 }
             }
 
@@ -2058,31 +2107,116 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             function tryInstall() {
                 let deviceType = '';
                 let installSteps = '';
+                let shareButtonLocation = '';
                 
                 if (isIPad()) {
                     deviceType = 'iPad';
-                    installSteps = '請按照以下步驟安裝：\n\n1. 點擊 Safari 頂部網址列右側的分享按鈕\n2. 選擇「加入主畫面」\n3. 點擊「新增」\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！';
+                    shareButtonLocation = 'Safari 頂部網址列右側';
+                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 頂部網址列右側的分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！\n\n💡 提示：分享按鈕看起來像一個方形，裡面有個箭頭向上。`;
                 } else if (isIPhone()) {
                     deviceType = 'iPhone';
-                    installSteps = '請按照以下步驟安裝：\n\n1. 點擊 Safari 底部分享按鈕\n2. 選擇「加入主畫面」\n3. 點擊「新增」\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！';
+                    shareButtonLocation = 'Safari 底部工具列';
+                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 底部分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！\n\n💡 提示：分享按鈕在底部工具列，看起來像一個方形，裡面有個箭頭向上。`;
                 } else {
                     deviceType = 'iOS 設備';
-                    installSteps = '請按照以下步驟安裝：\n\n1. 點擊 Safari 的分享按鈕\n2. 選擇「加入主畫面」\n3. 點擊「新增」\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！';
+                    shareButtonLocation = 'Safari 瀏覽器';
+                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 的分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！\n\n💡 提示：分享按鈕看起來像一個方形，裡面有個箭頭向上。`;
                 }
                 
-                alert(`${deviceType} 安裝說明：\n\n${installSteps}`);
+                // 創建更友好的安裝說明對話框
+                const installDialog = document.createElement('div');
+                installDialog.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+                installDialog.innerHTML = `
+                    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+                        <div class="text-center mb-6">
+                            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">${deviceType} 安裝指南</h3>
+                            <p class="text-gray-600">請按照以下步驟將 Skopos 安裝到您的主畫面</p>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6 text-left">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
+                                <div>
+                                    <p class="font-medium text-gray-800">找到分享按鈕</p>
+                                    <p class="text-sm text-gray-600">位置：${shareButtonLocation}</p>
+                                    <p class="text-xs text-blue-600 mt-1">💡 分享按鈕看起來像一個方形，裡面有個箭頭向上</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
+                                <div>
+                                    <p class="font-medium text-gray-800">選擇「加入主畫面」</p>
+                                    <p class="text-sm text-gray-600">在分享選單中找到此選項</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">3</div>
+                                <div>
+                                    <p class="font-medium text-gray-800">點擊「新增」</p>
+                                    <p class="text-sm text-gray-600">完成安裝，應用程式將出現在主畫面</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <div class="flex items-start gap-2">
+                                <div class="text-blue-600 text-lg">ℹ️</div>
+                                <div class="text-sm text-blue-800">
+                                    <p class="font-medium mb-1">為什麼需要手動安裝？</p>
+                                    <p>由於 iOS 的安全政策，PWA 無法自動安裝。這是為了保護您的設備安全，請按照上述步驟手動安裝。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-4 rounded-lg transition-colors" onclick="this.closest('.fixed').remove()">
+                                我明白了
+                            </button>
+                            <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg transition-colors" onclick="this.closest('.fixed').remove(); showInstallModal();">
+                                再次查看步驟
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(installDialog);
+                
+                // 點擊外部關閉
+                installDialog.addEventListener('click', (e) => {
+                    if (e.target === installDialog) {
+                        installDialog.remove();
+                    }
+                });
+                
                 hideInstallModal();
             }
 
             // 智能觸發安裝提示
             function triggerInstallPrompt() {
+                console.log('🔍 觸發安裝提示檢查:', {
+                    isIOS: isIOS(),
+                    isPWAInstalled: isPWAInstalled(),
+                    userAgent: navigator.userAgent
+                });
+                
                 if (isIOS() && !isPWAInstalled()) {
                     // 根據用戶行為調整觸發策略
                     const shouldShow = shouldTriggerPrompt();
+                    console.log('📱 iOS 設備，應該顯示:', shouldShow);
                     
                     if (shouldShow) {
                         showInstallPrompt();
                     }
+                } else {
+                    console.log('❌ 不符合顯示條件:', {
+                        isIOS: isIOS(),
+                        isPWAInstalled: isPWAInstalled()
+                    });
                 }
             }
 
@@ -2232,10 +2366,16 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             }
 
             // 1. 頁面載入後立即顯示（縮短延遲）
-            setTimeout(triggerInstallPrompt, 1000);
+            setTimeout(() => {
+                console.log('⏰ 延遲1秒後觸發安裝提示');
+                triggerInstallPrompt();
+            }, 1000);
 
             // 2. 頁面載入完成後再次檢查
-            setTimeout(triggerInstallPrompt, 3000);
+            setTimeout(() => {
+                console.log('⏰ 延遲3秒後觸發安裝提示');
+                triggerInstallPrompt();
+            }, 3000);
 
             // 3. 用戶積極瀏覽時觸發
             window.addEventListener('scroll', () => {
@@ -2243,6 +2383,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 userBehavior.lastInteraction = Date.now();
                 
                 if (userBehavior.scrollCount === 5 || userBehavior.scrollCount === 15 || userBehavior.scrollCount === 30) {
+                    console.log('📜 滾動觸發安裝提示，滾動次數:', userBehavior.scrollCount);
                     triggerInstallPrompt();
                 }
             });
@@ -2255,14 +2396,21 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     userBehavior.lastInteraction = Date.now();
                     
                     if (userBehavior.clickCount === 3 || userBehavior.clickCount === 8) {
+                        console.log('🖱️ 點擊觸發安裝提示，點擊次數:', userBehavior.clickCount);
                         triggerInstallPrompt();
                     }
                 }
             });
 
             // 5. 用戶在頁面停留時間觸發
-            setTimeout(triggerInstallPrompt, 10000); // 10秒後
-            setTimeout(triggerInstallPrompt, 30000); // 30秒後
+            setTimeout(() => {
+                console.log('⏰ 延遲10秒後觸發安裝提示');
+                triggerInstallPrompt();
+            }, 10000); // 10秒後
+            setTimeout(() => {
+                console.log('⏰ 延遲30秒後觸發安裝提示');
+                triggerInstallPrompt();
+            }, 30000); // 30秒後
 
             // 6. 監聽 PWA 安裝狀態變化
             window.addEventListener('beforeinstallprompt', () => {
@@ -2276,13 +2424,18 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
             // 8. 定期檢查安裝狀態（每分鐘檢查一次）
             setInterval(() => {
+                console.log('⏰ 定期檢查安裝狀態');
                 if (isPWAInstalled()) {
+                    console.log('✅ PWA 已安裝，隱藏提示');
                     hideInstallPrompt();
                     // 顯示安裝成功慶祝動畫
                     showInstallSuccessCelebration();
                 } else if (isIOS()) {
+                    console.log('📱 iOS 設備，再次觸發安裝提示');
                     // 如果還沒安裝，再次顯示提示
                     triggerInstallPrompt();
+                } else {
+                    console.log('❌ 不是iOS設備或PWA已安裝');
                 }
             }, 60000);
 
@@ -2292,20 +2445,29 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 userBehavior.lastInteraction = Date.now();
                 
                 if (userBehavior.touchCount === 2 || userBehavior.touchCount === 5 || userBehavior.touchCount === 10) {
+                    console.log('👆 觸摸觸發安裝提示，觸摸次數:', userBehavior.touchCount);
                     triggerInstallPrompt();
                 }
             });
 
             // 10. 用戶切換頁面可見性時觸發
             document.addEventListener('visibilitychange', () => {
+                console.log('👁️ 頁面可見性變化:', {
+                    hidden: document.hidden,
+                    isIOS: isIOS(),
+                    isPWAInstalled: isPWAInstalled()
+                });
                 if (!document.hidden && isIOS() && !isPWAInstalled()) {
+                    console.log('⏰ 頁面可見時，延遲2秒觸發安裝提示');
                     setTimeout(triggerInstallPrompt, 2000);
                 }
             });
 
             // 11. 用戶返回頁面時觸發
             window.addEventListener('pageshow', () => {
+                console.log('🔄 頁面顯示事件觸發');
                 if (isIOS() && !isPWAInstalled()) {
+                    console.log('⏰ 頁面顯示時，延遲3秒觸發安裝提示');
                     setTimeout(triggerInstallPrompt, 3000);
                 }
             });
@@ -2316,6 +2478,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 
                 // 每分鐘檢查一次是否應該觸發提示
                 if (userBehavior.timeSpent % 60 === 0) {
+                    console.log('⏰ 每分鐘觸發安裝提示檢查，時間:', userBehavior.timeSpent);
                     triggerInstallPrompt();
                     // 同時檢查安裝進度
                     trackInstallProgress();
@@ -2411,6 +2574,22 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
         document.addEventListener('DOMContentLoaded', function() {
             initResponsiveSidebar();
             initIOSInstallGuide();
+            
+            // 添加手動測試按鈕（僅在開發模式下顯示）
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                const testButton = document.createElement('button');
+                testButton.textContent = '🧪 測試iOS安裝';
+                testButton.className = 'fixed bottom-4 left-4 bg-red-500 text-white px-3 py-2 rounded-lg z-50 text-sm';
+                testButton.onclick = () => {
+                    console.log('🧪 手動測試iOS安裝提示');
+                    if (typeof triggerInstallPrompt === 'function') {
+                        triggerInstallPrompt();
+                    } else {
+                        console.error('❌ triggerInstallPrompt 函數未找到');
+                    }
+                };
+                document.body.appendChild(testButton);
+            }
         });
     </script>
 
