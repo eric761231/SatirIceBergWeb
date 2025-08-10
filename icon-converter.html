@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冰块图标转换器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .icon-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .icon-item {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .icon-item img {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .download-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background: #45a049;
+        }
+        .instructions {
+            background: #e7f3ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧊 冰块图标转换器</h1>
+    
+    <div class="instructions">
+        <h3>使用说明：</h3>
+        <ol>
+            <li>右键点击下方的图标</li>
+            <li>选择"另存为图片"</li>
+            <li>保存为对应的尺寸名称（如：icon-512x512.png）</li>
+            <li>将保存的图标文件放到 icons 文件夹中</li>
+        </ol>
+    </div>
+
+    <div class="icon-preview">
+        <div class="icon-item">
+            <h3>512x512</h3>
+            <img src="ice-icon.svg" width="512" height="512" alt="512x512 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(512)">下载 512x512</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>384x384</h3>
+            <img src="ice-icon.svg" width="384" height="384" alt="384x384 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(384)">下载 384x384</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>192x192</h3>
+            <img src="ice-icon.svg" width="192" height="192" alt="192x192 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(192)">下载 192x192</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>152x152</h3>
+            <img src="ice-icon.svg" width="152" height="152" alt="152x152 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(152)">下载 152x152</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>144x144</h3>
+            <img src="ice-icon.svg" width="144" height="144" alt="144x144 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(144)">下载 144x144</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>128x128</h3>
+            <img src="ice-icon.svg" width="128" height="128" alt="128x128 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(128)">下载 128x128</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>96x96</h3>
+            <img src="ice-icon.svg" width="96" height="96" alt="96x96 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(96)">下载 96x96</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>72x72</h3>
+            <img src="ice-icon.svg" width="72" height="72" alt="72x72 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(72)">下载 72x72</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>48x48</h3>
+            <img src="ice-icon.svg" width="48" height="48" alt="48x48 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(48)">下载 48x48</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>32x32</h3>
+            <img src="ice-icon.svg" width="32" height="32" alt="32x32 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(32)">下载 32x32</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>16x16</h3>
+            <img src="ice-icon.svg" width="16" height="16" alt="16x16 冰块图标">
+            <br>
+            <button class="download-btn" onclick="downloadIcon(16)">下载 16x16</button>
+        </div>
+    </div>
+
+    <script>
+        function downloadIcon(size) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = size;
+            canvas.height = size;
+            
+            const img = new Image();
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, size, size);
+                
+                const link = document.createElement('a');
+                link.download = `icon-${size}x${size}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            };
+            img.src = 'ice-icon.svg';
+        }
+    </script>
+</body>
+</html>

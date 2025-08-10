@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- 背景圆形 -->
+  <circle cx="256" cy="256" r="240" fill="url(#iceGradient)" stroke="#4a90e2" stroke-width="8"/>
+  
+  <!-- 冰块主体 -->
+  <path d="M180 120 L332 120 L300 200 L212 200 L180 120 Z" fill="url(#iceBodyGradient)" stroke="#ffffff" stroke-width="4"/>
+  
+  <!-- 冰块内部纹理 -->
+  <path d="M200 140 L320 140 L295 190 L225 190 L200 140 Z" fill="url(#iceTextureGradient)" opacity="0.7"/>
+  
+  <!-- 冰块反光效果 -->
+  <path d="M190 130 L310 130 L285 180 L215 180 L190 130 Z" fill="url(#iceHighlightGradient)" opacity="0.4"/>
+  
+  <!-- 冰块底部 -->
+  <path d="M160 200 L352 200 L320 280 L192 280 L160 200 Z" fill="url(#iceBodyGradient)" stroke="#ffffff" stroke-width="4"/>
+  
+  <!-- 冰块底部纹理 -->
+  <path d="M180 220 L332 220 L305 270 L207 270 L180 220 Z" fill="url(#iceTextureGradient)" opacity="0.6"/>
+  
+  <!-- 冰块顶部小冰块 -->
+  <path d="M220 100 L292 100 L280 140 L232 140 L220 100 Z" fill="url(#iceBodyGradient)" stroke="#ffffff" stroke-width="3"/>
+  
+  <!-- 雪花装饰 -->
+  <g fill="#ffffff" opacity="0.8">
+    <circle cx="120" cy="120" r="3"/>
+    <circle cx="392" cy="140" r="2"/>
+    <circle cx="140" cy="380" r="2.5"/>
+    <circle cx="380" cy="360" r="2"/>
+    <circle cx="80" cy="280" r="2"/>
+    <circle cx="432" cy="300" r="2.5"/>
+  </g>
+  
+  <!-- 渐变定义 -->
+  <defs>
+    <!-- 背景渐变 -->
+    <linearGradient id="iceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e3f2fd;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#bbdefb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#90caf9;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 冰块主体渐变 -->
+    <linearGradient id="iceBodyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e1f5fe;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#b3e5fc;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#81d4fa;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 冰块纹理渐变 -->
+    <linearGradient id="iceTextureGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f3e5f5;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#e1bee7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ce93d8;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- 冰块高光渐变 -->
+    <linearGradient id="iceHighlightGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e3f2fd;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
