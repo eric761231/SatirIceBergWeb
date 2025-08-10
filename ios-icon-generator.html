@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS PWA 圖示生成器</title>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .icon-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .icon-item {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        
+        .icon-item h3 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #fff;
+        }
+        
+        .ice-icon {
+            display: inline-block;
+            position: relative;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+            border-radius: 50%;
+            border: 4px solid #4a90e2;
+            box-shadow: 
+                0 6px 20px rgba(74, 144, 226, 0.4),
+                inset 0 3px 15px rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+        }
+        
+        .ice-icon::before {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            right: 15%;
+            bottom: 15%;
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 50%, #ce93d8 100%);
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+        
+        .ice-icon::after {
+            content: '';
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            right: 25%;
+            bottom: 25%;
+            background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+        
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .download-btn:active {
+            transform: translateY(0);
+        }
+        
+        .instructions {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .instructions h2 {
+            color: #fff;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            text-align: left;
+            line-height: 1.8;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+        
+        .size-180 { width: 180px; height: 180px; }
+        .size-180 .snowflake:nth-child(1) { top: 10%; left: 20%; width: 6px; height: 6px; }
+        .size-180 .snowflake:nth-child(2) { top: 15%; right: 25%; width: 5px; height: 5px; }
+        .size-180 .snowflake:nth-child(3) { bottom: 20%; left: 15%; width: 5px; height: 5px; }
+        .size-180 .snowflake:nth-child(4) { bottom: 15%; right: 20%; width: 6px; height: 6px; }
+        .size-180 .snowflake:nth-child(5) { top: 50%; left: 10%; width: 4px; height: 4px; }
+        .size-180 .snowflake:nth-child(6) { top: 50%; right: 10%; width: 4px; height: 4px; }
+        
+        .size-152 { width: 152px; height: 152px; }
+        .size-152 .snowflake:nth-child(1) { top: 10%; left: 20%; width: 5px; height: 5px; }
+        .size-152 .snowflake:nth-child(2) { top: 15%; right: 25%; width: 4px; height: 4px; }
+        .size-152 .snowflake:nth-child(3) { bottom: 20%; left: 15%; width: 4px; height: 4px; }
+        .size-152 .snowflake:nth-child(4) { bottom: 15%; right: 20%; width: 5px; height: 5px; }
+        .size-152 .snowflake:nth-child(5) { top: 50%; left: 10%; width: 3px; height: 3px; }
+        .size-152 .snowflake:nth-child(6) { top: 50%; right: 10%; width: 3px; height: 3px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🧊 iOS PWA 圖示生成器</h1>
+        <p>為您的 Skopos 應用程式生成 iOS 專用圖示</p>
+    </div>
+    
+    <div class="icon-container">
+        <div class="icon-item">
+            <h3>180x180 圖示 (iOS 推薦)</h3>
+            <div class="ice-icon size-180">
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+            </div>
+            <button class="download-btn" onclick="downloadIcon(180)">下載 180x180 PNG</button>
+        </div>
+        
+        <div class="icon-item">
+            <h3>152x152 圖示 (iOS 標準)</h3>
+            <div class="ice-icon size-152">
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+                <div class="snowflake"></div>
+            </div>
+            <button class="download-btn" onclick="downloadIcon(152)">下載 152x152 PNG</button>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>📱 iOS 安裝說明</h2>
+        <ol>
+            <li>使用 Safari 瀏覽器開啟您的網站</li>
+            <li>點擊底部的分享按鈕 (方塊加箭頭圖示)</li>
+            <li>選擇「加入主畫面」</li>
+            <li>點擊「新增」完成安裝</li>
+            <li>現在您可以在主畫面找到 Skopos 應用程式了！</li>
+        </ol>
+        <p><strong>注意：</strong>iOS 15 之前的版本不支援 PWA 安裝</p>
+    </div>
+
+    <script>
+        function downloadIcon(size) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = size;
+            canvas.height = size;
+            
+            // 創建漸層背景
+            const gradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+            gradient.addColorStop(0, '#e3f2fd');
+            gradient.addColorStop(0.5, '#bbdefb');
+            gradient.addColorStop(1, '#90caf9');
+            
+            // 繪製背景圓形
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 8, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // 繪製邊框
+            ctx.strokeStyle = '#4a90e2';
+            ctx.lineWidth = 8;
+            ctx.stroke();
+            
+            // 繪製內部圓形
+            const innerGradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+            innerGradient.addColorStop(0, '#f3e5f5');
+            innerGradient.addColorStop(0.5, '#e1bee7');
+            innerGradient.addColorStop(1, '#ce93d8');
+            
+            ctx.fillStyle = innerGradient;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 24, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // 繪製高光
+            const highlightGradient = ctx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+            highlightGradient.addColorStop(0, '#ffffff');
+            highlightGradient.addColorStop(1, '#e3f2fd');
+            
+            ctx.fillStyle = highlightGradient;
+            ctx.globalAlpha = 0.4;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 36, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            
+            // 繪製雪花
+            ctx.fillStyle = 'white';
+            ctx.globalAlpha = 0.8;
+            
+            const snowflakePositions = [
+                [size * 0.2, size * 0.1], [size * 0.75, size * 0.15],
+                [size * 0.15, size * 0.8], [size * 0.8, size * 0.85],
+                [size * 0.1, size * 0.5], [size * 0.9, size * 0.5]
+            ];
+            
+            snowflakePositions.forEach((pos, index) => {
+                const snowflakeSize = index < 2 ? 6 : (index < 4 ? 5 : 4);
+                ctx.beginPath();
+                ctx.arc(pos[0], pos[1], snowflakeSize, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+            
+            ctx.globalAlpha = 1;
+            
+            // 下載
+            const link = document.createElement('a');
+            link.download = `skopos-icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>
