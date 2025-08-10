@@ -1815,7 +1815,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             }
         }
 
-        // iOS 安裝引導功能
+        // iOS 和 iPadOS 安裝引導功能
         function initIOSInstallGuide() {
             const installPrompt = document.getElementById('ios-install-prompt');
             const installModal = document.getElementById('ios-install-modal');
@@ -1823,9 +1823,19 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const closeModal = document.getElementById('close-install-modal');
             const tryInstallBtn = document.getElementById('try-install-now');
 
-            // 檢測是否為 iOS 設備
+            // 檢測是否為 iOS 設備（iPhone、iPad、iPod）
             function isIOS() {
                 return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            }
+
+            // 檢測是否為 iPad
+            function isIPad() {
+                return /iPad/.test(navigator.userAgent) && !window.MSStream;
+            }
+
+            // 檢測是否為 iPhone
+            function isIPhone() {
+                return /iPhone/.test(navigator.userAgent) && !window.MSStream;
             }
 
             // 檢測是否已安裝 PWA
@@ -1859,9 +1869,21 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
             // 嘗試觸發安裝（雖然無法自動安裝，但可以引導用戶）
             function tryInstall() {
-                // 在 iOS 上，我們無法自動觸發安裝
-                // 但可以顯示更詳細的說明
-                alert('請按照以下步驟安裝：\n\n1. 點擊 Safari 底部分享按鈕\n2. 選擇「加入主畫面」\n3. 點擊「新增」\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！');
+                let deviceType = '';
+                let installSteps = '';
+                
+                if (isIPad()) {
+                    deviceType = 'iPad';
+                    installSteps = '請按照以下步驟安裝：\n\n1. 點擊 Safari 頂部網址列右側的分享按鈕\n2. 選擇「加入主畫面」\n3. 點擊「新增」\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！';
+                } else if (isIPhone()) {
+                    deviceType = 'iPhone';
+                    installSteps = '請按照以下步驟安裝：\n\n1. 點擊 Safari 底部分享按鈕\n2. 選擇「加入主畫面」\n3. 點擊「新增」\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！';
+                } else {
+                    deviceType = 'iOS 設備';
+                    installSteps = '請按照以下步驟安裝：\n\n1. 點擊 Safari 的分享按鈕\n2. 選擇「加入主畫面」\n3. 點擊「新增」\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！';
+                }
+                
+                alert(`${deviceType} 安裝說明：\n\n${installSteps}`);
                 hideInstallModal();
             }
 
@@ -1898,17 +1920,17 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
         });
     </script>
 
-    <!-- iOS 安裝引導按鈕 -->
+    <!-- iOS 和 iPadOS 安裝引導按鈕 -->
     <div id="ios-install-prompt" class="fixed top-4 right-4 z-50 hidden">
         <button id="ios-install-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
             </svg>
-            安裝 Skopos
+            安裝到主畫面
         </button>
     </div>
 
-    <!-- iOS 安裝引導模態框 -->
+    <!-- iOS 和 iPadOS 安裝引導模態框 -->
     <div id="ios-install-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
             <div class="text-center mb-6">
@@ -1918,15 +1940,15 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">安裝 Skopos 到主畫面</h3>
-                <p class="text-gray-600">按照以下步驟將 Skopos 安裝到您的主畫面</p>
+                <p class="text-gray-600">按照以下步驟將 Skopos 安裝到您的主畫面（支援 iPhone 和 iPad）</p>
             </div>
             
             <div class="space-y-4 mb-6">
                 <div class="flex items-start gap-3">
                     <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
                     <div>
-                        <p class="font-medium text-gray-800">點擊底部分享按鈕</p>
-                        <p class="text-sm text-gray-600">在 Safari 底部找到方塊加箭頭圖示</p>
+                        <p class="font-medium text-gray-800">點擊分享按鈕</p>
+                        <p class="text-sm text-gray-600">iPhone：在 Safari 底部 | iPad：在網址列右側</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-3">
