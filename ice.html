@@ -1988,6 +1988,14 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 return isIPhoneDevice;
             }
 
+            // 檢測是否為 Safari 瀏覽器
+            function isSafari() {
+                const userAgent = navigator.userAgent;
+                const isSafariBrowser = /Safari/i.test(userAgent) && !/Chrome/i.test(userAgent);
+                console.log('🌐 Safari 檢測:', { userAgent, isSafari: isSafariBrowser });
+                return isSafariBrowser;
+            }
+
             // 檢測是否已安裝 PWA
             function isPWAInstalled() {
                 const standalone = window.navigator.standalone === true;
@@ -2105,6 +2113,55 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
             // 嘗試觸發安裝（雖然無法自動安裝，但可以引導用戶）
             function tryInstall() {
+                // 檢查是否使用 Safari 瀏覽器
+                if (!isSafari()) {
+                    const nonSafariDialog = document.createElement('div');
+                    nonSafariDialog.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
+                    nonSafariDialog.innerHTML = `
+                        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+                            <div class="text-center mb-6">
+                                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-10 h-10 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-800 mb-2">⚠️ 需要 Safari 瀏覽器</h3>
+                                <p class="text-gray-600 mb-4">在 iOS 設備上安裝 PWA 必須使用 Safari 瀏覽器</p>
+                                
+                                <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                                    <div class="flex items-start gap-2">
+                                        <div class="text-red-600 text-lg">ℹ️</div>
+                                        <div class="text-sm text-red-800">
+                                            <p class="font-medium mb-1">為什麼必須使用 Safari？</p>
+                                            <p>由於 iOS 的安全政策，只有 Safari 瀏覽器支援「加入主畫面」功能。其他瀏覽器（如 Chrome、Firefox）在 iOS 上無法安裝 PWA。</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex gap-3">
+                                    <button class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-4 rounded-lg transition-colors" onclick="this.closest('.fixed').remove()">
+                                        我知道了
+                                    </button>
+                                    <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg transition-colors" onclick="this.closest('.fixed').remove(); window.open('x-web-search://?Safari', '_blank');">
+                                        開啟 Safari
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(nonSafariDialog);
+                    
+                    // 點擊外部關閉
+                    nonSafariDialog.addEventListener('click', (e) => {
+                        if (e.target === nonSafariDialog) {
+                            nonSafariDialog.remove();
+                        }
+                    });
+                    
+                    return;
+                }
+
                 let deviceType = '';
                 let installSteps = '';
                 let shareButtonLocation = '';
@@ -2600,6 +2657,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
             </svg>
             安裝到主畫面
+            <span class="text-xs opacity-75">(需Safari)</span>
         </button>
     </div>
 
@@ -2613,6 +2671,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 <div>
                     <p class="font-semibold">🚀 將 Skopos 安裝到主畫面</p>
                     <p class="text-sm opacity-90">享受更快的啟動速度和離線功能</p>
+                    <p class="text-xs opacity-75 mt-1">⚠️ 必須使用 Safari 瀏覽器</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -2639,6 +2698,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 </div>
                 <h3 class="text-xl font-bold text-gray-800 mb-2">安裝 Skopos 到主畫面</h3>
                 <p class="text-gray-600">按照以下步驟將 Skopos 安裝到您的主畫面（支援 iPhone 和 iPad）</p>
+                <p class="text-sm text-red-600 font-medium mt-2">⚠️ 重要：必須使用 Safari 瀏覽器才能安裝</p>
             </div>
             
             <div class="space-y-4 mb-6">
@@ -2647,6 +2707,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     <div>
                         <p class="font-medium text-gray-800">點擊分享按鈕</p>
                         <p class="text-sm text-gray-600">iPhone：在 Safari 底部 | iPad：在網址列右側</p>
+                        <p class="text-xs text-red-500 mt-1">💡 請確保您正在使用 Safari 瀏覽器</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-3">
