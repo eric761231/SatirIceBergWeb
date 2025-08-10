@@ -86,6 +86,26 @@
             --gemini-gradient: linear-gradient(135deg, #4285f4, #ea4335, #fbbc04, #34a853);
             --mini-sidebar-width: 56px; /* 桌面收合時的小側欄寬度（加寬以免過窄） */
         }
+
+        /* 安裝提示動畫 */
+        @keyframes install-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes install-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        .install-pulse {
+            animation: install-pulse 2s infinite;
+        }
+
+        .install-shake {
+            animation: install-shake 0.5s ease-in-out;
+        }
         body {
             font-family: 'Google Sans', 'Noto Sans TC', sans-serif;
             background-color: var(--bg-primary);
@@ -1818,8 +1838,11 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
         // iOS 和 iPadOS 安裝引導功能
         function initIOSInstallGuide() {
             const installPrompt = document.getElementById('ios-install-prompt');
+            const installBanner = document.getElementById('ios-install-banner');
             const installModal = document.getElementById('ios-install-modal');
             const installBtn = document.getElementById('ios-install-btn');
+            const bannerInstallBtn = document.getElementById('banner-install-btn');
+            const bannerCloseBtn = document.getElementById('banner-close-btn');
             const closeModal = document.getElementById('close-install-modal');
             const tryInstallBtn = document.getElementById('try-install-now');
 
@@ -1847,13 +1870,47 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             // 顯示安裝提示
             function showInstallPrompt() {
                 if (isIOS() && !isPWAInstalled()) {
+                    // 隨機選擇顯示方式：橫幅或按鈕
+                    if (Math.random() < 0.7) { // 70% 機率顯示橫幅
+                        showBanner();
+                    } else {
+                        showButton();
+                    }
+                }
+            }
+
+            // 顯示橫幅
+            function showBanner() {
+                if (installBanner) {
+                    installBanner.classList.remove('hidden');
+                    // 滑入動畫
+                    setTimeout(() => {
+                        installBanner.classList.remove('-translate-y-full');
+                    }, 100);
+                }
+            }
+
+            // 顯示按鈕
+            function showButton() {
+                if (installPrompt) {
                     installPrompt.classList.remove('hidden');
+                    // 添加動畫效果
+                    installPrompt.classList.add('animate-bounce');
+                    setTimeout(() => {
+                        installPrompt.classList.remove('animate-bounce');
+                    }, 1000);
                 }
             }
 
             // 隱藏安裝提示
             function hideInstallPrompt() {
-                installPrompt.classList.add('hidden');
+                if (installPrompt) installPrompt.classList.add('hidden');
+                if (installBanner) {
+                    installBanner.classList.add('-translate-y-full');
+                    setTimeout(() => {
+                        installBanner.classList.add('hidden');
+                    }, 500);
+                }
             }
 
             // 顯示安裝模態框
@@ -1889,6 +1946,8 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
             // 事件監聽器
             installBtn.addEventListener('click', showInstallModal);
+            bannerInstallBtn.addEventListener('click', showInstallModal);
+            bannerCloseBtn.addEventListener('click', hideInstallPrompt);
             closeModal.addEventListener('click', hideInstallModal);
             tryInstallBtn.addEventListener('click', tryInstall);
 
@@ -1899,18 +1958,86 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 }
             });
 
-            // 頁面載入後檢查是否顯示安裝提示
-            setTimeout(showInstallPrompt, 2000);
+            // 多種觸發安裝提示的方式
+            function triggerInstallPrompt() {
+                if (isIOS() && !isPWAInstalled()) {
+                    showInstallPrompt();
+                }
+            }
 
-            // 監聽 PWA 安裝狀態變化
+            // 1. 頁面載入後立即顯示（縮短延遲）
+            setTimeout(triggerInstallPrompt, 1000);
+
+            // 2. 頁面載入完成後再次檢查
+            setTimeout(triggerInstallPrompt, 3000);
+
+            // 3. 用戶滾動頁面時觸發
+            let scrollCount = 0;
+            window.addEventListener('scroll', () => {
+                scrollCount++;
+                if (scrollCount === 5 || scrollCount === 15 || scrollCount === 30) {
+                    triggerInstallPrompt();
+                }
+            });
+
+            // 4. 用戶點擊頁面時觸發（點擊3次後）
+            let clickCount = 0;
+            document.addEventListener('click', (e) => {
+                // 排除安裝相關按鈕的點擊
+                if (!e.target.closest('#ios-install-prompt') && !e.target.closest('#ios-install-modal')) {
+                    clickCount++;
+                    if (clickCount === 3 || clickCount === 8) {
+                        triggerInstallPrompt();
+                    }
+                }
+            });
+
+            // 5. 用戶在頁面停留時間觸發
+            setTimeout(triggerInstallPrompt, 10000); // 10秒後
+            setTimeout(triggerInstallPrompt, 30000); // 30秒後
+
+            // 6. 監聽 PWA 安裝狀態變化
             window.addEventListener('beforeinstallprompt', () => {
                 hideInstallPrompt();
             });
 
-            // 如果已經安裝，隱藏提示
+            // 7. 如果已經安裝，隱藏提示
             if (isPWAInstalled()) {
                 hideInstallPrompt();
             }
+
+            // 8. 定期檢查安裝狀態（每分鐘檢查一次）
+            setInterval(() => {
+                if (isPWAInstalled()) {
+                    hideInstallPrompt();
+                } else if (isIOS()) {
+                    // 如果還沒安裝，再次顯示提示
+                    triggerInstallPrompt();
+                }
+            }, 60000);
+
+            // 9. 用戶觸摸螢幕時觸發（移動設備）
+            let touchCount = 0;
+            document.addEventListener('touchstart', () => {
+                touchCount++;
+                if (touchCount === 2 || touchCount === 5 || touchCount === 10) {
+                    triggerInstallPrompt();
+                }
+            });
+
+            // 10. 用戶切換頁面可見性時觸發
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && isIOS() && !isPWAInstalled()) {
+                    setTimeout(triggerInstallPrompt, 2000);
+                }
+            });
+
+            // 11. 用戶返回頁面時觸發
+            window.addEventListener('pageshow', () => {
+                if (isIOS() && !isPWAInstalled()) {
+                    setTimeout(triggerInstallPrompt, 3000);
+                }
+            });
         }
 
         // 頁面載入完成後初始化
@@ -1922,12 +2049,37 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
     <!-- iOS 和 iPadOS 安裝引導按鈕 -->
     <div id="ios-install-prompt" class="fixed top-4 right-4 z-50 hidden">
-        <button id="ios-install-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105">
+        <button id="ios-install-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105 install-pulse">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
             </svg>
             安裝到主畫面
         </button>
+    </div>
+
+    <!-- iOS 和 iPadOS 安裝提示橫幅 -->
+    <div id="ios-install-banner" class="fixed top-0 left-0 right-0 bg-gradient-to-r from-blue-500 to-purple-600 text-white p-3 z-40 hidden transform -translate-y-full transition-transform duration-500">
+        <div class="flex items-center justify-between max-w-4xl mx-auto">
+            <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                </svg>
+                <div>
+                    <p class="font-semibold">🚀 將 Skopos 安裝到主畫面</p>
+                    <p class="text-sm opacity-90">享受更快的啟動速度和離線功能</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="banner-install-btn" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                    立即安裝
+                </button>
+                <button id="banner-close-btn" class="text-white hover:text-gray-200 transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- iOS 和 iPadOS 安裝引導模態框 -->
@@ -1980,3 +2132,4 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
 
 </body>
 </html>
+
