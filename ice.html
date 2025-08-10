@@ -200,6 +200,43 @@
             .sidebar-collapsed #sidebar .expanded-only { display: none; }
         }
         
+        /* 用戶頭像和個人資料樣式 */
+        .user-avatar-container {
+            flex-shrink: 0;
+        }
+        
+        .user-avatar-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #4a5568;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .user-avatar-text {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        .user-profile-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            /* 確保文字沒有背景 */
+            background: transparent;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
         /* 手機版：優化佈局和間距 */
         @media (max-width: 767px) {
             .input-area {
@@ -211,6 +248,20 @@
             }
             .chat-header h1 {
                 margin-left: 4rem;
+            }
+            
+            /* 手機版用戶頭像優化 */
+            .user-avatar-circle {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .user-avatar-text {
+                font-size: 18px;
+            }
+            
+            .user-name {
+                font-size: 14px;
             }
         }
     </style>
@@ -252,6 +303,18 @@
                     </svg>
                 </button>
                 <h2 class="text-lg font-medium text-white"></h2>
+            </div>
+            
+            <!-- 用戶個人資料區域 -->
+            <div class="flex items-center gap-3 mb-6 expanded-only">
+                <div class="user-avatar-container">
+                    <div class="user-avatar-circle">
+                        <span class="user-avatar-text">S</span>
+                    </div>
+                </div>
+                <div class="user-profile-info">
+                    <div class="user-name">shiro Yama</div>
+                </div>
             </div>
             <!-- 收合時：僅顯示窄條與展開按鈕置頂置中 -->
             <div class="collapsed-only md:flex-col md:items-start md:justify-start md:pt-2 md:gap-2">
