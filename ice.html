@@ -397,18 +397,24 @@
             }
             .chat-header h1 {
                 margin-left: 4rem;
+                font-size: 1.1rem !important;
             }
-            
+            .phase-indicator {
+                font-size: 0.85rem !important;
+                padding: 4px 8px !important;
+            }
+            #usage-indicator {
+                font-size: 0.85rem !important;
+                padding: 4px 8px !important;
+            }
             /* 手機版用戶頭像優化 */
             .user-avatar-circle {
                 width: 40px;
                 height: 40px;
             }
-            
             .user-avatar-text {
                 font-size: 18px;
             }
-            
             .user-name {
                 font-size: 14px;
             }
@@ -458,6 +464,16 @@
     <!-- 側邊欄設定面板 - 左側滑動式面板 -->
     <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-gray-800 border-r border-gray-600 transform -translate-x-full transition-all duration-300 ease-in-out z-40 md:static md:h-auto md:min-h-screen md:translate-x-0 md:transform-none md:resize-x md:overflow-auto md:min-w-[240px] md:max-w-[480px]">
         <div class="p-4 h-full flex flex-col">
+            <!-- 回主頁漢堡按鈕 -->
+            <div class="flex items-center mb-4">
+                <button onclick="window.location.href='ice.html'" class="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 bg-gray-800 transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400/50" title="回主頁">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+                        <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                        <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
             <!-- 側邊欄標題區域 -->
             <div class="flex items-center gap-2 mb-6 expanded-only">
                 <!-- 桌面版：側欄左上角收合按鈕（三條橫線） -->
@@ -1702,13 +1718,30 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 <p class="text-gray-600">按照以下步驟將 Obyssey 安裝到您的主畫面（支援 iPhone 和 iPad）</p>
                 <p class="text-sm text-red-600 font-medium mt-2">⚠️ 重要：必須使用 Safari 瀏覽器才能安裝</p>
             </div>
-            
             <div class="space-y-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <div class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">A</div>
+                    <div>
+                        <p class="font-medium text-gray-800">Android：在 Chrome 右上角點擊 <b>選單</b> 按鈕 <span class="menu-emoji">&#x2630;</span></p>
+                        <img src="icons/android-menu.png" alt="Android Chrome 選單按鈕" class="install-img" />
+                        <p class="font-medium text-gray-800">選擇「加入主畫面」或「安裝應用程式」</p>
+                        <img src="icons/android-add-home.png" alt="Android 加入主畫面選項" class="install-img" />
+                        <p class="text-xs text-green-600 mt-1">💡 Android 裝置建議使用 Chrome 瀏覽器</p>
+                    </div>
+                </div>
+        .install-img {
+            max-width:180px;
+            border-radius:8px;
+            margin:8px 0;
+            box-shadow:0 2px 8px #0002;
+        }
                 <div class="flex items-start gap-3">
                     <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
                     <div>
-                        <p class="font-medium text-gray-800">點擊分享按鈕</p>
-                        <p class="text-sm text-gray-600">iPhone：在 Safari 底部 | iPad：在網址列右側</p>
+                        <p class="font-medium text-gray-800">iPhone：在 Safari 底部點擊 <b>分享</b> 按鈕 <span class="share-emoji">&#x1F5D2;</span></p>
+                        <img src="icons/ios-share-iphone.png" alt="iPhone Safari 分享按鈕" style="max-width:180px;border-radius:8px;margin:8px 0;box-shadow:0 2px 8px #0002;" />
+                        <p class="font-medium text-gray-800">iPad：在網址列右側點擊 <b>分享</b> 按鈕 <span class="share-emoji">&#x1F5D2;</span></p>
+                        <img src="icons/ios-share-ipad.png" alt="iPad Safari 分享按鈕" style="max-width:180px;border-radius:8px;margin:8px 0;box-shadow:0 2px 8px #0002;" />
                         <p class="text-xs text-red-500 mt-1">💡 請確保您正在使用 Safari 瀏覽器</p>
                     </div>
                 </div>
@@ -1716,6 +1749,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
                     <div>
                         <p class="font-medium text-gray-800">選擇「加入主畫面」</p>
+                        <img src="icons/ios-add-home.png" alt="加入主畫面選項" style="max-width:180px;border-radius:8px;margin:8px 0;box-shadow:0 2px 8px #0002;" />
                         <p class="text-sm text-gray-600">在分享選單中找到此選項</p>
                     </div>
                 </div>
@@ -1727,7 +1761,6 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     </div>
                 </div>
             </div>
-
             <div class="flex gap-3">
                 <button id="close-install-modal" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg transition-colors">
                     關閉
