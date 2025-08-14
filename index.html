@@ -124,14 +124,49 @@
         <div class="note">如未顯示安裝提示，請確認瀏覽器版本或改用 Safari/Chrome。</div>
     </div>
 
-        <!-- 引入 PWA 配置文件 -->
-        <script src="/pwa-config.js"></script>
-        <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            if (window.PWAInstallManager) {
-                window.pwaManager = new window.PWAInstallManager();
+    <!-- 引入 PWA 配置文件 -->
+    <script src="/pwa-config.js"></script>
+    <script>
+    // PWA 安裝事件處理
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('installAppBtn');
+    const statusIndicator = document.getElementById('statusIndicator');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'inline-block';
+        if (statusIndicator) statusIndicator.style.display = 'none';
+    });
+
+    installBtn.addEventListener('click', async function() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                installBtn.textContent = '已安裝';
+                installBtn.disabled = true;
             }
-        });
-        </script>
+            deferredPrompt = null;
+        }
+    });
+
+    // 檢查是否支援 PWA 安裝
+    window.addEventListener('DOMContentLoaded', function() {
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            installBtn.style.display = 'none';
+            if (statusIndicator) {
+                statusIndicator.textContent = 'App 已安裝';
+                statusIndicator.style.display = 'block';
+            }
+        } else if (!window.BeforeInstallPromptEvent) {
+            installBtn.style.display = 'none';
+            if (statusIndicator) {
+                statusIndicator.textContent = '此瀏覽器不支援安裝 App';
+                statusIndicator.style.display = 'block';
+            }
+        }
+    });
+    </script>
 </body>
 </html>
