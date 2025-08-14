@@ -1,0 +1,138 @@
+{
+  "app": {
+    "name": "Obyssey",
+    "shortName": "Obyssey",
+    "version": "1.0.0",
+    "description": "基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界",
+    "author": "Obyssey Team",
+    "website": "https://satir-ice-berg-web.vercel.app/",
+    "supportEmail": "support@obyssey.com"
+  },
+  "pwa": {
+    "enabled": true,
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "themeColor": "#2c3e50",
+    "backgroundColor": "#ecf0f1",
+    "scope": "/",
+    "startUrl": "/",
+    "lang": "zh-TW",
+    "categories": ["health", "lifestyle", "productivity", "education"],
+    "shortcuts": [
+      {
+        "name": "開始新對話",
+        "shortName": "新對話",
+        "description": "立即開始一個新的心理探索對話",
+        "url": "/ice.html"
+      },
+      {
+        "name": "API 設定",
+        "shortName": "設定",
+        "description": "配置 Google Gemini API 金鑰",
+        "url": "/ice.html#api-config"
+      }
+    ]
+  },
+  "features": {
+    "offlineSupport": true,
+    "pushNotifications": false,
+    "backgroundSync": false,
+    "fileHandling": false,
+    "shareTarget": false,
+    "periodicSync": false
+  },
+  "cache": {
+    "strategy": "cache-first",
+    "maxAge": 86400000,
+    "maxEntries": 100,
+    "staticFiles": [
+      "/",
+      "/index.html",
+      "/ice.html",
+      "/install-app.html",
+      "/pwa-config.js",
+      "/manifest.json",
+      "/sw.js"
+    ],
+    "iconSizes": [72, 96, 128, 144, 152, 192, 384, 512]
+  },
+  "ui": {
+    "theme": {
+      "primaryColor": "#3498db",
+      "secondaryColor": "#2c3e50",
+      "backgroundColor": "#ecf0f1",
+      "textColor": "#222",
+      "borderRadius": "16px",
+      "shadow": "0 4px 24px rgba(0,0,0,0.08)"
+    },
+    "fonts": {
+      "primary": "Noto Sans TC",
+      "fallback": "sans-serif"
+    },
+    "responsive": {
+      "breakpoints": {
+        "mobile": "480px",
+        "tablet": "768px",
+        "desktop": "1024px"
+      }
+    }
+  },
+  "api": {
+    "endpoints": {
+      "gemini": "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+      "openai": "https://api.openai.com/v1/chat/completions",
+      "anthropic": "https://api.anthropic.com/v1/messages"
+    },
+    "timeout": 30000,
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  },
+  "security": {
+    "httpsRequired": true,
+    "cspEnabled": true,
+    "contentSecurityPolicy": {
+      "defaultSrc": ["'self'"],
+      "scriptSrc": ["'self'", "'unsafe-inline'"],
+      "styleSrc": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      "fontSrc": ["'self'", "https://fonts.gstatic.com"],
+      "imgSrc": ["'self'", "data:", "https:"],
+      "connectSrc": ["'self'", "https://generativelanguage.googleapis.com", "https://api.openai.com", "https://api.anthropic.com"]
+    }
+  },
+  "performance": {
+    "lazyLoading": true,
+    "imageOptimization": true,
+    "minification": true,
+    "compression": true,
+    "preload": [
+      "/pwa-config.js",
+      "/manifest.json"
+    ]
+  },
+  "analytics": {
+    "enabled": false,
+    "provider": "none",
+    "trackingId": "",
+    "privacyMode": true
+  },
+  "localization": {
+    "defaultLanguage": "zh-TW",
+    "supportedLanguages": ["zh-TW", "en-US"],
+    "fallbackLanguage": "en-US",
+    "dateFormat": "YYYY-MM-DD",
+    "timeFormat": "HH:mm:ss"
+  },
+  "accessibility": {
+    "highContrast": false,
+    "largeText": false,
+    "screenReader": true,
+    "keyboardNavigation": true,
+    "focusIndicators": true
+  },
+  "debug": {
+    "enabled": false,
+    "logLevel": "info",
+    "showConsoleLogs": false,
+    "performanceMonitoring": false
+  }
+}

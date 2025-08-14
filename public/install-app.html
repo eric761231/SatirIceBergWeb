@@ -63,56 +63,44 @@
             cursor: pointer;
             display: inline-block;
         }
-        </style>
-        <script>
-        // 註冊 Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(function(registration) {
-                        console.log('ServiceWorker 註冊成功:', registration);
-                    })
-                    .catch(function(error) {
-                        console.log('ServiceWorker 註冊失敗:', error);
-                    });
-            });
+        .centered {
+            text-align: center;
         }
-        </script>
+        .update-app-btn {
+            margin-top: 16px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .status-indicator {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-    <h1>安裝 Obyssey App 到手機</h1>
+        <h1>安裝 Obyssey App 到手機</h1>
         <div class="centered">
-            <button id="installAppBtn" class="install-app-btn">安裝App</button>
+            <button id="installAppBtn" class="install-app-btn" style="display: none;">安裝App</button>
+            <div id="statusIndicator" class="status-indicator" style="display: none;">
+                正在檢查安裝狀態...
+            </div>
         </div>
-    <script>
-    // PWA 安裝事件
-    let deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', function(e) {
-        e.preventDefault();
-        deferredPrompt = e;
-        const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) installBtn.style.display = 'inline-block';
-    });
-    const installBtn = document.getElementById('installAppBtn');
-    if (installBtn) {
-        installBtn.addEventListener('click', function() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(function(choiceResult) {
-                    deferredPrompt = null;
-                });
-            } else {
-                alert('請使用支援PWA的瀏覽器，或已安裝/不支援安裝提示');
-            }
-        });
-    }
-    </script>
+        
         <div class="guide">
             <h2>安裝前提醒</h2>
-                    .centered {
-                        text-align: center;
-                    }
             <ul>
                 <li>請用預設瀏覽器（Safari 或 Chrome）開啟本頁，避免在 LINE、Facebook 等 App 內建瀏覽器安裝。</li>
                 <li>如需複製網址，可長按網址或點選「複製連結」後貼到瀏覽器。</li>
@@ -135,5 +123,8 @@
         </div>
         <div class="note">如未顯示安裝提示，請確認瀏覽器版本或改用 Safari/Chrome。</div>
     </div>
+
+    <!-- 引入 PWA 配置文件 -->
+    <script src="/pwa-config.js"></script>
 </body>
 </html>
