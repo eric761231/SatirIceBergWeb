@@ -3,45 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Obyssey</title>
-    <meta name="application-name" content="Obyssey">
-    <meta name="description" content="基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
-    <link rel="shortcut icon" href="/icons/icon-192x192.png">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>安裝 Obyssey App 到手機</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #131314;
-            --bg-secondary: #1e1f20;
-            --bg-tertiary: #2a2b2c;
-            --text-primary: #e8eaed;
-            --text-secondary: #9aa0a6;
-            --border-color: #3c4043;
-            --accent-blue: #8ab4f8;
+        .share-icon {
+            font-size: 1.2em;
         }
-        .main-center {
-            max-width: 400px;
-            margin: 48px auto 0 auto;
-            text-align: center;
-        }
-        /* Removing the .main-center CSS class */
-        /* This class was mistakenly displayed in the content */
-        /* It is now removed to clean up the code */
         body {
-            font-family: 'Google Sans', 'Noto Sans TC', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Noto Sans TC', sans-serif;
+            background: #f7f8fa;
+            color: #222;
             margin: 0;
             padding: 0;
         }
-        /* .container 樣式已移除，內容直接置中顯示 */
+        .container {
+            max-width: 420px;
+            margin: 32px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #3498db;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .guide {
+            margin-top: 18px;
+        }
+        .guide h2 {
+            font-size: 1.1rem;
+            color: #222;
+            margin-bottom: 8px;
+        }
+        .guide ul {
+            padding-left: 20px;
+            margin: 0 0 16px 0;
+        }
+        .guide li {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .note {
+            color: #888;
+            font-size: 0.95rem;
+            margin-top: 12px;
+            text-align: center;
+        }
         .install-app-btn {
-            margin-top: 16px;
+            margin-top: 24px;
             padding: 8px 18px;
             border-radius: 8px;
             background: #3498db;
@@ -49,339 +61,77 @@
             border: none;
             font-size: 1rem;
             cursor: pointer;
-        }
-        .settings-btn {
-            position: absolute;
-            top: 18px;
-            left: 18px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            transition: color 0.2s;
-            z-index: 10;
-            padding: 4px;
-        }
-        .settings-btn:hover {
-            color: var(--accent-blue);
-        }
-        .logo {
-            font-size: 3rem;
-            margin-bottom: 18px;
-            display: block;
-            text-align: center;
-        }
-        h1 {
-            font-size: 1.5rem;
-            font-weight: 500;
-            margin-bottom: 10px;
-            color: var(--accent-blue);
-            letter-spacing: 1px;
-            text-align: center;
-        }
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            margin-bottom: 28px;
-            line-height: 1.5;
-            text-align: center;
-        }
-        .auth-section {
-            margin-bottom: 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #installHardBtn {
-            width: 100%;
-            padding: 6px 12px;
-            font-size: 0.95rem;
-            color: var(--text-primary) !important;
-            background: transparent !important;
-            border: none;
-            text-align: center;
-            cursor: pointer;
-        }
-        .settings-menu {
-            display: none;
-            position: absolute;
-            top: 52px;
-            left: 18px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            min-width: 100px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-            z-index: 100;
-            padding: 8px;
-            overflow: hidden;
-        }
-        .settings-menu button {
-            width: 100%;
-            padding: 8px 12px;
-            font-size: 0.98rem;
-            color: var(--text-primary);
-            background: transparent;
-            border: none;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .settings-menu button:hover {
-            background: var(--accent-blue);
-            color: #131314;
-        }
-        #signOutBtn {
-            display: none;
-        }
-        .user-info {
-            display: none;
-            text-align: center;
-            background: var(--bg-tertiary);
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        #user-name {
-            margin-top: 8px;
-            font-weight: 500;
-        }
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-        }
-        .loading {
-            display: none;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-top: 16px;
-            text-align: center;
-        }
-        .spinner {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #3c4043;
-            border-top: 2px solid var(--accent-blue);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .centered {
+            text-align: center;
         }
-        @media (max-width: 600px) {
-            .container {
-                padding: 24px 16px;
-                margin: 10px;
-                border: none;
-                border-radius: 0;
-                box-shadow: none;
-                margin-top: 32px;
-            }
-            h1 {
-                font-size: 1.2rem;
-            }
-            .logo {
-                font-size: 2.5rem;
-            }
+        .update-app-btn {
+            margin-top: 16px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: #27ae60;
+            color: #fff;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .status-indicator {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
         }
     </style>
 </head>
 <body>
-    <div class="main-center">
-    <!-- 已移除漢堡按鈕與設定選單 -->
-    <!-- user-info 區塊已移除 -->
-        <span class="logo">🧊</span>
-    <h1>Obyssey</h1>
-        <p class="subtitle">
-            溯源的目的是認識自己，<br>
-            認識自己就是忘記自己，<br>
-            忘記自己就是覺悟於萬物。
-        </p>
-        <div class="auth-section">
-            <div id="google-signin-btn"></div>
+    <div class="container">
+        <h1>安裝 Obyssey App 到手機</h1>
+        <div class="centered">
+            <button id="installAppBtn" class="install-app-btn" style="display: none;">安裝App</button>
+            <div id="statusIndicator" class="status-indicator" style="display: none;">
+                正在檢查安裝狀態...
+            </div>
         </div>
-        <div id="loading" class="loading">
-            <div class="spinner"></div>
-            正在進入應用...
+        
+        <div class="guide">
+            <h2>安裝前提醒</h2>
+            <ul>
+                <li>請用預設瀏覽器（Safari 或 Chrome）開啟本頁，避免在 LINE、Facebook 等 App 內建瀏覽器安裝。</li>
+                <li>如需複製網址，可長按網址或點選「複製連結」後貼到瀏覽器。</li>
+            </ul>
+            <h2>iOS / iPad 安裝教學</h2>
+            <ul>
+                <li>1. 使用 Safari 開啟 <a href="https://satir-ice-berg-web.vercel.app/" target="_blank" rel="noopener">Obyssey 網站</a></li>
+                <li>2. 點擊頁面上的「安裝App」按鈕</li>
+                <li>3. 若未顯示安裝提示，請點選 Safari 下方「分享」按鈕 <span class="share-icon">&#x1F4E4;</span></li>
+                <li>4. 選擇「加入主畫面」(Add to Home Screen)</li>
+                <li>5. 點擊「加入」即可完成安裝，桌面會出現 Obyssey App 圖示</li>
+            </ul>
+            <h2>Android 安裝教學</h2>
+            <ul>
+                <li>1. 使用 Chrome 開啟 <a href="https://satir-ice-berg-web.vercel.app/" target="_blank" rel="noopener">Obyssey 網站</a></li>
+                <li>2. 點擊頁面上的「安裝App」按鈕</li>
+                <li>3. 若未顯示安裝提示，請點選瀏覽器選單「安裝 App」</li>
+                <li>4. 按照提示完成安裝，桌面會出現 Obyssey App 圖示</li>
+            </ul>
         </div>
+        <div class="note">如未顯示安裝提示，請確認瀏覽器版本或改用 Safari/Chrome。</div>
     </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- PWA 安裝事件（只保留 installAppBtn 流程）---
-        let deferredPrompt = null;
-        window.addEventListener('beforeinstallprompt', function(e) {
-            e.preventDefault();
-            deferredPrompt = e;
-            const installBtn = document.getElementById('installAppBtn');
-            if (installBtn) installBtn.style.display = 'inline-block';
+
+        <!-- 引入 PWA 配置文件 -->
+        <script src="/pwa-config.js"></script>
+        <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            if (window.PWAInstallManager) {
+                window.pwaManager = new window.PWAInstallManager();
+            }
         });
-        const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) {
-            installBtn.addEventListener('click', function() {
-                if (deferredPrompt) {
-                    deferredPrompt.prompt();
-                    deferredPrompt.userChoice.then(function(choiceResult) {
-                        deferredPrompt = null;
-                    });
-                } else {
-                    alert('請使用支援PWA的瀏覽器，或已安裝/不支援安裝提示');
-                }
-            });
-        }
-        // --- 其他原本 JS 可放這裡 ---
-        
-    // --- 其他原本 JS 可放這裡 ---
-        });
-
-        // --- Service Worker 註冊 ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        registration.onupdatefound = () => {
-                            const installingWorker = registration.installing;
-                            installingWorker.onstatechange = () => {
-                                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    showUpdateNotification();
-                                }
-                            };
-                        };
-                    }).catch(error => console.error('Service Worker 註冊失敗:', error));
-            });
-        }
-
-        function showUpdateNotification() {
-            const updateMsg = createToast('🔄 發現新版本，點擊重新載入', true);
-            updateMsg.onclick = () => window.location.reload();
-            document.body.appendChild(updateMsg);
-        }
-
-        function createToast(message, permanent = false) {
-            const toast = document.createElement('div');
-            toast.style.cssText = 'position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 12px 24px; border-radius: 8px; z-index: 1000; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            if (!permanent) {
-                setTimeout(() => { document.body.removeChild(toast); }, 3000);
-            }
-            return toast;
-        }
-
-        // --- Google 登入系統 ---
-        const signOutBtn = document.getElementById('signOutBtn');
-
-        function initializeGoogleSignIn() {
-            if (typeof google === 'undefined' || !google.accounts) {
-                showGoogleLoginError('Google 登入服務載入失敗');
-                return;
-            }
-            try {
-                google.accounts.id.initialize({
-                    client_id: "28263511849-3rk0avke93rn8rfdi5hq0boffkp6gm0j.apps.googleusercontent.com",
-                    callback: handleGoogleSignIn,
-                    auto_prompt: false
-                });
-                google.accounts.id.renderButton(
-                    document.getElementById("google-signin-btn"), {
-                        theme: "outline",
-                        size: "large",
-                        type: "standard",
-                        text: "signin_with",
-                        locale: "zh_TW",
-                        width: 280
-                    }
-                );
-            } catch (error) {
-                showGoogleLoginError('Google 登入初始化失敗，請檢查網域設定');
-            }
-        }
-        
-        function showGoogleLoginError(message) {
-            const googleSigninBtn = document.getElementById('google-signin-btn');
-            if (googleSigninBtn) {
-                googleSigninBtn.innerHTML = `<div style="text-align: center; padding: 16px; color: #e74c3c;"><p style="margin: 0 0 8px 0; font-size: 0.9rem;">${message}</p><p style="margin: 0; font-size: 0.8rem; color: #95a5a6;">請檢查 Google Cloud Console 的網域授權設定</p></div>`;
-            }
-        }
-
-        function handleGoogleSignIn(response) {
-            const jwt = response.credential;
-            try {
-                const payload = parseJWT(jwt);
-                const user = {
-                    id: payload.sub,
-                    name: payload.name,
-                    email: payload.email,
-                    picture: payload.picture
-                };
-                localStorage.setItem('user_info', JSON.stringify(user));
-                updateUIForLoggedInUser(user);
-                proceedToApp();
-            } catch (err) {
-                showGoogleLoginError('Google 登入憑證處理失敗');
-            }
-        }
-
-        function parseJWT(token) {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
-            return JSON.parse(jsonPayload);
-        }
-
-        function updateUIForLoggedInUser(user) {
-            const userInfoDiv = document.getElementById('user-info');
-            const userAvatar = document.getElementById('user-avatar');
-            const userName = document.getElementById('user-name');
-            const authSection = document.querySelector('.auth-section');
-
-            if (userAvatar && userName && userInfoDiv) {
-                userAvatar.src = user.picture || '';
-                userName.textContent = user.name || user.email;
-                userInfoDiv.style.display = 'block';
-                if(authSection) authSection.style.display = 'none';
-                if(signOutBtn) signOutBtn.style.display = 'block';
-                if(installHardBtn) installHardBtn.style.display = 'none'; // 登入後選單只留登出
-            }
-        }
-
-        function proceedToApp() {
-            const loading = document.getElementById('loading');
-            if (loading) loading.style.display = 'block';
-            setTimeout(() => {
-                window.location.href = './ice.html';
-            }, 1200);
-        }
-
-        function checkExistingAuth() {
-            const userInfo = localStorage.getItem('user_info');
-            if (userInfo) {
-                try {
-                    const user = JSON.parse(userInfo);
-                    updateUIForLoggedInUser(user);
-                } catch (error) {
-                    localStorage.removeItem('user_info');
-                }
-            }
-        }
-
-        window.signOut = function() {
-            if (typeof google !== 'undefined' && google.accounts) {
-                google.accounts.id.disableAutoSelect();
-            }
-            localStorage.removeItem('user_info');
-            window.location.reload();
-        }
-
-        // --- 初始化 ---
-        checkExistingAuth();
-        setTimeout(initializeGoogleSignIn, 500); // 稍微延遲以確保 GSI 腳本載入
-    // 結束 DOMContentLoaded 事件
-    </script>
+        </script>
 </body>
 </html>
