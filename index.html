@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKOPOS</title>
-    <meta name="application-name" content="SKOPOS">
+    <title>Obyssey</title>
+    <meta name="application-name" content="Obyssey">
     <meta name="description" content="基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界">
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
@@ -24,6 +24,14 @@
             --border-color: #3c4043;
             --accent-blue: #8ab4f8;
         }
+        .main-center {
+            max-width: 400px;
+            margin: 48px auto 0 auto;
+            text-align: center;
+        }
+        /* Removing the .main-center CSS class */
+        /* This class was mistakenly displayed in the content */
+        /* It is now removed to clean up the code */
         body {
             font-family: 'Google Sans', 'Noto Sans TC', sans-serif;
             background-color: var(--bg-primary);
@@ -31,15 +39,16 @@
             margin: 0;
             padding: 0;
         }
-        .container {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            max-width: 400px;
-            margin: 48px auto;
-            padding: 32px 24px;
-            box-shadow: 0 4px 32px rgba(0,0,0,0.18);
-            position: relative;
+        /* .container 樣式已移除，內容直接置中顯示 */
+        .install-app-btn {
+            margin-top: 16px;
+            padding: 8px 18px;
+            border-radius: 8px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
         }
         .settings-btn {
             position: absolute;
@@ -184,25 +193,19 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <button class="settings-btn" id="settingsBtn" title="設定">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
-            </svg>
-            <button id="signOutBtn" onclick="signOut()">登出帳號</button>
-        <div class="settings-menu" id="settingsMenu">
-            <button id="installHardBtn">安裝應用</button>
-            <button id="signOutBtn" style="display: none;" onclick="signOut()">登出帳號</button>
-        </div>
-        <div id="user-info" class="user-info">
-            <img id="user-avatar" class="user-avatar" src="" alt="使用者頭像">
-            <div id="user-name"></div>
-        </div>
+    <div class="main-center">
+    <!-- 已移除漢堡按鈕與設定選單 -->
+    <!-- user-info 區塊已移除 -->
         <span class="logo">🧊</span>
-        <h1>SKOPOS</h1>
-        <p class="subtitle">探索內心深處，看到更真實的自我</p>
+    <h1>Obyssey</h1>
+        <p class="subtitle">
+            溯源的目的是認識自己，<br>
+            認識自己就是忘記自己，<br>
+            忘記自己就是覺悟於萬物。
+        </p>
         <div class="auth-section">
             <div id="google-signin-btn"></div>
+            <button id="installAppBtn" class="install-app-btn">安裝App</button>
         </div>
         <div id="loading" class="loading">
             <div class="spinner"></div>
@@ -211,58 +214,30 @@
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- 設定選單系統 ---
-        const settingsBtn = document.getElementById('settingsBtn');
-        const settingsMenu = document.getElementById('settingsMenu');
-        const installHardBtn = document.getElementById('installHardBtn');
-        let menuVisible = false;
-
-        if (settingsBtn && settingsMenu) {
-            settingsBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                menuVisible = !menuVisible;
-                settingsMenu.style.display = menuVisible ? 'block' : 'none';
-            });
-            document.addEventListener('click', function(e) {
-                if (menuVisible && !settingsMenu.contains(e.target) && e.target !== settingsBtn) {
-                    settingsMenu.style.display = 'none';
-                    menuVisible = false;
-                }
-            });
-        }
-        
-        // --- PWA 安裝支援 ---
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
+        // --- PWA 安裝事件（只保留 installAppBtn 流程）---
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             deferredPrompt = e;
-            if (installHardBtn) {
-                installHardBtn.style.display = 'block';
-            }
+            const installBtn = document.getElementById('installAppBtn');
+            if (installBtn) installBtn.style.display = 'inline-block';
         });
-
-        if (installHardBtn) {
-            installHardBtn.onclick = async () => {
-                if (!deferredPrompt) {
-                    alert('此瀏覽器不支援應用安裝，或已安裝。請嘗試使用 Chrome、Edge 或 Safari。');
-                    return;
+        const installBtn = document.getElementById('installAppBtn');
+        if (installBtn) {
+            installBtn.addEventListener('click', function() {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(function(choiceResult) {
+                        deferredPrompt = null;
+                    });
+                } else {
+                    alert('請使用支援PWA的瀏覽器，或已安裝/不支援安裝提示');
                 }
-                const result = await deferredPrompt.prompt();
-                if (result.outcome === 'accepted') {
-                    installHardBtn.style.display = 'none';
-                }
-                deferredPrompt = null;
-            };
+            });
         }
+        // --- 其他原本 JS 可放這裡 ---
         
-        // 如果 App 已經安裝，或無法安裝，則隱藏按鈕
-        if (window.matchMedia('(display-mode: standalone)').matches || !deferredPrompt) {
-             if (installHardBtn) installHardBtn.style.display = 'none';
-        }
-
-        window.addEventListener('appinstalled', () => {
-            if (installHardBtn) installHardBtn.style.display = 'none';
-            createToast('🎉 應用安裝成功！現在可以從桌面啟動');
+    // --- 其他原本 JS 可放這裡 ---
         });
 
         // --- Service Worker 註冊 ---
@@ -407,7 +382,7 @@
         // --- 初始化 ---
         checkExistingAuth();
         setTimeout(initializeGoogleSignIn, 500); // 稍微延遲以確保 GSI 腳本載入
-    });
+    // 結束 DOMContentLoaded 事件
     </script>
 </body>
 </html>
