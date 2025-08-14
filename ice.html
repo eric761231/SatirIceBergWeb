@@ -474,6 +474,9 @@
                     </svg>
                 </button>
             </div>
+            <div class="mb-2">
+                <div id="sidebar-phase-indicator" class="text-xs text-gray-400 px-2 py-1 rounded bg-gray-700 w-full text-left">目前階段：表層探索 (行為→感受)</div>
+            </div>
             <!-- 側邊欄標題區域 -->
             <div class="flex items-center gap-2 mb-6 expanded-only">
                 <!-- 桌面版：側欄左上角收合按鈕（三條橫線） -->
@@ -621,14 +624,9 @@
     <div class="max-w-3xl mx-auto md:max-w-none md:mx-0 gemini-container relative z-30 md:h-full md:flex md:flex-col md:min-h-0 flex flex-col h-screen">
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center flex-shrink-0">
-            <div class="flex items-center justify-between w-full">
-                <h1 class="text-xl font-medium md:ml-12 ml-16">Obyssey</h1>
-                <div class="flex items-center gap-4">
-                    <div class="phase-indicator text-sm text-gray-400">目前階段：表層探索 (行為→感受)</div>
-                    <div id="usage-indicator" class="phase-indicator text-sm text-gray-400">
-                        今日使用：<span id="usage-count">0</span>/<span id="usage-limit">50</span> 次
-                    </div>
-                </div>
+            <div class="flex flex-col w-full items-center justify-center relative">
+                <h1 class="text-xl font-medium text-center w-full" style="margin:0;">Obyssey</h1>
+                <div id="usage-indicator" class="phase-indicator text-sm text-gray-400 text-right whitespace-nowrap absolute right-0 top-0" style="min-width:120px;">今日使用：<span id="usage-count">0</span>/<span id="usage-limit">50</span> 次</div>
             </div>
         </div>
 
