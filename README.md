@@ -1,3 +1,4 @@
+# 強制觸發 Vercel 部署 2025/08/14
 <<<<<<< HEAD
 # 薩提爾冰山探索者 (Satir Iceberg Web)
 
