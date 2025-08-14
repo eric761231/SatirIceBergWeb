@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -581,3 +582,588 @@
     </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKOPOS</title>
+    <meta name="application-name" content="SKOPOS">
+    <meta name="description" content="基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="shortcut icon" href="/icons/icon-192x192.png">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #131314;
+            --bg-secondary: #1e1f20;
+            --bg-tertiary: #2a2b2c;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --border-color: #3c4043;
+            --accent-blue: #8ab4f8;
+        }
+        body {
+            font-family: 'Google Sans', 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .container {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 400px;
+            margin: 48px auto;
+            padding: 32px 24px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+            position: relative;
+        }
+        /* === 設定按鈕樣式 === */
+        .settings-btn {
+            position: absolute; /* 絕對定位，相對於 container */
+            top: 18px; /* 距離頂部 18px */
+            left: 18px; /* 距離左側 18px */
+            background: none; /* 透明背景 */
+            border: none; /* 無邊框 */
+            cursor: pointer; /* 滑鼠指標變為手型 */
+            font-size: 1.5rem; /* 圖標大小 */
+            color: var(--text-secondary); /* 次要文字顏色 */
+            transition: color 0.2s; /* 顏色過渡動畫 */
+            z-index: 10; /* 確保在適當層級 */
+        }
+        .settings-btn:hover {
+            color: var(--accent-blue); /* 懸停時變為強調色 */
+        }
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 18px;
+            display: block;
+            text-align: center;
+        }
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 28px;
+            line-height: 1.5;
+            text-align: center;
+        }
+        .auth-section {
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .login-btn {
+            background: transparent !important;
+            /* 移除 color，交由 #installHardBtn 控制 */
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px;
+            text-decoration: none;
+        }
+        /* installHardBtn 尺寸與定位：絕對定位於左上角，寬度 160~220px，padding 12px 10px */
+        #installHardBtn {
+            width: 100%;
+            min-width: 90px;
+            max-width: 120px;
+            padding: 6px 8px;
+            font-size: 0.95rem;
+            color: #fff !important;
+            background: transparent !important;
+            border: none;
+            text-align: left;
+        }
+        /* === 設定選單樣式 === */
+        .settings-menu {
+            /* 選單初始隱藏，由 JS 控制顯示 */
+            display: none;
+            /* 絕對定位於設定按鈕下方 */
+            position: absolute;
+            top: 44px;      /* 距離 container 上方 44px，與設定按鈕對齊 */
+            left: 18px;     /* 與設定按鈕左側對齊 */
+            /* 背景色與主題一致 */
+            background: var(--bg-tertiary);
+            /* 邊框顏色與主題一致 */
+            border: 1px solid var(--border-color);
+            /* 圓角 4px，讓選單略微圓潤 */
+            border-radius: 4px;
+            /* 最小寬度 80px，最大寬度 90px，確保內容不擠壓 */
+            min-width: 80px;
+            max-width: 90px;
+            /* 陰影 0 4px 16px，讓選單浮起來 */
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            /* z-index 100，確保在最上層 */
+            z-index: 100;
+            /* 上下 padding 0px，讓選單內容不貼邊 */
+            padding: 0px 0;
+        }
+        /* === 設定選單按鈕樣式 === */
+        .settings-menu button {
+            width: 100%;      /* 按鈕寬度填滿選單，與選單寬度一致 */
+            padding: 0 12px;  /* 左右內距 12px，讓文字不貼邊 */
+            height: 24px;     /* 固定高度 24px，讓按鈕更一致 */
+            font-size: 0.98rem; /* 字體大小 */
+            color: #fff !important; /* 白色文字 */
+            background: transparent !important; /* 透明背景 */
+            border: none; /* 無邊框 */
+            text-align: center; /* 文字置中 */
+            cursor: pointer; /* 滑鼠指標變為手型 */
+            border-radius: 2px; /* 輕微圓角 */
+        }
+        .settings-menu button:hover {
+            background: var(--accent-blue); /* 懸停時背景變為強調色 */
+            color: #131314 !important; /* 懸停時文字變為深色 */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.10); /* 懸停時添加陰影 */
+        }
+        .login-btn:hover {
+            /* 安裝應用按鈕保持透明，不受 hover 影響 */
+            background: transparent !important;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .user-info {
+            display: none;
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        #user-name {
+            text-align: center;
+        }
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+        }
+        .loading {
+            display: none;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 16px;
+            text-align: center;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #3c4043;
+            border-top: 2px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+                margin: 10px;
+            }
+            h1 {
+                font-size: 1.2rem;
+            }
+            .logo {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="settings-btn" id="settingsBtn" title="設定">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+            </svg>
+        </button>
+        <div class="settings-menu" id="settingsMenu">
+            <button class="login-btn" id="installHardBtn">安裝應用</button>
+        </div>
+        
+        <div id="user-info" class="user-info">
+            <img id="user-avatar" class="user-avatar" src="" alt="使用者頭像">
+            <div id="user-name"></div>
+        </div>
+        
+        <span class="logo">🧊</span>
+        <h1>SKOPOS</h1>
+        <p class="subtitle">探索內心深處,看到更真實的自我</p>
+        
+        <div class="auth-section">
+            <div id="google-signin-btn"></div>
+            
+        </div>
+        
+
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            正在進入應用...
+        </div>
+    </div>
+
+    <script>
+        // === 設定選單系統 ===
+        /**
+         * 初始化設定按鈕和下拉選單功能
+         * 控制設定按鈕的點擊事件和選單的顯示/隱藏
+         * 
+         * 功能說明：
+         * - 點擊設定按鈕切換選單顯示狀態
+         * - 點擊外部區域自動隱藏選單
+         * - 防止事件冒泡，避免意外觸發其他事件
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsMenu = document.getElementById('settingsMenu');
+            const installHardBtn = document.getElementById('installHardBtn');
+            let menuVisible = false; // 追蹤選單顯示狀態
+            
+            if (settingsBtn && settingsMenu) {
+                // 設定按鈕點擊事件 - 切換選單顯示/隱藏
+                settingsBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 防止事件冒泡
+                    menuVisible = !menuVisible; // 切換顯示狀態
+                    settingsMenu.style.display = menuVisible ? 'block' : 'none'; // 控制選單顯示
+                });
+                
+                // 點擊外部區域隱藏選單 - 提升用戶體驗
+                document.addEventListener('click', function(e) {
+                    if (menuVisible && !settingsMenu.contains(e.target) && e.target !== settingsBtn) {
+                        settingsMenu.style.display = 'none'; // 隱藏選單
+                        menuVisible = false; // 更新狀態
+                    }
+                });
+            }
+            // installHardBtn 的點擊事件由 showInstallButton() 控制
+        });
+        
+        // PWA 安裝支援
+        let deferredPrompt;
+        let installButton;
+        
+        // 檢測 PWA 安裝提示
+        window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('💫 PWA 安裝提示可用');
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallButton();
+        });
+        
+        // 顯示安裝按鈕
+        function showInstallButton() {
+            // 僅在支援 PWA 並觸發 beforeinstallprompt 時才設定 installHardBtn 的 onclick
+            const installHardBtn = document.getElementById('installHardBtn');
+            if (installHardBtn) {
+                installHardBtn.onclick = installPWA;
+            }
+        }
+        
+        // 安裝 PWA
+        async function installPWA() {
+            if (!deferredPrompt) {
+                alert('此瀏覽器不支援應用安裝，請使用 Chrome、Edge 或 Safari');
+                return;
+            }
+            
+            const result = await deferredPrompt.prompt();
+            console.log('🚀 PWA 安裝結果:', result.outcome);
+            
+            if (result.outcome === 'accepted') {
+                console.log('✅ 用戶接受安裝');
+                hideInstallButton();
+            } else {
+                console.log('❌ 用戶拒絕安裝');
+            }
+            
+            deferredPrompt = null;
+        }
+        
+        // 隱藏安裝按鈕
+        function hideInstallButton() {
+            if (installButton) {
+                installButton.style.display = 'none';
+            }
+        }
+        
+        // 檢測 PWA 安裝狀態
+        window.addEventListener('appinstalled', (evt) => {
+            console.log('🎉 PWA 安裝成功');
+            hideInstallButton();
+            
+            // 顯示安裝成功訊息彈出視窗
+            const successMsg = document.createElement('div');
+            successMsg.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #27ae60;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 1000;
+                font-size: 14px;
+            `;
+            successMsg.textContent = '🎉 應用安裝成功！現在可以從桌面啟動';
+            document.body.appendChild(successMsg);
+            // 3 秒後自動移除彈窗
+            setTimeout(() => {
+                document.body.removeChild(successMsg);
+            }, 3000);
+        });
+        
+        // 註冊 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker 註冊成功:', registration.scope);
+                        
+                        // 檢查更新
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('🔄 發現新版本，準備更新');
+                                    showUpdateNotification();
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('❌ Service Worker 註冊失敗:', error);
+                    });
+            });
+        }
+        
+        // 顯示更新通知
+        function showUpdateNotification() {
+            const updateMsg = document.createElement('div');
+            updateMsg.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #3498db;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 1000;
+                font-size: 14px;
+                cursor: pointer;
+            `;
+            updateMsg.innerHTML = '🔄 發現新版本，點擊重新載入';
+            updateMsg.onclick = () => window.location.reload();
+            document.body.appendChild(updateMsg);
+        }
+        
+        // Google 登入配置
+        let gapi_loaded = false;
+        let gsi_loaded = false;
+        
+        // 初始化 Google Identity Services
+        function initializeGoogleSignIn() {
+            if (typeof google === 'undefined' || !google.accounts) {
+                console.warn('Google Identity Services 尚未載入');
+                return;
+            }
+            
+            console.log('初始化 Google 登入...');
+            console.log('當前網址:', window.location.origin);
+            
+            try {
+                google.accounts.id.initialize({
+                    client_id: "28263511849-3rk0avke93rn8rfdi5hq0boffkp6gm0j.apps.googleusercontent.com",
+                    callback: handleGoogleSignIn,
+                    auto_prompt: false
+                });
+                
+                google.accounts.id.renderButton(
+                    document.getElementById("google-signin-btn"), {
+                        theme: "outline",
+                        size: "large",
+                        type: "standard",
+                        text: "signin_with",
+                        locale: "zh_TW",
+                        width: 280
+                    }
+                );
+                
+                console.log('✅ Google 登入按鈕初始化成功');
+            } catch (error) {
+                console.error('❌ Google 登入初始化失敗:', error);
+                showGoogleLoginError('Google 登入初始化失敗，請檢查網址設定');
+            }
+        }
+        
+        // 顯示 Google 登入錯誤訊息
+        function showGoogleLoginError(message) {
+            const googleSigninBtn = document.getElementById('google-signin-btn');
+            if (googleSigninBtn) {
+                googleSigninBtn.innerHTML = `
+                    <div style="text-align: center; padding: 16px; color: #e74c3c;">
+                        <p style="margin: 0 0 8px 0; font-size: 0.9rem;">${message}</p>
+                        <p style="margin: 0; font-size: 0.8rem; color: #95a5a6;">請檢查 Google Cloud Console 設定</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // 處理 Google 登入回調
+        function handleGoogleSignIn(response) {
+            console.log('Google 登入成功，處理回應...');
+            const jwt = response.credential;
+            
+            try {
+                // 直接解析 JWT 獲取用戶信息
+                const payload = parseJWT(jwt);
+                const user = {
+                    id: payload.sub,
+                    name: payload.name,
+                    email: payload.email,
+                    picture: payload.picture
+                };
+                
+                console.log('用戶信息:', user);
+                
+                // 儲存用戶信息到 localStorage
+                localStorage.setItem('user_info', JSON.stringify(user));
+                showUserInfo(user);
+                
+                // 延遲進入應用
+                setTimeout(proceedToApp, 1500);
+                
+            } catch (err) {
+                console.error('Google 登入處理失敗:', err);
+                alert('登入處理失敗，請檢查 Google Cloud Console 設定');
+            }
+        }
+        
+        // 解析 JWT Token
+        function parseJWT(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (error) {
+                console.error('JWT 解析失敗:', error);
+                throw new Error('無法解析登入憑證');
+            }
+        }
+        
+        // 顯示用戶信息
+        function showUserInfo(user) {
+            const userInfo = document.getElementById('user-info');
+            const userAvatar = document.getElementById('user-avatar');
+            const userName = document.getElementById('user-name');
+            const authSection = document.querySelector('.auth-section');
+            
+            if (userAvatar && userName && userInfo) {
+                userAvatar.src = user.picture || '';
+                userName.textContent = user.name || user.email;
+                userInfo.style.display = 'block';
+            }
+            
+            if (authSection) {
+                authSection.style.display = 'none';
+            }
+        }
+        
+
+        
+        // 進入主應用
+        function proceedToApp() {
+            const loading = document.getElementById('loading');
+            if (loading) {
+                loading.style.display = 'block';
+            }
+            setTimeout(() => {
+                window.location.href = './ice.html';
+            }, 800);
+        }
+        
+        // 檢查現有登入狀態
+        function checkExistingAuth() {
+            const userInfo = localStorage.getItem('user_info');
+            
+            if (userInfo) {
+                try {
+                    const user = JSON.parse(userInfo);
+                    showUserInfo(user);
+                } catch (error) {
+                    console.error('解析用戶信息失敗:', error);
+                    localStorage.removeItem('user_info');
+                }
+            }
+        }
+        
+        // 頁面載入完成後初始化
+        window.addEventListener('load', function() {
+            // 顯示當前網址
+            const currentUrlSpan = document.getElementById('current-url');
+            if (currentUrlSpan) {
+                currentUrlSpan.textContent = window.location.origin;
+            }
+            
+            // 檢查現有認證狀態
+            checkExistingAuth();
+            
+            // 初始化 Google 登入（延遲載入以避免阻塞）
+            setTimeout(() => {
+                if (typeof google !== 'undefined' && google.accounts) {
+                    initializeGoogleSignIn();
+                } else {
+                    console.warn('Google Identity Services 載入失敗');
+                    // 隱藏 Google 登入按鈕並顯示錯誤訊息
+                    const googleSigninBtn = document.getElementById('google-signin-btn');
+                    if (googleSigninBtn) {
+                        googleSigninBtn.innerHTML = 
+                            '<p style="color: #7f8c8d; font-size: 0.9rem;">Google 登入暫時無法使用</p>';
+                    }
+                }
+            }, 1000);
+        });
+        
+        // 登出功能（供之後使用）
+        function signOut() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                google.accounts.id.disableAutoSelect();
+            }
+            localStorage.removeItem('user_info');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
+>>>>>>> 09d91cdc0b5b9c6f0152c10c424cbd2c9ac89208
