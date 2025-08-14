@@ -13,7 +13,6 @@
     
     <!-- PWA 相關 -->
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-152x152.png">
     <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -139,6 +138,7 @@
 
         /* 智能安裝提示樣式 */
         #ios-install-banner {
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
@@ -508,7 +508,7 @@
                 <!-- 標題欄 -->
                 <div class="flex justify-between items-center p-6 border-b border-gray-600">
                     <h2 class="text-xl font-semibold text-white">對話記錄</h2>
-                    <button onclick="closeConversationHistory()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700">
+                    <button onclick="closeConversationHistory()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700" title="關閉對話記錄" aria-label="關閉對話記錄">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>

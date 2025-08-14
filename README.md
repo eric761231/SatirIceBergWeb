@@ -98,6 +98,66 @@ iOS 對 PWA 的支援有限制：
 ### 替換現有圖示
 
 1. **生成新圖示**：使用上述工具之一生成所需尺寸
+
+## 📱 iOS 原生應用打包
+
+### 專案已轉換為 React Native
+
+我們已經將專案從 Web 版本轉換為 React Native 版本，現在可以生成真正的 iOS 原生應用！
+
+### 打包方式選擇
+
+#### 🍎 方案 1：macOS 原生構建（推薦）
+- **最佳性能和用戶體驗**
+- **可以上架 App Store**
+- **需要 Mac 電腦和開發者帳號**
+
+**步驟：**
+1. 將專案複製到 Mac 電腦
+2. 安裝 Xcode 和 Command Line Tools
+3. 安裝 CocoaPods：`sudo gem install cocoapods`
+4. 運行：`chmod +x ios-build.sh && ./ios-build.sh`
+
+#### ☁️ 方案 2：Expo 雲端構建
+- **無需 Mac 電腦**
+- **雲端構建服務**
+- **需要 Expo 帳號，構建時間較長**
+
+**步驟：**
+1. 安裝 Expo CLI：`npm install -g @expo/cli`
+2. 創建 Expo 專案：`expo init SkoposExpo`
+3. 複製 `src/` 目錄到新專案
+4. 運行：`expo build:ios`
+
+#### 🌐 方案 3：Web 應用轉換
+- **立即可用**
+- **可部署到任何 Web 服務器**
+- **不是原生應用，功能受限**
+
+**步驟：**
+1. 安裝依賴：`npm install react-native-web react-dom`
+2. 運行：`npm run web`
+
+### 快速開始
+
+#### Windows 用戶
+```powershell
+# 運行互動式打包工具
+.\build-ios-windows.ps1
+```
+
+#### macOS 用戶
+```bash
+# 運行自動打包腳本
+chmod +x ios-build.sh
+./ios-build.sh
+```
+
+### 詳細文檔
+
+- **完整指南**：`IOS_BUILD_GUIDE.md`
+- **React Native 專案**：`README-RN.md`
+- **打包腳本**：`ios-build.sh` (macOS), `build-ios-windows.ps1` (Windows)
 2. **替換文件**：將生成的 PNG 文件放到 `icons/` 目錄
 3. **更新配置**：確保 `manifest.json` 中的路徑正確
 4. **清除快取**：重新安裝 PWA 或清除瀏覽器快取
