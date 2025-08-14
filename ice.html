@@ -474,9 +474,8 @@
             <!-- 用戶個人資料區域 -->
             <div class="flex flex-col items-center gap-3 mb-6 expanded-only">
                 <div class="user-avatar-container">
-                    <div class="user-avatar-circle">
-                        <img id="user-avatar-img" src="" alt="用戶頭像" class="w-16 h-16 rounded-full object-cover hidden" />
-                        <span id="user-avatar-text" class="user-avatar-text">S</span>
+                    <div id="user-avatar-circle" class="user-avatar-circle hidden">
+                        <img id="user-avatar-img" src="" alt="用戶頭像" class="w-16 h-16 rounded-full object-cover" />
                     </div>
                 </div>
                 <div class="user-profile-info text-center">
@@ -543,7 +542,7 @@
                 </button>
 
                 <!-- 新增選項：冥想音樂 -->
-                <button onclick="showMeditationMusic()" class="w-full text-left px-4 py-3 text-sm text-blue-300 hover:bg-blue-700 hover:text-white rounded-lg transition-colors" title="冥想音樂">
+                <a href="meditation.html" class="w-full text-left px-4 py-3 text-sm text-blue-300 hover:bg-blue-700 hover:text-white rounded-lg transition-colors block" title="冥想音樂">
                     <div class="flex items-center space-x-3">
                         <span class="text-lg">🎵</span>
                         <div>
@@ -551,7 +550,7 @@
                             <div class="text-xs text-blue-200">放鬆心情，進入冥想狀態</div>
                         </div>
                     </div>
-                </button>
+                </a>
 
                 <!-- 新增選項：每日閱讀 -->
                 <button onclick="showDailyReading()" class="w-full text-left px-4 py-3 text-sm text-green-300 hover:bg-green-700 hover:text-white rounded-lg transition-colors" title="每日閱讀">
@@ -1587,19 +1586,16 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
         
         // 登出功能
         function handleLogout() {
-            // 不清除本地資料
-            // 重設用戶資訊
             const avatarImg = document.getElementById('user-avatar-img');
-            const avatarText = document.getElementById('user-avatar-text');
+            const avatarCircle = document.getElementById('user-avatar-circle');
             const userNameDiv = document.getElementById('user-name');
             const logoutBtn = document.getElementById('logout-btn');
             const googleSignin = document.querySelector('.g_id_signin');
-            avatarImg.classList.add('hidden');
-            avatarText.classList.remove('hidden');
+            avatarImg.src = '';
+            avatarCircle.classList.add('hidden');
             if (userNameDiv) userNameDiv.textContent = '未登入';
             if (logoutBtn) logoutBtn.classList.add('hidden');
             if (googleSignin) googleSignin.style.display = '';
-            // Google Identity Services signOut
             if (window.google && window.google.accounts && window.google.accounts.id) {
                 window.google.accounts.id.disableAutoSelect();
             }
@@ -1613,36 +1609,38 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const avatarUrl = payload.picture || '';
             const userName = payload.name || payload.email || 'Google 用戶';
             const avatarImg = document.getElementById('user-avatar-img');
-            const avatarText = document.getElementById('user-avatar-text');
+            const avatarCircle = document.getElementById('user-avatar-circle');
             const userNameDiv = document.getElementById('user-name');
             const logoutBtn = document.getElementById('logout-btn');
             const googleSignin = document.querySelector('.g_id_signin');
             if (avatarUrl) {
                 avatarImg.src = avatarUrl;
-                avatarImg.classList.remove('hidden');
-                avatarText.classList.add('hidden');
+                avatarCircle.classList.remove('hidden');
             } else {
-                avatarImg.classList.add('hidden');
-                avatarText.classList.remove('hidden');
+                avatarCircle.classList.add('hidden');
             }
             if (userNameDiv) userNameDiv.textContent = userName;
-            // 隱藏登入按鈕，顯示登出按鈕
             if (googleSignin) googleSignin.style.display = 'none';
             if (logoutBtn) logoutBtn.classList.remove('hidden');
             alert('Google 登入成功！');
-
         }
 
         // 頁面載入時初始化用戶資訊
         function initUserProfile() {
             const avatarImg = document.getElementById('user-avatar-img');
-            const avatarText = document.getElementById('user-avatar-text');
+            const avatarCircle = document.getElementById('user-avatar-circle');
             const userNameDiv = document.getElementById('user-name');
-            avatarImg.classList.add('hidden');
-            avatarText.classList.remove('hidden');
+            avatarImg.src = '';
+            avatarCircle.classList.add('hidden');
             if (userNameDiv) userNameDiv.textContent = '未登入';
         }
-        document.addEventListener('DOMContentLoaded', initUserProfile);
+        document.addEventListener('DOMContentLoaded', function() {
+            initUserProfile();
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+        });
     </script>
 
     <!-- Google Identity Services SDK -->

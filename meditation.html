@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>冥想音樂播放器</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+        .container {
+            background: rgba(30, 30, 45, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            max-width: 600px;
+            width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.2em;
+            font-weight: 300;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .music-list {
+            list-style: none;
+            padding: 0;
+        }
+        .music-item {
+            background: rgba(45, 45, 60, 0.8);
+            margin-bottom: 18px;
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,0.07);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .music-title {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+        audio {
+            width: 100%;
+            margin-top: 6px;
+        }
+        .creed-container {
+            margin-top: 10px;
+        }
+        .creed-toggle {
+            background: none;
+            border: none;
+            color: #e0e0e0;
+            font-size: 1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 0;
+            margin-bottom: 4px;
+        }
+        .creed-toggle:focus {
+            outline: 2px solid #0f3460;
+        }
+        .triangle {
+            font-size: 1.1em;
+            transition: transform 0.2s;
+        }
+        .creed-content {
+            background: rgba(45, 45, 60, 0.7);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 2px;
+            color: #f5f5f5;
+            font-size: 0.98em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            white-space: pre-line;
+        }
+        .creed-pair {
+            margin-bottom: 10px;
+            text-align: left;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+        .hide {
+            display: none !important;
+        }
+        .side-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 180px;
+            padding: 0;
+            background: linear-gradient(180deg, #0f3460 60%, #16213e 100%);
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 500;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            text-decoration: none;
+            z-index: 100;
+            transition: background 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            writing-mode: vertical-rl;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        .side-btn:hover {
+            background: linear-gradient(180deg, #16213e 60%, #0f3460 100%);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.28);
+        }
+        .left-btn {
+            left: 24px;
+        }
+        .right-btn {
+            right: 24px;
+        }
+        @media (max-width: 600px) {
+            .side-btn {
+                width: 36px;
+                height: 120px;
+                font-size: 0.95em;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            }
+            .left-btn {
+                left: 8px;
+            }
+            .right-btn {
+                right: 8px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="ice.html" class="side-btn right-btn">回主頁</a>
+    <div class="container">
+        <h1>🎵 溯源冥想播放器</h1>
+        <ul class="music-list">
+            <li class="music-item">
+                <div class="music-title">溯源冥想1 Rainbow</div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation1_rainbow.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
+            </li>
+            <li class="music-item">
+                <div class="music-title">溯源冥想2 HamSa</div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation2_hamsa.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
+            </li>
+            <li class="music-item">
+                <div class="music-title">溯源冥想3 Mindfulness</div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation3_mindfulness.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
+            </li>
+            <li class="music-item">
+                <div class="music-title">溯源冥想4 Warrior's Creed</div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation4_warriorscreed.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
+                <div class="creed-container">
+                    <button class="creed-toggle" aria-expanded="false" aria-controls="creed-content">
+                        <span class="triangle">▶</span> 戰士的信條
+                    </button>
+                    <div class="creed-content hide" id="creed-content"></div>
+                </div>
+            </li>
+            <li class="music-item">
+                <div class="music-title">溯源冥想5 Hollow Body</div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation5_hollowbody.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
+            </li>
+            <li class="music-item">
+                <div class="music-title">溯源冥想6 Pearl & Ocean</div>
+                <audio controls preload="none">
+                    <source src="meditationMusic/meditation6_pearl&ocean.mp3" type="audio/mpeg">
+                    您的瀏覽器不支援音頻播放。
+                </audio>
+            </li>
+        </ul>
+    </div>
+    
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var toggle = document.querySelector('.creed-toggle');
+        var content = document.querySelector('.creed-content');
+        var triangle = document.querySelector('.triangle');
+        var loaded = false;
+        var warriorAudio = document.querySelector('.music-item:nth-child(4) audio');
+        if (!warriorAudio) {
+            warriorAudio = document.querySelector('.music-item:last-child audio');
+        }
+        function showCreedAnimated(pairs) {
+            content.innerHTML = '';
+            let idx = 0;
+            function showNext() {
+                if (idx >= pairs.length) return;
+                var group = document.createElement('div');
+                group.className = 'creed-pair';
+                group.style.opacity = 0;
+                group.innerHTML = `<div>${pairs[idx][0]}</div><div>${pairs[idx][1]}</div>`;
+                content.appendChild(group);
+                setTimeout(() => {
+                    group.style.transition = 'opacity 0.4s ease-in-out';
+                    group.style.opacity = 1;
+                    idx++;
+                    setTimeout(showNext, 180);
+                }, 10);
+            }
+            showNext();
+        }
+        function autoExpandCreed() {
+            var expanded = toggle.getAttribute('aria-expanded') === 'true';
+            if (!expanded) {
+                toggle.setAttribute('aria-expanded', 'true');
+                content.classList.remove('hide');
+                triangle.textContent = '▼';
+                if (!loaded) {
+                    var base = "./warrior'sCreed/warror'sCreed.txt";
+                    fetch(base)
+                        .then(function(response) { return response.text(); })
+                        .then(function(text) {
+                            var lines = text.split(/\r?\n/).filter(Boolean);
+                            var pairs = [];
+                            for (var i = 0; i < lines.length - 1; i += 2) {
+                                pairs.push([lines[i], lines[i + 1]]);
+                            }
+                            showCreedAnimated(pairs);
+                            content.setAttribute('data-lines', lines.join(','));
+                            loaded = true;
+                        })
+                        .catch(function() {
+                            content.textContent = '無法載入信條內容。';
+                        });
+                } else {
+                    var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
+                    var pairs = [];
+                    for (var i = 0; i < lines.length - 1; i += 2) {
+                        pairs.push([lines[i], lines[i + 1]]);
+                    }
+                    showCreedAnimated(pairs);
+                }
+            }
+        }
+        toggle.addEventListener('click', function() {
+            var expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', !expanded);
+            if (expanded) {
+                content.classList.add('hide');
+            } else {
+                content.classList.remove('hide');
+            }
+            triangle.textContent = expanded ? '▶' : '▼';
+            if (!expanded) {
+                if (!loaded) {
+                    var base = "./warrior'sCreed/warror'sCreed.txt";
+                    fetch(base)
+                        .then(function(response) { return response.text(); })
+                        .then(function(text) {
+                            var lines = text.split(/\r?\n/).filter(Boolean);
+                            var pairs = [];
+                            for (var i = 0; i < lines.length - 1; i += 2) {
+                                pairs.push([lines[i], lines[i + 1]]);
+                            }
+                            showCreedAnimated(pairs);
+                            content.setAttribute('data-lines', lines.join(','));
+                            loaded = true;
+                        })
+                        .catch(function() {
+                            content.textContent = '無法載入信條內容。';
+                        });
+                } else {
+                    var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
+                    var pairs = [];
+                    for (var i = 0; i < lines.length - 1; i += 2) {
+                        pairs.push([lines[i], lines[i + 1]]);
+                    }
+                    showCreedAnimated(pairs);
+                }
+            }
+        });
+        if (warriorAudio) {
+            warriorAudio.addEventListener('play', function() {
+                setTimeout(autoExpandCreed, 200);
+            });
+        }
+    });
+    </script>
+</body>
+</html>
