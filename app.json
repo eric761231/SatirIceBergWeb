@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SkoposExpo",
-    "slug": "SkoposExpo",
+    "name": "ObysseyExpo",
+    "slug": "ObysseyExpo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.eric761231.skoposexpo",
+      "bundleIdentifier": "com.eric761231.obysseyexpo",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -25,7 +25,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.eric761231.skoposexpo"
+      "package": "com.eric761231.obysseyexpo"
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skopos</title>
+    <title>Obyssey</title>
     
     <!-- iOS PWA 支援 -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Skopos">
+    <meta name="apple-mobile-web-app-title" content="Obyssey">
     <meta name="apple-touch-fullscreen" content="yes">
     
     <!-- PWA 相關 -->
@@ -480,6 +480,21 @@
                 </div>
                 <div class="user-profile-info text-center">
                     <div class="user-name">shiro Yama</div>
+                </div>
+                <!-- Google OAuth 登入元件 -->
+                <div id="g_id_onload"
+                    data-client_id="28263511849-3rk0avke93rn8rfdi5hq0boffkp6gm0j.apps.googleusercontent.com"
+                    data-context="signin"
+                    data-callback="handleGoogleSignIn"
+                    data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-size="large"
+                    data-theme="outline"
+                    data-text="sign_in_with"
+                    data-shape="rectangular"
+                    data-logo_alignment="left">
                 </div>
             </div>
             <!-- 收合時：僅顯示窄條與展開按鈕置頂置中 -->
@@ -1578,6 +1593,15 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             }
         }
 
+        // Google OAuth callback
+        function handleGoogleSignIn(response) {
+            const id_token = response.credential;
+            // 你可以將 id_token 傳送到後端驗證，或直接解析 JWT 取得使用者資訊
+            // 例如：console.log(id_token);
+            // 可用 jwt-decode 套件解析，或用 atob 分析 payload
+            alert('Google 登入成功！');
+        }
+
         // === 事件監聽器 ===
         userInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') sendMessage();
@@ -1605,6 +1629,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
             const desktopExpandBtnMini = document.getElementById('desktop-expand-btn-mini');
             
             // 以 Tailwind md 斷點為準（768px）判斷桌面/小螢幕
+           
             function isDesktop() {
                 return window.matchMedia('(min-width: 768px)').matches;
             }
@@ -1617,7 +1642,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                         sidebar.classList.remove('-translate-x-full');
                     }
                     sidebarOverlay.classList.add('hidden');
-                    sidebarOverlay.style.pointerEvents = 'none';
+                                       sidebarOverlay.style.pointerEvents = 'none';
                 } else {
                     // 小螢幕：預設關閉側欄，遮罩關閉且不可互動
                     sidebar.classList.add('-translate-x-full');
@@ -2236,50 +2261,51 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 if (isIPad()) {
                     deviceType = 'iPad';
                     shareButtonLocation = 'Safari 頂部網址列右側';
-                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 頂部網址列右側的分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！\n\n💡 提示：分享按鈕看起來像一個方形，裡面有個箭頭向上。`;
+                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 頂部網址列右側的分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Obyssey 了！\n\n💡 提示：分享按鈕看起來像一個方形，裡面有個箭頭向上。`;
                 } else if (isIPhone()) {
                     deviceType = 'iPhone';
                     shareButtonLocation = 'Safari 底部工具列';
-                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 底部分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！\n\n💡 提示：分享按鈕在底部工具列，看起來像一個方形，裡面有個箭頭向上。`;
+                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 底部分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Obyssey 了！\n\n💡 提示：分享按鈕在底部工具列，看起來像一個方形，裡面有個箭頭向上。`;
                 } else {
                     deviceType = 'iOS 設備';
                     shareButtonLocation = 'Safari 瀏覽器';
-                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 的分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Skopos 了！\n\n💡 提示：分享按鈕看起來像一個方形，裡面有個箭頭向上。`;
+                    installSteps = `請按照以下步驟安裝：\n\n1. 點擊 Safari 的分享按鈕（方形圖示）\n2. 在分享選單中選擇「加入主畫面」\n3. 點擊「新增」按鈕\n\n安裝完成後，您就可以從主畫面啟動 Obyssey 了！\n\n💡 提示：分享按鈕看起來像一個方形，裡面有個箭頭向上。`;
                 }
                 
                 // 創建更友好的安裝說明對話框
                 const installDialog = document.createElement('div');
                 installDialog.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4';
                 installDialog.innerHTML = `
-                    <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+                    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
                         <div class="text-center mb-6">
-                            <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <svg class="w-10 h-10 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                                 </svg>
                             </div>
-                            <h3 class="text-2xl font-bold text-gray-800 mb-2">${deviceType} 安裝指南</h3>
-                            <p class="text-gray-600">請按照以下步驟將 Skopos 安裝到您的主畫面</p>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">安裝 Obyssey 到主畫面</h3>
+                            <p class="text-gray-600">按照以下步驟將 Obyssey 安裝到您的主畫面（支援 iPhone 和 iPad）</p>
+                            <p class="text-sm text-red-600 font-medium mt-2">⚠️ 重要：必須使用 Safari 瀏覽器才能安裝</p>
                         </div>
                         
-                        <div class="space-y-4 mb-6 text-left">
+                        <div class="space-y-4 mb-6">
                             <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
+                                <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
                                 <div>
-                                    <p class="font-medium text-gray-800">找到分享按鈕</p>
-                                    <p class="text-sm text-gray-600">位置：${shareButtonLocation}</p>
-                                    <p class="text-xs text-blue-600 mt-1">💡 分享按鈕看起來像一個方形，裡面有個箭頭向上</p>
+                                    <p class="font-medium text-gray-800">點擊分享按鈕</p>
+                                    <p class="text-sm text-gray-600">iPhone：在 Safari 底部 | iPad：在網址列右側</p>
+                                    <p class="text-xs text-red-500 mt-1">💡 請確保您正在使用 Safari 瀏覽器</p>
                                 </div>
                             </div>
                             <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
+                                <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
                                 <div>
                                     <p class="font-medium text-gray-800">選擇「加入主畫面」</p>
                                     <p class="text-sm text-gray-600">在分享選單中找到此選項</p>
                                 </div>
                             </div>
                             <div class="flex items-start gap-3">
-                                <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">3</div>
+                                <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">3</div>
                                 <div>
                                     <p class="font-medium text-gray-800">點擊「新增」</p>
                                     <p class="text-sm text-gray-600">完成安裝，應用程式將出現在主畫面</p>
@@ -2287,33 +2313,12 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                             </div>
                         </div>
                         
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                            <div class="flex items-start gap-2">
-                                <div class="text-blue-600 text-lg">ℹ️</div>
-                                <div class="text-sm text-blue-800">
-                                    <p class="font-medium mb-1">為什麼需要手動安裝？</p>
-                                    <p>由於 iOS 的安全政策，PWA 無法自動安裝。這是為了保護您的設備安全，請按照上述步驟手動安裝。</p>
-                                    
-                                    <div class="mt-3 p-3 bg-blue-100 rounded border-l-4 border-blue-400">
-                                        <p class="font-medium text-blue-800 mb-2">📱 瀏覽器相容性：</p>
-                                        <ul class="text-xs text-blue-700 space-y-1">
-                                            <li>✅ Safari：完全支援，可以安裝 PWA</li>
-                                            <li>❌ Chrome iOS：無法安裝 PWA（系統限制）</li>
-                                            <li>❌ Firefox iOS：無法安裝 PWA（系統限制）</li>
-                                            <li>❌ Edge iOS：無法安裝 PWA（系統限制）</li>
-                                            <li>💡 建議：在 iOS 上使用 Safari 來安裝 PWA</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="flex gap-3">
-                            <button class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-3 px-4 rounded-lg transition-colors" onclick="this.closest('.fixed').remove()">
-                                我明白了
+                            <button id="close-install-modal" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-lg transition-colors">
+                                關閉
                             </button>
-                            <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-lg transition-colors" onclick="this.closest('.fixed').remove(); showInstallModal();">
-                                再次查看步驟
+                            <button id="try-install-now" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors">
+                                立即嘗試
                             </button>
                         </div>
                     </div>
@@ -2327,7 +2332,8 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                         installDialog.remove();
                     }
                 });
-                
+
+                // 隱藏安裝模態框
                 hideInstallModal();
             }
 
@@ -2368,7 +2374,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     }
                 }
                 
-                // 如果用戶多次嘗試安裝，增加觸發頻率
+                // 如果用戶多次嘗試安裝，增加觸发頻率
                 if (userBehavior.installAttempts > 2) {
                     return true;
                 }
@@ -2441,7 +2447,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     },
                     'second-attempt': {
                         title: '🔄 再次嘗試安裝',
-                        message: '看起來您對 Skopos 很感興趣，讓我們一起完成安裝！',
+                        message: '看起來您對 Obyssey 很感興趣，讓我們一起完成安裝！',
                         color: 'green'
                     },
                     'persistent-user': {
@@ -2451,7 +2457,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     },
                     'engaged-user': {
                         title: '⏰ 您已經停留很久了',
-                        message: '既然您這麼喜歡 Skopos，不如安裝到主畫面隨時使用？',
+                        message: '既然您這麼喜歡 Obyssey，不如安裝到主畫面隨時使用？',
                         color: 'orange'
                     },
                     'active-browser': {
@@ -2512,7 +2518,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                 triggerInstallPrompt();
             }, 3000);
 
-            // 3. 用戶積極瀏覽時觸發
+            // 3. 用戶積極瀏覽時觸发
             window.addEventListener('scroll', () => {
                 userBehavior.scrollCount++;
                 userBehavior.lastInteraction = Date.now();
@@ -2629,7 +2635,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     <div class="celebration-container bg-white rounded-2xl p-8 text-center max-w-sm mx-4 shadow-2xl">
                         <div class="text-6xl mb-4 install-celebration">🎉</div>
                         <h3 class="text-2xl font-bold text-gray-800 mb-2">安裝成功！</h3>
-                        <p class="text-gray-600 mb-6">Skopos 已成功安裝到您的主畫面</p>
+                        <p class="text-gray-600 mb-6">Obyssey 已成功安裝到您的主畫面</p>
                         <div class="flex gap-3">
                             <button class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105">
                                 開始使用
@@ -2728,6 +2734,9 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
         });
     </script>
 
+    <!-- Google Identity Services SDK -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <!-- iOS 和 iPadOS 安裝引導按鈕 -->
     <div id="ios-install-prompt" class="fixed top-4 right-4 z-50 hidden">
         <button id="ios-install-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105 install-pulse">
@@ -2750,7 +2759,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                 </svg>
                 <div>
-                    <p class="font-semibold">🚀 將 Skopos 安裝到主畫面</p>
+                    <p class="font-semibold">🚀 將 Obyssey 安裝到主畫面</p>
                     <p class="text-sm opacity-90">享受更快的啟動速度和離線功能</p>
                     <div class="flex items-center gap-2 mt-1">
                         <span class="text-xs opacity-75">⚠️ 必須使用 Safari 瀏覽器</span>
@@ -2780,8 +2789,8 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">安裝 Skopos 到主畫面</h3>
-                <p class="text-gray-600">按照以下步驟將 Skopos 安裝到您的主畫面（支援 iPhone 和 iPad）</p>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">安裝 Obyssey 到主畫面</h3>
+                <p class="text-gray-600">按照以下步驟將 Obyssey 安裝到您的主畫面（支援 iPhone 和 iPad）</p>
                 <p class="text-sm text-red-600 font-medium mt-2">⚠️ 重要：必須使用 Safari 瀏覽器才能安裝</p>
             </div>
             

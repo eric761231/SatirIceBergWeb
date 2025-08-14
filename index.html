@@ -4,10 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>安裝 Obyssey App 到手機</title>
+    <link rel="manifest" href="manifest.json">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Obyssey">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         .share-icon {
             font-size: 1.2em;
+            vertical-align: middle;
         }
         body {
             font-family: 'Noto Sans TC', sans-serif;
@@ -37,6 +45,8 @@
             font-size: 1.1rem;
             color: #222;
             margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 4px;
         }
         .guide ul {
             padding-left: 20px;
@@ -54,121 +64,143 @@
         }
         .install-app-btn {
             margin-top: 24px;
-            padding: 8px 18px;
+            padding: 12px 24px;
             border-radius: 8px;
             background: #3498db;
             color: #fff;
             border: none;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
             display: inline-block;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+        .install-app-btn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
         }
         .centered {
             text-align: center;
         }
-        .update-app-btn {
-            margin-top: 16px;
-            padding: 8px 18px;
-            border-radius: 8px;
-            background: #27ae60;
-            color: #fff;
-            border: none;
-            font-size: 1rem;
-            cursor: pointer;
-            display: inline-block;
-        }
-        .status-indicator {
-            margin-top: 16px;
-            padding: 12px;
-            border-radius: 8px;
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #6c757d;
+        .ios-guide {
+             display: none; /* 預設隱藏 */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>安裝 Obyssey App 到手機</h1>
+        <h1>安裝 Obyssey App</h1>
         <div class="centered">
-            <button id="installAppBtn" class="install-app-btn">安裝App</button>
-            <div id="statusIndicator" class="status-indicator" style="display: none;">
-                正在檢查安裝狀態...
-            </div>
+            <button id="installAppBtn" class="install-app-btn">安裝 App 到手機</button>
         </div>
         
         <div class="guide">
             <h2>安裝前提醒</h2>
             <ul>
-                <li>請用預設瀏覽器（Safari 或 Chrome）開啟本頁，避免在 LINE、Facebook 等 App 內建瀏覽器安裝。</li>
-                <li>如需複製網址，可長按網址或點選「複製連結」後貼到瀏覽器。</li>
+                <li>請**使用手機預設瀏覽器**（iOS 請用 Safari，Android 請用 Chrome）開啟本頁面。</li>
+                <li>若您在 LINE 或 Facebook 等 App 中開啟，請先複製網址並貼到預設瀏覽器中。</li>
             </ul>
-            <h2>iOS / iPad 安裝教學</h2>
-            <ul>
-                <li>1. 使用 Safari 開啟 <a href="https://satir-ice-berg-web.vercel.app/" target="_blank" rel="noopener">Obyssey 網站</a></li>
-                <li>2. 點擊頁面上的「安裝App」按鈕</li>
-                <li>3. 若未顯示安裝提示，請點選 Safari 下方「分享」按鈕 <span class="share-icon">&#x1F4E4;</span></li>
-                <li>4. 選擇「加入主畫面」(Add to Home Screen)</li>
-                <li>5. 點擊「加入」即可完成安裝，桌面會出現 Obyssey App 圖示</li>
-            </ul>
+
+            <div id="ios-guide" class="ios-guide">
+                <h2>iOS / iPad 安裝教學</h2>
+                <ul>
+                    <li>1. 請點選 Safari 瀏覽器下方的「分享」按鈕 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233498db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-share'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="分享圖示" class="share-icon"></li>
+                    <li>2. 在彈出的選單中，向下滑動並選擇「**加入主畫面**」(Add to Home Screen)</li>
+                    <li>3. 點擊右上角的「新增」，即可在桌面上看到 App 圖示</li>
+                </ul>
+            </div>
+            
             <h2>Android 安裝教學</h2>
             <ul>
                 <li>1. 使用 Chrome 開啟 <a href="https://satir-ice-berg-web.vercel.app/" target="_blank" rel="noopener">Obyssey 網站</a></li>
-                <li>2. 點擊頁面上的「安裝App」按鈕</li>
-                <li>3. 若未顯示安裝提示，請點選瀏覽器選單「安裝 App」</li>
-                <li>4. 按照提示完成安裝，桌面會出現 Obyssey App 圖示</li>
+                <li>2. 點擊上方的「安裝 App 到手機」按鈕</li>
+                <li>3. 若按鈕無效或未出現，請點選瀏覽器右上角的「選單 ⋮」</li>
+                <li>4. 選擇「**安裝應用程式**」(Install app)</li>
+                <li>5. 按照提示完成安裝，桌面將會出現 App 圖示</li>
             </ul>
         </div>
-        <div class="note">如未顯示安裝提示，請確認瀏覽器版本或改用 Safari/Chrome。</div>
+        <div class="note">若安裝遇到問題，請確保您的瀏覽器為最新版本。</div>
     </div>
 
-    <!-- 引入 PWA 配置文件 -->
-    <script src="/pwa-config.js"></script>
     <script>
-    // 註冊 Service Worker
+    // --- 確保 Service Worker 和 Manifest 存在 ---
+    // 1. 建立一個名為 manifest.json 的檔案在網站根目錄。
+    // 2. 建立一個名為 service-worker.js 的檔案在網站根目錄。
+
+    // --- Service Worker 註冊 ---
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(function(registration) {
+      window.addEventListener('load', () => {
+        // 使用相對路徑，確保在任何路徑下都能正確註冊
+        navigator.serviceWorker.register('service-worker.js')
+          .then(registration => {
             console.log('Service Worker 註冊成功:', registration);
           })
-          .catch(function(error) {
-            console.log('Service Worker 註冊失敗:', error);
+          .catch(error => {
+            console.error('Service Worker 註冊失敗:', error);
           });
       });
     }
-    // PWA 安裝事件處理（永遠顯示按鈕）
-    let deferredPrompt = null;
+
+    // --- PWA 安裝邏輯 ---
     const installBtn = document.getElementById('installAppBtn');
+    const iosGuide = document.getElementById('ios-guide');
+    let deferredPrompt = null;
+
+    // 判斷是否為 iOS 裝置
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    // 判斷 App 是否已經以 PWA 模式開啟
+    const isInStandaloneMode = () =>
+        (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
 
     window.addEventListener('beforeinstallprompt', (e) => {
+        // 防止 Chrome 67 以下版本自動顯示安裝提示
         e.preventDefault();
+        // 儲存事件，以便後續觸發
         deferredPrompt = e;
+        // 顯示安裝按鈕 (如果原本是隱藏的)
+        installBtn.style.display = 'inline-block';
     });
 
-    installBtn.addEventListener('click', async function() {
+    installBtn.addEventListener('click', async () => {
+        // iOS 裝置的處理方式
+        if (isIOS) {
+            alert('iOS 用戶請依照下方的教學手動安裝。');
+            iosGuide.style.display = 'block'; // 顯示 iOS 安裝教學
+            window.scrollTo(0, document.body.scrollHeight); // 捲動到頁面底部方便查看
+            return;
+        }
+
+        // Android 或桌面版的處理方式
         if (deferredPrompt) {
+            // 顯示安裝提示
             deferredPrompt.prompt();
+            // 等待使用者回應
             const { outcome } = await deferredPrompt.userChoice;
+            console.log(`使用者回應: ${outcome}`);
             if (outcome === 'accepted') {
-                installBtn.textContent = '已安裝';
+                installBtn.textContent = '安裝成功！';
                 installBtn.disabled = true;
             }
             deferredPrompt = null;
         } else {
-            // 根據裝置顯示安裝教學
-            const ua = navigator.userAgent;
-            if (/iPhone|iPad|iPod/i.test(ua)) {
-                alert('iOS 用戶請點選 Safari 下方「分享」→「加入主畫面」手動安裝 App。');
-            } else if (/Android/i.test(ua)) {
-                alert('Android 用戶請點選瀏覽器選單「安裝 App」或「加入主畫面」手動安裝。');
-            } else {
-                alert('請使用支援 PWA 的瀏覽器（如 Chrome/Safari）安裝 App，或參考下方教學手動加入主畫面。');
-            }
+             // 如果 deferredPrompt 為 null，可能代表 App 已安裝或不支援
+             alert('應用程式可能已經安裝，或您的瀏覽器不支援自動安裝。請參考下方的 Android 教學手動操作。');
         }
     });
+
+    // 頁面載入時檢查狀態
+    window.addEventListener('DOMContentLoaded', () => {
+        if (isInStandaloneMode()) {
+            installBtn.textContent = '已在主畫面開啟';
+            installBtn.disabled = true;
+        } else if (isIOS) {
+            // 在 iOS 上，永遠顯示手動教學提示
+            installBtn.textContent = 'iOS 手動安裝教學';
+            iosGuide.style.display = 'block';
+        }
+    });
+
     </script>
 </body>
 </html>
