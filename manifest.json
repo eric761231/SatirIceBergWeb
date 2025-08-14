@@ -2,7 +2,7 @@
   "name": "Obyssey",
   "short_name": "Obyssey",
   "description": "基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界",
-  "start_url": "/",
+  "start_url": "ice.html",
   "display": "standalone",
   "background_color": "#ecf0f1",
   "theme_color": "#2c3e50",
