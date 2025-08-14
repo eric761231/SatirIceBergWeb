@@ -417,6 +417,7 @@
 </head>
 <body class="p-4 md:p-8">
     <div class="app md:grid md:grid-cols-[auto_1fr] md:h-screen md:gap-0">
+    <script>
     // 手機版側邊欄開關（修正版，避免重複掛載與錯誤）
     document.addEventListener('DOMContentLoaded', function() {
         const sidebarToggle = document.getElementById('sidebar-toggle');
@@ -433,7 +434,7 @@
             });
         }
     });
-
+    </script>
     <!-- ===== 側邊欄系統 ===== -->
     <!-- 
     側邊欄位置說明：
