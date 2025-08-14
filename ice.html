@@ -551,7 +551,7 @@
             <!-- 底部資訊區域 -->
             <div class="mt-auto pt-4 border-t border-gray-600 expanded-only">
                 <div class="text-xs text-gray-500 text-center">
-                    SKOPOS 療癒系統
+                    Odyssey 溯源
                 </div>
             </div>
         </div>
@@ -589,17 +589,13 @@
     <div class="max-w-3xl mx-auto md:max-w-none md:mx-0 gemini-container relative z-30 md:h-full md:flex md:flex-col md:min-h-0 flex flex-col h-screen">
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center flex-shrink-0">
-            <h1 class="text-xl font-medium md:ml-12 ml-16">SKOPOS</h1>
-        </div>
-
-        <!-- Phase Indicator -->
-        <div id="phase-indicator" class="p-4 flex-shrink-0">
-            <div class="flex justify-between items-center">
-                <div class="phase-indicator">
-                    目前階段：<span id="current-phase">初始探索</span>
-                </div>
-                <div id="usage-indicator" class="phase-indicator">
-                    今日使用：<span id="usage-count">0</span>/<span id="usage-limit">50</span> 次
+            <div class="flex items-center justify-between w-full">
+                <h1 class="text-xl font-medium md:ml-12 ml-16">Obyssey</h1>
+                <div class="flex items-center gap-4">
+                    <div class="phase-indicator text-sm text-gray-400">目前階段：表層探索 (行為→感受)</div>
+                    <div id="usage-indicator" class="phase-indicator text-sm text-gray-400">
+                        今日使用：<span id="usage-count">0</span>/<span id="usage-limit">50</span> 次
+                    </div>
                 </div>
             </div>
         </div>
@@ -609,7 +605,7 @@
             <!-- Initial AI Message -->
             <div class="chat-message ai-message">
                 <div class="message-content" id="initial-message">
-                    <p class="mt-2" id="user-greeting-message">最近有什麼讓您感到困擾的事件或行為嗎？</p>
+                    <p class="mt-2" id="user-greeting-message">最近有什麼讓您感到困擾的事件嗎？</p>
                 </div>
             </div>
              <!-- Thinking Indicator -->
