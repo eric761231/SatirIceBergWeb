@@ -245,6 +245,9 @@
         .ai-message .message-content {
             background-color: var(--bg-tertiary);
             border-bottom-left-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .user-message .message-content {
             background-color: var(--accent-blue);
@@ -475,7 +478,7 @@
                 </button>
             </div>
             <div class="mb-2">
-                <div id="sidebar-phase-indicator" class="text-xs text-gray-400 px-2 py-1 rounded bg-gray-700 w-full text-left">目前階段：表層探索 (行為→感受)</div>
+                <!-- 目前階段已移除 -->
             </div>
             <!-- 側邊欄標題區域 -->
             <div class="flex items-center gap-2 mb-6 expanded-only">
