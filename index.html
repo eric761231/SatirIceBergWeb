@@ -93,7 +93,7 @@
     <div class="container">
         <h1>安裝 Obyssey App 到手機</h1>
         <div class="centered">
-            <button id="installAppBtn" class="install-app-btn" style="display: none;">安裝App</button>
+            <button id="installAppBtn" class="install-app-btn">安裝App</button>
             <div id="statusIndicator" class="status-indicator" style="display: none;">
                 正在檢查安裝狀態...
             </div>
@@ -127,16 +127,13 @@
     <!-- 引入 PWA 配置文件 -->
     <script src="/pwa-config.js"></script>
     <script>
-    // PWA 安裝事件處理
+    // PWA 安裝事件處理（永遠顯示按鈕）
     let deferredPrompt = null;
     const installBtn = document.getElementById('installAppBtn');
-    const statusIndicator = document.getElementById('statusIndicator');
 
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installBtn.style.display = 'inline-block';
-        if (statusIndicator) statusIndicator.style.display = 'none';
     });
 
     installBtn.addEventListener('click', async function() {
@@ -148,23 +145,8 @@
                 installBtn.disabled = true;
             }
             deferredPrompt = null;
-        }
-    });
-
-    // 檢查是否支援 PWA 安裝
-    window.addEventListener('DOMContentLoaded', function() {
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            installBtn.style.display = 'none';
-            if (statusIndicator) {
-                statusIndicator.textContent = 'App 已安裝';
-                statusIndicator.style.display = 'block';
-            }
-        } else if (!window.BeforeInstallPromptEvent) {
-            installBtn.style.display = 'none';
-            if (statusIndicator) {
-                statusIndicator.textContent = '此瀏覽器不支援安裝 App';
-                statusIndicator.style.display = 'block';
-            }
+        } else {
+            alert('請使用支援 PWA 的瀏覽器（如 Chrome/Safari）安裝 App。');
         }
     });
     </script>
