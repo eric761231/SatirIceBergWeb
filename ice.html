@@ -417,19 +417,21 @@
 </head>
 <body class="p-4 md:p-8">
     <div class="app md:grid md:grid-cols-[auto_1fr] md:h-screen md:gap-0">
-    // 手機版側邊欄開關
+    // 手機版側邊欄開關（修正版，避免重複掛載與錯誤）
     document.addEventListener('DOMContentLoaded', function() {
         const sidebarToggle = document.getElementById('sidebar-toggle');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebar-overlay');
-        sidebarToggle.addEventListener('click', function() {
-            document.body.classList.add('sidebar-open');
-            overlay.style.display = 'block';
-        });
-        overlay.addEventListener('click', function() {
-            document.body.classList.remove('sidebar-open');
-            overlay.style.display = 'none';
-        });
+        if (sidebarToggle && overlay) {
+            sidebarToggle.addEventListener('click', function() {
+                document.body.classList.add('sidebar-open');
+                overlay.style.display = 'block';
+            });
+            overlay.addEventListener('click', function() {
+                document.body.classList.remove('sidebar-open');
+                overlay.style.display = 'none';
+            });
+        }
     });
 
     <!-- ===== 側邊欄系統 ===== -->

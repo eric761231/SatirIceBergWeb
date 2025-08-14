@@ -68,13 +68,42 @@
 <body>
     <div class="container">
     <h1>安裝 Obyssey App 到手機</h1>
-        <div class="qrcode">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://satir-ice-berg-web.vercel.app/" alt="Obyssey App QR Code">
+    <!-- QR Code 已移除 -->
+        <div style="text-align:center;margin-top:24px;">
+            <button id="installAppBtn" class="install-app-btn">安裝App</button>
         </div>
+    <script>
+    // PWA 安裝事件
+    let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        const installBtn = document.getElementById('installAppBtn');
+        if (installBtn) installBtn.style.display = 'inline-block';
+    });
+    const installBtn = document.getElementById('installAppBtn');
+    if (installBtn) {
+        installBtn.addEventListener('click', function() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(function(choiceResult) {
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('請使用支援PWA的瀏覽器，或已安裝/不支援安裝提示');
+            }
+        });
+    }
+    </script>
         <div class="guide">
+            <h2>安裝前提醒</h2>
+            <ul>
+                <li>請用預設瀏覽器（Safari 或 Chrome）開啟本頁，避免在 LINE、Facebook 等 App 內建瀏覽器安裝。</li>
+                <li>如需複製網址，可長按網址或點選「複製連結」後貼到瀏覽器。</li>
+            </ul>
             <h2>iOS / iPad 安裝教學</h2>
             <ul>
-                <li>1. 使用 Safari 掃描上方 QR Code 或直接開啟 <a href="https://satir-ice-berg-web.vercel.app/" target="_blank" rel="noopener">Obyssey 網站</a></li>
+                <li>1. 使用 Safari 開啟 <a href="https://satir-ice-berg-web.vercel.app/" target="_blank" rel="noopener">Obyssey 網站</a></li>
                 <li>2. 點擊頁面上的「安裝App」按鈕</li>
                 <li>3. 若未顯示安裝提示，請點選 Safari 下方「分享」按鈕 <span class="share-icon">&#x1F4E4;</span></li>
                 <li>4. 選擇「加入主畫面」(Add to Home Screen)</li>
@@ -82,7 +111,7 @@
             </ul>
             <h2>Android 安裝教學</h2>
             <ul>
-                <li>1. 使用 Chrome 掃描上方 QR Code 或直接開啟 <a href="https://satir-ice-berg-web.vercel.app/" target="_blank" rel="noopener">Obyssey 網站</a></li>
+                <li>1. 使用 Chrome 開啟 <a href="https://satir-ice-berg-web.vercel.app/" target="_blank" rel="noopener">Obyssey 網站</a></li>
                 <li>2. 點擊頁面上的「安裝App」按鈕</li>
                 <li>3. 若未顯示安裝提示，請點選瀏覽器選單「安裝 App」</li>
                 <li>4. 按照提示完成安裝，桌面會出現 Obyssey App 圖示</li>
