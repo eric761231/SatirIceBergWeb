@@ -127,6 +127,18 @@
     <!-- 引入 PWA 配置文件 -->
     <script src="/pwa-config.js"></script>
     <script>
+    // 註冊 Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/public/service-worker.js')
+          .then(function(registration) {
+            console.log('Service Worker 註冊成功:', registration);
+          })
+          .catch(function(error) {
+            console.log('Service Worker 註冊失敗:', error);
+          });
+      });
+    }
     // PWA 安裝事件處理（永遠顯示按鈕）
     let deferredPrompt = null;
     const installBtn = document.getElementById('installAppBtn');
@@ -146,7 +158,15 @@
             }
             deferredPrompt = null;
         } else {
-            alert('請使用支援 PWA 的瀏覽器（如 Chrome/Safari）安裝 App。');
+            // 根據裝置顯示安裝教學
+            const ua = navigator.userAgent;
+            if (/iPhone|iPad|iPod/i.test(ua)) {
+                alert('iOS 用戶請點選 Safari 下方「分享」→「加入主畫面」手動安裝 App。');
+            } else if (/Android/i.test(ua)) {
+                alert('Android 用戶請點選瀏覽器選單「安裝 App」或「加入主畫面」手動安裝。');
+            } else {
+                alert('請使用支援 PWA 的瀏覽器（如 Chrome/Safari）安裝 App，或參考下方教學手動加入主畫面。');
+            }
         }
     });
     </script>
