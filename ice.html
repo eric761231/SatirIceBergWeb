@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Obyssey</title>
     
     <!-- iOS PWA 支援 -->
@@ -74,9 +74,18 @@
     </script>
     
     <style>
+        /* 安裝教學圖片統一樣式 */
+        .install-guide-img {
+            max-width: 180px;
+            border-radius: 8px;
+            margin: 8px 0;
+            box-shadow: 0 2px 8px #0002;
+        }
         /* iOS/Safari 字體縮放修正 */
         html {
             -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
         }
         /* 響應式優化：針對小螢幕（手機） */
         @media (max-width: 480px) {
@@ -369,6 +378,10 @@
             display: inline-block;
             margin-bottom: 16px;
         }
+        #usage-indicator {
+            min-width: 120px;
+        }
+        
         .retry-button {
             transition: all 0.2s ease;
         }
@@ -433,7 +446,7 @@
             /* 確保文字沒有背景 */
             background: transparent;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
+    }
         
         /* 手機版：優化佈局和間距 */
         @media (max-width: 767px) {
@@ -447,6 +460,7 @@
             .chat-header h1 {
                 margin-left: 4rem;
                 font-size: 1.1rem !important;
+                margin: 0 !important;
             }
             .phase-indicator {
                 font-size: 0.85rem !important;
@@ -674,8 +688,8 @@
         <!-- Header -->
         <div class="chat-header p-4 flex justify-between items-center flex-shrink-0">
             <div class="flex flex-col w-full items-center justify-center relative">
-                <h1 class="text-xl font-medium text-center w-full" style="margin:0;">Obyssey</h1>
-                <div id="usage-indicator" class="phase-indicator text-sm text-gray-400 text-right whitespace-nowrap absolute right-0 top-0" style="min-width:120px;">今日使用：<span id="usage-count">0</span>/<span id="usage-limit">50</span> 次</div>
+                <h1 class="text-xl font-medium text-center w-full">Obyssey</h1>
+                <div id="usage-indicator" class="phase-indicator text-sm text-gray-400 text-right whitespace-nowrap absolute right-0 top-0">今日使用：<span id="usage-count">0</span>/<span id="usage-limit">50</span> 次</div>
             </div>
         </div>
 
@@ -1786,9 +1800,9 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
                     <div>
                         <p class="font-medium text-gray-800">iPhone：在 Safari 底部點擊 <b>分享</b> 按鈕 <span class="share-emoji">&#x1F5D2;</span></p>
-                        <img src="icons/ios-share-iphone.png" alt="iPhone Safari 分享按鈕" style="max-width:180px;border-radius:8px;margin:8px 0;box-shadow:0 2px 8px #0002;" />
+                        <img src="icons/ios-share-iphone.png" alt="iPhone Safari 分享按鈕" class="install-guide-img" />
                         <p class="font-medium text-gray-800">iPad：在網址列右側點擊 <b>分享</b> 按鈕 <span class="share-emoji">&#x1F5D2;</span></p>
-                        <img src="icons/ios-share-ipad.png" alt="iPad Safari 分享按鈕" style="max-width:180px;border-radius:8px;margin:8px 0;box-shadow:0 2px 8px #0002;" />
+                        <img src="icons/ios-share-ipad.png" alt="iPad Safari 分享按鈕" class="install-guide-img" />
                         <p class="text-xs text-red-500 mt-1">💡 請確保您正在使用 Safari 瀏覽器</p>
                     </div>
                 </div>
@@ -1796,7 +1810,7 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                     <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">2</div>
                     <div>
                         <p class="font-medium text-gray-800">選擇「加入主畫面」</p>
-                        <img src="icons/ios-add-home.png" alt="加入主畫面選項" style="max-width:180px;border-radius:8px;margin:8px 0;box-shadow:0 2px 8px #0002;" />
+                        <img src="icons/ios-add-home.png" alt="加入主畫面選項" class="install-guide-img" />
                         <p class="text-sm text-gray-600">在分享選單中找到此選項</p>
                     </div>
                 </div>
