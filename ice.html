@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Obyssey</title>
     
     <!-- iOS PWA 支援 -->
@@ -74,6 +74,49 @@
     </script>
     
     <style>
+        /* iOS/Safari 字體縮放修正 */
+        html {
+            -webkit-text-size-adjust: 100%;
+        }
+        /* 響應式優化：針對小螢幕（手機） */
+        @media (max-width: 480px) {
+            .chat-header {
+                padding: 6vw 0 6vw 0;
+                font-size: 1.1em;
+            }
+            .message-content {
+                font-size: 1em;
+                padding: 4vw 3vw;
+                max-width: 90vw;
+                min-height: 38px;
+            }
+            .input-area {
+                padding: 2vw 2vw;
+                border-radius: 7vw;
+            }
+            .message-input {
+                font-size: 1em;
+                min-height: 38px;
+            }
+            .send-button {
+                width: 44px;
+                height: 44px;
+                min-width: 44px;
+                min-height: 44px;
+                font-size: 1.2em;
+            }
+            .google-login-btn {
+                font-size: 1em;
+                min-height: 38px;
+                padding: 2vw 4vw;
+            }
+        }
+        /* Android Chrome 字型修正 */
+        @media screen and (-webkit-min-device-pixel-ratio:0) {
+            body {
+                font-family: 'Google Sans', 'Noto Sans TC', Arial, sans-serif;
+            }
+        }
         /* 手機版側邊欄全螢幕覆蓋 */
         @media (max-width: 767px) {
             #sidebar {
