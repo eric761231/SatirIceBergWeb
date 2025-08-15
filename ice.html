@@ -529,13 +529,7 @@
         <div class="p-4 h-full flex flex-col">
             <!-- 回主頁漢堡按鈕 -->
             <div class="flex items-center mb-4">
-                <button onclick="window.location.href='ice.html'" class="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 bg-gray-800 transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400/50" title="回主頁">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
-                        <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
-                        <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
-                    </svg>
-                </button>
+                <!-- 已合併漢堡選單至左上角，移除此按鈕 -->
             </div>
             <div class="mb-2">
                 <!-- 目前階段已移除 -->
@@ -635,7 +629,7 @@
                 </a>
 
                 <!-- 新增選項：每日閱讀 -->
-                <button onclick="showDailyReading()" class="w-full text-left px-4 py-3 text-sm text-green-300 hover:bg-green-700 hover:text-white rounded-lg transition-colors" title="每日閱讀">
+                <a href="articles.html" class="w-full text-left px-4 py-3 text-sm text-green-300 hover:bg-green-700 hover:text-white rounded-lg transition-colors block" title="每日閱讀">
                     <div class="flex items-center space-x-3">
                         <span class="text-lg">📖</span>
                         <div>
@@ -643,7 +637,7 @@
                             <div class="text-xs text-green-200">精選療癒文章/語錄</div>
                         </div>
                     </div>
-                </button>
+                </a>
             </div>
             
             <!-- 底部資訊區域 -->
