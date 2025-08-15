@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>安裝 Obyssey App 到手機</title>
+    <title>安裝 Obyssey App</title>
     <link rel="manifest" href="manifest.json">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,17 +13,6 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        .main-welcome {
-            text-align: center;
-            margin-top: 120px;
-        }
-        .main-link {
-            display: inline-block;
-            margin-top: 24px;
-            font-size: 1.2em;
-            color: #3498db;
-            text-decoration: underline;
-        }
         :root {
             --bg-primary: #131314;
             --bg-secondary: #1e1f20;
@@ -32,10 +21,6 @@
             --text-secondary: #9aa0a6;
             --border-color: #3c4043;
             --accent-blue: #8ab4f8;
-        }
-        .share-icon {
-            font-size: 1.2em;
-            vertical-align: middle;
         }
         body {
             font-family: 'Noto Sans TC', 'Google Sans', Arial, sans-serif;
@@ -108,8 +93,12 @@
         .centered {
             text-align: center;
         }
-        .ios-guide {
-            display: block;
+        .share-icon {
+            font-size: 1.2em;
+            vertical-align: middle;
+        }
+        #ios-guide, #android-guide {
+            display: none;
         }
     </style>
 </head>
@@ -127,7 +116,7 @@
                 <li>若您在 LINE 或 Facebook 等 App 中開啟，請先複製網址並貼到預設瀏覽器中。</li>
             </ul>
 
-            <div id="ios-guide" class="ios-guide">
+            <div id="ios-guide">
                 <h2>iOS / iPad 安裝教學</h2>
                 <ul>
                     <li>1. 請點選 Safari 瀏覽器下方的「分享」按鈕 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233498db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-share'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="分享圖示" class="share-icon"></li>
@@ -135,7 +124,7 @@
                     <li>3. 點擊右上角的「新增」，即可在桌面上看到 App 圖示</li>
                 </ul>
             </div>
-            <div id="android-guide" class="android-guide">
+            <div id="android-guide">
                 <h2>Android 安裝教學</h2>
                 <ul>
                     <li>1. 點擊上方的「安裝 App 到手機」按鈕</li>
@@ -148,81 +137,69 @@
         <div class="note">若安裝遇到問題，請確保您的瀏覽器為最新版本。</div>
     </div>
 
-        <script>
-        // --- 確保 Service Worker 和 Manifest 存在 ---
-        // 1. 建立一個名為 manifest.json 的檔案在網站根目錄。
-        // 2. 建立一個名為 service-worker.js 的檔案在網站根目錄。
-
-        // --- Service Worker 註冊 ---
+    <script>
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                // 使用相對路徑，確保在任何路徑下都能正確註冊
-                navigator.serviceWorker.register('service-worker.js')
-                    .then(registration => {
-                        console.log('Service Worker 註冊成功:', registration);
-                    })
-          .catch(error => {
-            console.error('Service Worker 註冊失敗:', error);
-          });
-      });
-    }
-
-    // --- PWA 安裝邏輯 ---
-    const installBtn = document.getElementById('installAppBtn');
-    const iosGuide = document.getElementById('ios-guide');
-    let deferredPrompt = null;
-
-    // 判斷是否為 iOS 裝置
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-    // 判斷 App 是否已經以 PWA 模式開啟
-    const isInStandaloneMode = () =>
-        (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        // 防止 Chrome 67 以下版本自動顯示安裝提示
-        e.preventDefault();
-        // 儲存事件，以便後續觸發
-        deferredPrompt = e;
-        // 顯示安裝按鈕 (如果原本是隱藏的)
-        installBtn.style.display = 'inline-block';
-    });
-
-    installBtn.addEventListener('click', async () => {
-        // iOS 裝置的處理方式
-        if (isIOS) {
-            alert('iOS 用戶請依照下方的教學手動安裝。');
-            iosGuide.style.display = 'block'; // 顯示 iOS 安裝教學
-            window.scrollTo(0, document.body.scrollHeight); // 捲動到頁面底部方便查看
-            return;
+            navigator.serviceWorker.register('service-worker.js')
+            .then(function(registration) {
+                console.log('Service Worker 註冊成功:', registration);
+            })
+            .catch(function(error) {
+                console.error('Service Worker 註冊失敗:', error);
+            });
         }
 
-        // Android 或桌面版的處理方式
-        if (deferredPrompt) {
-            // 顯示安裝提示
-            deferredPrompt.prompt();
-            // 等待使用者回應
-            const { outcome } = await deferredPrompt.userChoice;
-            console.log(`使用者回應: ${outcome}`);
-            if (outcome === 'accepted') {
-                installBtn.textContent = '安裝成功！';
-                installBtn.disabled = true;
+        const installBtn = document.getElementById('installAppBtn');
+        const iosGuide = document.getElementById('ios-guide');
+        const androidGuide = document.getElementById('android-guide');
+        let deferredPrompt = null;
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isInStandaloneMode = () =>
+            (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
+
+        // 監聽 PWA 安裝事件
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'inline-block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (isIOS) {
+                alert('iOS 用戶請依照下方的教學手動安裝。');
+                window.scrollTo(0, document.body.scrollHeight);
+            } else if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`使用者回應: ${outcome}`);
+                if (outcome === 'accepted') {
+                    installBtn.textContent = '安裝成功！';
+                    installBtn.disabled = true;
+                }
+                deferredPrompt = null;
+            } else {
+                alert('應用程式可能已經安裝，或您的瀏覽器不支援自動安裝。請參考下方的 Android 教學手動操作。');
+                window.scrollTo(0, document.body.scrollHeight);
             }
-            deferredPrompt = null;
-        } else {
-             // 如果 deferredPrompt 為 null，可能代表 App 已安裝或不支援
-             alert('應用程式可能已經安裝，或您的瀏覽器不支援自動安裝。請參考下方的 Android 教學手動操作。');
-        }
-    });
+        });
 
-    // 頁面載入時檢查狀態
-    window.addEventListener('DOMContentLoaded', () => {
-        if (isInStandaloneMode()) {
-            installBtn.textContent = '已在主畫面開啟';
-            installBtn.disabled = true;
-        } else if (isIOS) {
-            // 在 iOS 上，永遠顯示手動教學提示
-            installBtn.textContent = 'iOS 手動安裝教學';
-            iosGuide.style.display = 'block';
-        }
-    });
+        // 頁面載入時檢查並顯示正確的教學
+        window.addEventListener('DOMContentLoaded', () => {
+            if (isInStandaloneMode()) {
+                installBtn.textContent = '已在主畫面開啟';
+                installBtn.disabled = true;
+            } else if (isIOS) {
+                installBtn.textContent = 'iOS 手動安裝教學';
+                iosGuide.style.display = 'block';
+                androidGuide.style.display = 'none';
+            } else {
+                androidGuide.style.display = 'block';
+                // 如果 deferredPrompt 已存在，按鈕會自動顯示，否則維持隱藏
+                if (!deferredPrompt) {
+                     installBtn.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
