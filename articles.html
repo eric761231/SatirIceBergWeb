@@ -5,6 +5,46 @@
     <meta charset="UTF-8">
     <title>每日閱讀</title>
     <style>
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: #16213e;
+            box-shadow: 2px 0 16px #0006;
+            z-index: 200;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+        #sidebar.show {
+            transform: translateX(0);
+        }
+        #sidebar h2 {
+            color: #00aaff;
+            margin: 24px 0 16px 0;
+            text-align: center;
+        }
+        .sidebar-link {
+            /*
+                左側選單文字：
+                - 亮白色 (color: #fff)
+                - 文字大小統一 (font-size: 1.1em)
+                - 文字間距 (padding: 12px 32px，垂直12px、水平32px)
+                - 置中 (text-align: center)
+            */
+            display: block;
+            padding: 12px 32px; /* 文字間距：上下12px，左右32px */
+            color: #fff;        /* 亮白色 */
+            font-size: 1.1em;  /* 統一選單文字尺寸 */
+            text-decoration: none;
+            text-align: center;
+        }
+        #sidebar-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
         .icon-btn {
             display: inline-flex;
             align-items: center;
@@ -36,11 +76,11 @@
         .articles-container {
             background: rgba(30, 30, 45, 0.95);
             border-radius: 20px;
-            padding: 40px;
+            padding: 28px 40px 40px 40px; /* 上方 padding 減少，標題更靠上 */
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             max-width: 600px;
             width: 90%;
-            margin-top: 40px;
+            margin-top: 24px; /* 容器更靠上 */
             position: relative;
         }
 
@@ -48,7 +88,7 @@
             text-align: center;
             font-size: 2em;
             font-weight: 300;
-            margin-bottom: 20px;
+            margin-bottom: 8px; /* 標題下方間距減少 */
         }
 
         a {
@@ -60,13 +100,14 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 4px; /* header row 與下方間距減少 */
         }
 
         .articles-header-row .daily-title {
             flex: 1;
             text-align: center;
             margin-top: 0;
-            margin-bottom: 12px;
+            margin-bottom: 0;
         }
 
         .articles-header-row .icon-btn {
@@ -88,6 +129,12 @@
             transform: translateY(-24px);
             pointer-events: none;
             transition: opacity 0.3s, transform 0.3s;
+        }
+        .month-item {
+            padding: 3px 0;
+            font-size: 1em;
+            text-align: center;
+            cursor: pointer;
         }
 
         #month-list.slide-down {
@@ -185,7 +232,7 @@
 
         .articles-slider {
             position: relative;
-            margin-top: 16px;
+            margin-top: 36px; /* 文章內容區域往下移動 */
             height: 320px;
         }
 
@@ -270,9 +317,10 @@
     </style>
 </head>
 <body>
+    <!-- 左側漢堡按鈕移到框框內 -->
     <div class="articles-container">
         <div class="articles-header-row">
-            <button id="sidebar-toggle" class="icon-btn" title="展開選單">
+            <button id="hamburger" class="icon-btn" title="展開選單">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
                     <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
@@ -280,8 +328,18 @@
                 </svg>
             </button>
             <h1 class="daily-title">每日閱讀</h1>
-            <a href="ice.html" class="icon-btn" title="回主頁">
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5L12 4l9 7.5"/><path d="M4 10v8a2 2 0 0 0 2 2h3v-5h6v5h3a2 2 0 0 0 2-2v-8"/></svg>
+            <!-- 回主頁按鈕（原本導向主頁功能已註解，改為展開月份列表） -->
+            <a id="month-toggle" class="icon-btn" title="展開月份列表">
+                <!-- 日曆圖案 SVG -->
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="5" width="18" height="16" rx="2" fill="#16213e" stroke="#fff"/>
+                    <line x1="3" y1="9" x2="21" y2="9" stroke="#fff" stroke-width="2"/>
+                    <line x1="7" y1="2" x2="7" y2="6" stroke="#fff" stroke-width="2"/>
+                    <line x1="17" y1="2" x2="17" y2="6" stroke="#fff" stroke-width="2"/>
+                    <rect x="7" y="13" width="2" height="2" fill="#00aaff" stroke="#fff" stroke-width="1"/>
+                    <rect x="11" y="13" width="2" height="2" fill="#00aaff" stroke="#fff" stroke-width="1"/>
+                    <rect x="15" y="13" width="2" height="2" fill="#00aaff" stroke="#fff" stroke-width="1"/>
+                </svg>
             </a>
         </div>
         <div id="articles-panel"></div>
@@ -294,8 +352,43 @@
             <div class="month-item" data-month="9">9月</div>
             <div class="month-item" data-month="10">10月</div>
         </div>
-
+    </div>
+    <nav id="sidebar">
+    <h2>選單</h2>
+    <a href="meditation.html" class="sidebar-link">冥想音樂</a>
+    <a href="mandala.html" class="sidebar-link">曼陀羅</a>
+    <a href="guide.html" class="sidebar-link">每日指引</a>
+        <button id="sidebar-close" class="icon-btn" title="關閉選單">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </nav>
     <script>
+        // 漢堡按鈕展開/收合左側邊欄
+        const hamburgerBtn = document.getElementById('hamburger');
+        const sidebarNav = document.getElementById('sidebar');
+        const sidebarClose = document.getElementById('sidebar-close');
+        hamburgerBtn.addEventListener('click', function() {
+            sidebarNav.classList.toggle('show');
+        });
+        sidebarClose.addEventListener('click', function() {
+            sidebarNav.classList.remove('show');
+        });
+        // 展開/收合月份列表功能
+        document.addEventListener('DOMContentLoaded', function() {
+            var monthToggle = document.getElementById('month-toggle');
+            var monthList = document.getElementById('month-list');
+            if(monthToggle && monthList) {
+                monthList.style.display = 'none';
+                monthToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if(monthList.style.display === 'none') {
+                        monthList.style.display = 'block';
+                    } else {
+                        monthList.style.display = 'none';
+                    }
+                });
+            }
+        });
         // 取代 articlesData，動態讀取 txt 檔案
         let articlesData = {};
         const articlesPanel = document.getElementById('articles-panel');
@@ -371,10 +464,11 @@
             };
         }
 
-        // 漢堡按鈕控制側欄
-        const sidebarToggle = document.getElementById('sidebar-toggle');
+        // 回主頁按鈕控制月份列表展開
+        const monthToggle = document.getElementById('month-toggle');
         const monthListDiv = document.getElementById('month-list');
-        sidebarToggle.addEventListener('click', function() {
+        monthToggle.addEventListener('click', function(e) {
+            e.preventDefault();
             if (!monthListDiv.classList.contains('slide-down')) {
                 monthListDiv.classList.add('slide-down');
             } else {

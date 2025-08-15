@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>冥想音樂播放器</title>
     <style>
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            border: 1px solid rgba(255,255,255,0.12);
+            transition: background 0.2s, box-shadow 0.2s;
+            padding: 0;
+        }
+        .icon-btn:hover {
+            background: #16213e;
+        }
+        #sidebar h2 {
+            color: #00aaff;
+            margin: 24px 0 16px 0;
+            text-align: center;
+        }
+        #sidebar-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
@@ -24,6 +50,7 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: 20px;
             margin-bottom: 20px;
+            position: relative;
         }
         h1 {
             text-align: center;
@@ -130,6 +157,77 @@
         .right-btn {
             right: 24px;
         }
+        .home-btn {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            z-index: 101;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: rgba(30,30,45,0.95);
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            border: 1px solid rgba(255,255,255,0.12);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: #16213e;
+            box-shadow: 2px 0 16px #0006;
+            z-index: 200;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+        }
+        #sidebar.show {
+            transform: translateX(0);
+        }
+        #sidebar h2 {
+            color: #00aaff;
+            margin: 24px 0 16px 0;
+            text-align: center;
+        }
+        .sidebar-link {
+            /*
+                左側選單文字：
+                - 亮白色 (color: #fff)
+                - 文字大小統一 (font-size: 1.1em)
+                - 文字間距 (padding: 12px 32px，垂直12px、水平32px)
+                - 置中 (text-align: center)
+            */
+            display: block;
+            padding: 12px 32px; /* 文字間距：上下12px，左右32px */
+            color: #fff;        /* 亮白色 */
+            font-size: 1.1em;  /* 統一選單文字尺寸 */
+            text-decoration: none;
+            text-align: center;
+        }
+        #sidebar-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
+        @media (max-width: 600px) {
+            #sidebar {
+                width: 160px;
+                padding-top: 40px;
+            }
+            .home-btn {
+                width: 36px;
+                height: 36px;
+                top: 8px;
+                left: 8px;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            }
+        }
+
         @media (max-width: 600px) {
             .side-btn {
                 width: 36px;
@@ -150,14 +248,33 @@
             .container {
                 padding: 20px;
             }
+            .home-btn {
+                width: 36px;
+                height: 36px;
+                top: 8px;
+                left: 8px;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            }
         }
     </style>
 </head>
 <body>
-        <a href="ice.html" class="home-btn" title="回主頁" style="position:fixed;top:24px;left:24px;z-index:101;display:inline-flex;align-items:center;justify-content:center;width:48px;height:48px;background:rgba(30,30,45,0.95);border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,0.18);border:1px solid rgba(255,255,255,0.12);transition:background 0.2s,box-shadow 0.2s;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5L12 4l9 7.5"/><path d="M4 10v8a2 2 0 0 0 2 2h3v-5h6v5h3a2 2 0 0 0 2-2v-8"/></svg>
-        </a>
+    <!-- 漢堡按鈕 -->
     <div class="container">
+        <button id="sidebar-toggle" class="home-btn" title="展開選單">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        </button>
+        <nav id="sidebar">
+            <h2>選單</h2>
+            <a href="articles.html" class="sidebar-link">每日閱讀</a>
+            <a href="mandala.html" class="sidebar-link">曼陀羅</a>
+            <a href="guide.html" class="sidebar-link">每日指引</a>
+            <button id="sidebar-close" class="icon-btn" title="關閉選單">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </nav>
+        <div id="sidebar-overlay"></div>
         <h1>🎵 溯源冥想播放器</h1>
         <ul class="music-list">
             <li class="music-item">
@@ -214,6 +331,31 @@
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // 漢堡按鈕與側邊欄邏輯
+        var sidebarToggle = document.getElementById('sidebar-toggle');
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebar-overlay');
+        sidebarToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.add('show');
+            overlay.style.display = 'block';
+        });
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('show');
+            overlay.style.display = 'none';
+        });
+        // 關閉按鈕點擊收合側邊欄
+        document.getElementById('sidebar-close').addEventListener('click', function() {
+            sidebar.classList.remove('show');
+            overlay.style.display = 'none';
+        });
+        // 點擊其他區域自動收合
+        document.addEventListener('click', function(e) {
+            if (sidebar.classList.contains('show') && !sidebar.contains(e.target) && e.target !== sidebarToggle) {
+                sidebar.classList.remove('show');
+                overlay.style.display = 'none';
+            }
+        });
         var toggle = document.querySelector('.creed-toggle');
         var content = document.querySelector('.creed-content');
         var triangle = document.querySelector('.triangle');

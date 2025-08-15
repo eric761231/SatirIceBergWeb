@@ -5,37 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Obyssey</title>
     
-    <!-- iOS PWA 支援 -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Obyssey">
-    <meta name="apple-touch-fullscreen" content="yes">
-    
-    <!-- PWA 相關 -->
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- 載入療癒功能設定檔 -->
-    <script src="healing-config.js"></script>
-    
-    <!-- 載入 API 配置檔 -->
-    <script>
-        // 載入 API 配置
-        let apiConfig = null;
-        
-        async function loadApiConfig() {
-            try {
-                const response = await fetch('./api-config.json');
-                if (response.ok) {
-                    apiConfig = await response.json();
-                    return apiConfig;
-                } else {
-                    return getDefaultConfig();
+            <!-- 設定選單項目區域（API申請、API設定、對話記錄已移除） -->
                 }
             } catch (error) {
                 return getDefaultConfig();
@@ -489,246 +459,7 @@
     </style>
 </head>
 <body class="p-4 md:p-8">
-    <div class="app md:grid md:grid-cols-[auto_1fr] md:h-screen md:gap-0">
-    <script>
-    // 手機版側邊欄開關（修正版，避免重複掛載與錯誤）
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebarToggle = document.getElementById('sidebar-toggle');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebar-overlay');
-        if (sidebarToggle && overlay) {
-            sidebarToggle.addEventListener('click', function() {
-                document.body.classList.add('sidebar-open');
-                overlay.style.display = 'block';
-            });
-            overlay.addEventListener('click', function() {
-                document.body.classList.remove('sidebar-open');
-                overlay.style.display = 'none';
-            });
-        }
-    });
-    </script>
-    <!-- ===== 側邊欄系統 ===== -->
-    <!-- 
-    側邊欄位置說明：
-    - 切換按鈕：固定在左上角 (top-4 left-4)，z-index: 50 確保在最上層
-    - 側邊欄面板：固定在左側 (top-0 left-0)，寬度 320px (w-80)，初始位置在螢幕外 (-translate-x-full)
-    - 遮罩層：覆蓋整個螢幕 (inset-0)，z-index: 30 低於側邊欄但高於其他內容
-    - 側邊欄 z-index: 40，確保在遮罩層之上但在切換按鈕之下
-    -->
-    
-    <!-- 側邊欄切換按鈕 - 固定在左上角位置 -->
-    <div class="fixed top-4 left-4 z-50 md:hidden">
-        <button id="sidebar-toggle" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 bg-gray-800 border border-gray-600" title="設定選單">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
-                <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
-                <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
-            </svg>
-        </button>
-    </div>
-
-    <!-- 側邊欄設定面板 - 左側滑動式面板 -->
-    <div id="sidebar" class="fixed top-0 left-0 h-full w-80 bg-gray-800 border-r border-gray-600 transform -translate-x-full transition-all duration-300 ease-in-out z-40 md:static md:h-auto md:min-h-screen md:translate-x-0 md:transform-none md:resize-x md:overflow-auto md:min-w-[240px] md:max-w-[480px]">
-        <div class="p-4 h-full flex flex-col">
-            <!-- 回主頁漢堡按鈕 -->
-            <div class="flex items-center mb-4">
-                <!-- 已合併漢堡選單至左上角，移除此按鈕 -->
-            </div>
-            <div class="mb-2">
-                <!-- 目前階段已移除 -->
-            </div>
-            <!-- 側邊欄標題區域 -->
-            <div class="flex items-center gap-2 mb-6 expanded-only">
-                <!-- 桌面版：側欄左上角收合按鈕（三條橫線） -->
-                <button id="sidebar-collapse-btn" class="hidden md:inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 md:-ml-1" title="收合側欄">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                        <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
-                        <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
-                        <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
-                    </svg>
-                </button>
-                <h2 class="text-lg font-medium text-white"></h2>
-            </div>
-            
-            <!-- 用戶個人資料區域 -->
-            <div class="flex flex-col items-center gap-3 mb-6 expanded-only">
-                <div class="user-avatar-container">
-                    <div id="user-avatar-circle" class="user-avatar-circle hidden">
-                        <img id="user-avatar-img" src="" alt="用戶頭像" class="w-16 h-16 rounded-full object-cover" />
-                    </div>
-                </div>
-                <div class="user-profile-info text-center">
-                    <div id="user-name" class="user-name">未登入</div>
-                </div>
-                <!-- Google OAuth 登入元件 -->
-                <div id="g_id_onload"
-                    data-client_id="28263511849-3rk0avke93rn8rfdi5hq0boffkp6gm0j.apps.googleusercontent.com"
-                    data-context="signin"
-                    data-callback="handleGoogleSignIn"
-                    data-auto_prompt="false">
-                </div>
-                <div class="g_id_signin"
-                    data-type="standard"
-                    data-size="large"
-                    data-theme="outline"
-                    data-text="sign_in_with"
-                    data-shape="rectangular"
-                    data-logo_alignment="left">
-                </div>
-                <button id="logout-btn" class="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 transition hidden">登出帳號</button>
-            </div>
-            <!-- 收合時：僅顯示窄條與展開按鈕置頂置中 -->
-            <div class="collapsed-only md:flex-col md:items-start md:justify-start md:pt-2 md:gap-2">
-                <button id="desktop-expand-btn-mini" class="hidden md:inline-flex items-center justify-center w-8 h-8 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 bg-gray-800 transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400/50 md:ml-1" title="展開側欄">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-                        <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
-                        <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
-                        <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
-                    </svg>
-                </button>
-            </div>
-            
-            <!-- 設定選單項目區域 -->
-            <div class="flex-1 space-y-2 mt-8 expanded-only">
-                <button onclick="openApiKeyGuide()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="申請 Google Gemini API 金鑰">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-lg">🔑</span>
-                        <div>
-                            <div class="font-medium">申請 API</div>
-                            <div class="text-xs text-gray-500">申請 Google Gemini API 金鑰</div>
-                        </div>
-                    </div>
-                </button>
-
-                <button onclick="showApiConfig()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="設定 API 金鑰">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-lg">⚙️</span>
-                        <div>
-                            <div class="font-medium">API 設定</div>
-                            <div class="text-xs text-gray-500">設定和管理 API 金鑰</div>
-                        </div>
-                    </div>
-                </button>
-
-                <button onclick="showConversationHistory()" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors" title="查看過往對話">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-lg">📝</span>
-                        <div>
-                            <div class="font-medium">對話記錄</div>
-                            <div class="text-xs text-gray-500">查看過往的對話內容</div>
-                        </div>
-                    </div>
-                </button>
-
-                <!-- 新增選項：冥想音樂 -->
-                <a href="meditation.html" class="w-full text-left px-4 py-3 text-sm text-blue-300 hover:bg-blue-700 hover:text-white rounded-lg transition-colors block" title="冥想音樂">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-lg">🎵</span>
-                        <div>
-                            <div class="font-medium">冥想音樂</div>
-                            <div class="text-xs text-blue-200">放鬆心情，進入冥想狀態</div>
-                        </div>
-                    </div>
-                </a>
-
-                <!-- 新增選項：每日閱讀 -->
-                <a href="articles.html" class="w-full text-left px-4 py-3 text-sm text-green-300 hover:bg-green-700 hover:text-white rounded-lg transition-colors block" title="每日閱讀">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-lg">📖</span>
-                        <div>
-                            <div class="font-medium">每日閱讀</div>
-                            <div class="text-xs text-green-200">精選療癒文章/語錄</div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            
-            <!-- 底部資訊區域 -->
-            <div class="mt-auto pt-4 border-t border-gray-600 expanded-only">
-                <div class="text-xs text-gray-500 text-center">
-                    Odyssey 溯源
-                </div>
-            </div>
-        </div>
-    </div>
-
-            <!-- 遮罩層 - 背景變暗效果，點擊可關閉側邊欄 -->
-        <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
-
-        <!-- 移除固定展開按鈕，改為迷你側欄內的按鈕 -->
-
-    <!-- 對話記錄彈出視窗 -->
-    <div id="conversation-history-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-gray-800 border border-gray-600 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col">
-                <!-- 標題欄 -->
-                <div class="flex justify-between items-center p-6 border-b border-gray-600">
-                    <h2 class="text-xl font-semibold text-white">對話記錄</h2>
-                    <button onclick="closeConversationHistory()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700" title="關閉對話記錄" aria-label="關閉對話記錄">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                </div>
-                
-                <!-- 內容區域 -->
-                <div class="flex-1 overflow-y-auto p-6">
-                    <div id="conversation-history-content" class="space-y-4">
-                        <!-- 對話記錄將在這裡動態載入 -->
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="max-w-3xl mx-auto md:max-w-none md:mx-0 gemini-container relative z-30 md:h-full md:flex md:flex-col md:min-h-0 flex flex-col h-screen">
-        <!-- Header -->
-        <div class="chat-header p-4 flex justify-between items-center flex-shrink-0">
-            <div class="flex flex-col w-full items-center justify-center relative">
-                <h1 class="text-xl font-medium text-center w-full">Obyssey</h1>
-                <div id="usage-indicator" class="phase-indicator text-sm text-gray-400 text-right whitespace-nowrap absolute right-0 top-0">今日使用：<span id="usage-count">0</span>/<span id="usage-limit">50</span> 次</div>
-            </div>
-        </div>
-
-        <!-- Chat Area -->
-        <div id="chat-box" class="p-6 flex-1 overflow-y-auto">
-            <!-- Initial AI Message -->
-            <div class="chat-message ai-message">
-                <div class="message-content" id="initial-message">
-                    <p class="mt-2" id="user-greeting-message">最近有什麼讓您感到困擾的事件嗎？</p>
-                </div>
-            </div>
-             <!-- Thinking Indicator -->
-            <div id="thinking-indicator" class="chat-message ai-message hidden">
-                <div class="message-content thinking-indicator">
-                    <span>正在思考...</span>
-                    <div class="thinking-dot"></div>
-                    <div class="thinking-dot"></div>
-                    <div class="thinking-dot"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Input Area -->
-        <div class="p-4 flex-shrink-0">
-            <div class="input-area p-2 flex items-center gap-2">
-                <button id="new-chat-btn" onclick="startNewChat()" class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors" title="開始新對話">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                </button>
-                <input type="text" id="user-input" class="message-input px-3" placeholder="輸入您的訊息...">
-                <button id="send-btn" onclick="sendMessage()" class="send-button" title="傳送訊息">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 2L11 13"/>
-                        <path d="M22 2l-7 20-4-9-9-4 20-7z"/>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
-    </div>
+    <!-- 這裡原本是聊天機器人與側邊欄，已移除。請至 meditation.html 查看側邊欄功能。 -->
 
     <script>
         // === 基本變數設定 ===
@@ -1788,12 +1519,6 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
                         <p class="text-xs text-green-600 mt-1">💡 Android 裝置建議使用 Chrome 瀏覽器</p>
                     </div>
                 </div>
-        .install-img {
-            max-width:180px;
-            border-radius:8px;
-            margin:8px 0;
-            box-shadow:0 2px 8px #0002;
-        }
                 <div class="flex items-start gap-3">
                     <div class="w-6 h-6 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 mt-0.5">1</div>
                     <div>
@@ -1831,6 +1556,25 @@ ${hasDefaultKey ? '💡 提示：留空將使用系統預設金鑰，輸入新�
         </div>
     </div>
 
+    <script>
+const endpoint = window.apiConfig?.apiConfig?.endpoints?.vercel?.[0] || '';
+
+async function analyzeWithAI(imageBase64) {
+    const apiKey = getCurrentApiKey();
+    const prompt = `請根據以下圖片 base64，溫暖地分享你對這幅作品的看法，協助使用者探索自我，不要給予評價。圖片base64: ${imageBase64}`;
+    try {
+        const res = await fetch(endpoint + apiKey, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        });
+        const data = await res.json();
+        return data?.candidates?.[0]?.content?.parts?.[0]?.text || 'AI分析失敗，請稍後再試。';
+    } catch (err) {
+        return 'AI分析失敗，請檢查網路或API設定。';
+    }
+}
+    </script>
 </body>
 </html>
 
