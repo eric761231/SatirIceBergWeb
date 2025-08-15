@@ -276,13 +276,14 @@
             color: var(--text-primary);
         }
         .gemini-container {
-            background-color: var(--bg-secondary);
+            background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 15.2px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
         }
         .chat-header {
             border-bottom: 1px solid var(--border-color);
-            padding: 3.8% 0 3.8% 0;
+            padding: 32px 0 32px 0;
         }
         .chat-message {
             margin-bottom: 15.2px;
@@ -316,9 +317,10 @@
             font-size: 95%;
         }
         .input-area {
-            background-color: var(--bg-tertiary);
+            background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
-            border-radius: 22.8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #0002;
         }
         .message-input {
             background: transparent;
@@ -329,23 +331,25 @@
             font-size: 95%;
         }
         .send-button {
-            background-color: var(--accent-blue);
+            background: var(--accent-blue);
             color: var(--bg-primary);
-            border-radius: 47.5%;
-            width: 38px;
-            height: 38px;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             border: none;
-            /* 確保手機版 SVG 圖標正常顯示 */
-            min-width: 38px;
-            min-height: 38px;
-            flex-shrink: 0;
+            box-shadow: 0 2px 8px #0002;
+            font-size: 1.2em;
+            transition: background-color 0.3s, opacity 0.3s;
         }
         .send-button:disabled {
-            background-color: var(--border-color);
+            background: var(--border-color);
+            color: var(--text-secondary);
             cursor: not-allowed;
         }
         .thinking-indicator {
