@@ -6,81 +6,109 @@
     <title>繪畫壇城</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* Base color variables for easy theme management */
+        :root {
+            --bg-dark: #18181c;
+            --bg-medium: #22223a;
+            --bg-light: rgba(30, 30, 45, 0.98);
+            --text-light: #f3f3f3;
+            --primary-accent: #3498db;
+            --danger-accent: #e74c3c;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --shadow-color: rgba(0, 0, 0, 0.18);
+        }
+
+        /* Color button styling */
         .color-btn.color-blue { background-color: #3498db; }
         .color-btn.color-red { background-color: #e74c3c; }
         .color-btn.color-yellow { background-color: #f1c40f; }
+    .color-btn.color-orange { background-color: #ff9800; }
         .color-btn.color-green { background-color: #2ecc71; }
         .color-btn.color-purple { background-color: #9b59b6; }
-        .color-btn.color-white { background-color: #ffffff; }
+        .color-btn.color-white { background-color: #ffffff; border-color: #888; }
         .color-btn.color-black { background-color: #000000; }
 
         body {
-            background: #18181c;
-            color: #f3f3f3;
+            background: var(--bg-dark);
+            color: var(--text-light);
             font-family: 'Noto Sans TC', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden;
+            overflow: hidden; /* 防止滾動條影響佈局 */
         }
+
         .main-layout {
             display: flex;
             flex-direction: row;
             height: 100vh;
             width: 100vw;
         }
+
+        /* 側邊欄樣式 */
         .sidebar {
-            width: 250px;
-            min-width: 200px;
-            background: rgba(30, 30, 45, 0.98);
-            box-shadow: 2px 0 16px rgba(0, 0, 0, 0.18);
-            border-right: 1px solid rgba(255, 255, 255, 0.12);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            padding: 24px 16px;
+            /* 寬度從「每日閱讀」的 240px 調整為 300px，讓畫布區域有更多空間 */
+            width: 300px;
+            background: #16213e; 
+            box-shadow: 2px 0 16px #0006;
+            padding: 24px;
+            box-sizing: border-box; /* 確保 padding 不增加總寬度 */
             overflow-y: auto;
-            box-sizing: border-box;
+            display: flex; /* 讓內部工具組垂直排列 */
+            flex-direction: column;
         }
 
         .canvas-area {
-            flex: 1;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #22223a;
+            background: var(--bg-medium);
             height: 100vh;
             padding: 20px;
             box-sizing: border-box;
             overflow: auto;
         }
+
         .toolbar-group {
             display: flex;
             flex-direction: column;
             gap: 12px;
             padding-bottom: 20px;
-            border-bottom: 1px solid #444;
         }
-
+        /* 各分隔線獨立設定 */
+        .toolbar-group:nth-child(1) {
+            border-bottom: 1px solid #16213e;
+            margin-top: 2px;
+        }
+        .toolbar-group:nth-child(2) {
+            border-bottom: 1px solid #16213e;
+            padding-bottom: 0;
+        }
+        .toolbar-group:nth-child(3) {
+            border-bottom: 1px solid #16213e;
+            margin-top: 88px;
+        }
         .toolbar-group:last-child {
             border-bottom: none;
         }
+
         .toolbar-group-title {
             font-size: 1.2em;
             font-weight: bold;
             margin-bottom: 4px;
+            color: var(--primary-accent);
+            text-align: center;
         }
+
         .toolbar-row {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
+            justify-content: center;
         }
-        .toolbar-row-margin {
-            margin-bottom: 16px;
-        }
-
-        /* 繪畫工具樣式 */
+        
         .sidebar button, .sidebar select, .sidebar input[type="range"] {
             font-family: inherit;
         }
@@ -88,32 +116,47 @@
         .sidebar label {
             white-space: nowrap;
         }
+
         .icon-btn {
-            position: relative;
-            background: #222;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 14px;
-            cursor: pointer;
-            font-size: 1em;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            border: 1px solid rgba(255,255,255,0.12);
             transition: background 0.2s, box-shadow 0.2s;
-            box-shadow: 0 1px 4px #0001;
+            padding: 0;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
         }
 
         .icon-btn.active {
-            background: #3498db;
+            background: var(--primary-accent);
             color: #fff;
+            border-color: var(--primary-accent);
         }
-
+        
         .icon-btn:hover {
             background: #444;
         }
+        
+        .icon-btn:active {
+            transform: translateY(1px);
+        }
+
         .color-palette {
             display: flex;
             flex-wrap: wrap;
+            flex-direction: row;
             gap: 8px;
+            width: 72px;
+            height: 80px;
         }
+
         .color-btn {
             width: 32px;
             height: 32px;
@@ -121,32 +164,25 @@
             border: 2px solid #fff;
             padding: 0;
             cursor: pointer;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.1s;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
         }
 
         .color-btn.active {
-            border-color: #3498db;
-            box-shadow: 0 0 0 2px #3498db44;
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 0 3px var(--primary-accent);
         }
 
-        #color-picker {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            border: 2px solid #fff2;
-            cursor: pointer;
-            padding: 0;
-            transition: border 0.2s, box-shadow 0.2s;
+        #eraser-btn-desktop.active, #eraser-btn-mobile.active {
+            background: var(--danger-accent);
+            border-color: var(--danger-accent);
         }
 
-        #color-picker.active {
-            border: 3px solid #3498db;
-            box-shadow: 0 0 0 2px #3498db44;
-        }
-        #eraser-btn.active svg g rect { fill: #e74c3c; }
-        #eraser-btn.active svg g line { stroke: #e74c3c; }
         .shape-select, .symmetry-select {
-            background: #222;
+            background: #2a2a3a;
             color: #fff;
             border-radius: 8px;
             border: 1px solid #888;
@@ -155,244 +191,635 @@
             min-width: 60px;
             cursor: pointer;
         }
+
         #mandala-canvas {
             background: #fff;
             border-radius: 16px;
             box-shadow: 0 4px 24px #0006;
             touch-action: none;
-            width: 100%;
-            max-width: 90vh; /* 限制畫布寬度，確保比例正確 */
-            height: auto;
-            aspect-ratio: 1.5 / 1;
-            display: block;
+            cursor: crosshair;
+        }
+        
+        /* Mobile controls section */
+        .controls-mobile {
+            display: none;
+        }
+        
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .main-layout {
+                flex-direction: column-reverse;
+            }
+            .sidebar {
+                display: none;
+            }
+            .controls-mobile {
+                display: flex;
+                flex-direction: column;
+                background: var(--bg-light);
+                box-shadow: 0 -2px 16px var(--shadow-color);
+                padding: 16px;
+                gap: 16px;
+                width: 100%;
+                box-sizing: border-box;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                z-index: 10;
+            }
+            .controls-mobile .toolbar-row {
+                justify-content: space-around;
+                flex-wrap: wrap;
+            }
+            .canvas-area {
+                padding: 10px;
+                padding-bottom: 200px;
+                height: 100%;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            #mandala-canvas {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+            }
+            .toolbar-group-title {
+                display: none;
+            }
+            .toolbar-group {
+                border-bottom: none;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
+            }
         }
     </style>
-    <script>
-    // 所有 JS 程式碼移到這裡
-    document.addEventListener('DOMContentLoaded', function() {
-        const canvas = document.getElementById('mandala-canvas');
-        const ctx = canvas.getContext('2d');
-        const center = { x: canvas.width / 2, y: canvas.height / 2 };
-
-        let drawing = false;
-        let last = null;
-        let brushColor = document.getElementById('color-picker') ? document.getElementById('color-picker').value : '#3498db';
-        let brushSize = parseInt(document.getElementById('brush-size').value);
-        let symmetry = parseInt(document.getElementById('symmetry-count').value);
-        let erasing = false;
-        let shape = 'free';
-        let shapeStart = null;
-
-        // 初始設定
-        const defaultColorBtn = document.querySelector('.color-btn[data-color="#3498db"]');
-        if (defaultColorBtn) {
-            defaultColorBtn.classList.add('active');
-        }
-        if (document.getElementById('color-picker')) {
-            document.getElementById('color-picker').classList.add('active');
-        }
-
-        function pointerPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            let clientX, clientY;
-            if (e.touches) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            return {
-                x: (clientX - rect.left) * canvas.width / rect.width,
-                y: (clientY - rect.top) * canvas.height / rect.height
-            };
-        }
-
-        function drawSingle(from, to, drawOn) {
-            drawOn.beginPath();
-            if (shape === 'free') {
-                drawOn.moveTo(from.x, from.y);
-                drawOn.lineTo(to.x, to.y);
-            } else if (shape === 'line') {
-                drawOn.moveTo(from.x, from.y);
-                drawOn.lineTo(to.x, to.y);
-            } else if (shape === 'circle') {
-                const r = Math.hypot(to.x - from.x, to.y - from.y);
-                drawOn.arc(from.x, from.y, r, 0, 2 * Math.PI);
-            } else if (shape === 'rect') {
-                drawOn.rect(from.x, from.y, to.x - from.x, to.y - from.y);
-            }
-            drawOn.stroke();
-        }
-
-        function drawSymmetric(from, to) {
-            const color = erasing ? '#fff' : brushColor;
-            const compOp = erasing ? 'destination-out' : 'source-over';
-
-            ctx.save();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = brushSize;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.globalCompositeOperation = compOp;
-
-            if (symmetry === 0) {
-                drawSingle(from, to, ctx);
-            } else {
-                const angle = (2 * Math.PI) / symmetry;
-                for (let i = 0; i < symmetry; i++) {
-                    ctx.save();
-                    ctx.translate(center.x, center.y);
-                    ctx.rotate(angle * i);
-                    drawSingle(
-                        { x: from.x - center.x, y: from.y - center.y },
-                        { x: to.x - center.x, y: to.y - center.y },
-                        ctx
-                    );
-                    ctx.restore();
-                }
-            }
-            ctx.restore();
-        }
-
-        function startDraw(e) {
-            e.preventDefault();
-            const pos = pointerPos(e);
-            drawing = true;
-            last = pos;
-            shapeStart = pos;
-        }
-
-        function endDraw(e) {
-            e.preventDefault();
-            drawing = false;
-            if (shape !== 'free' && shapeStart) {
-                const pos = pointerPos(e);
-                drawSymmetric(shapeStart, pos);
-                shapeStart = null;
-            }
-        }
-
-        function draw(e) {
-            e.preventDefault();
-            if (!drawing || shape !== 'free') return;
-            const pos = pointerPos(e);
-            drawSymmetric(last, pos);
-            last = pos;
-        }
-
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('touchstart', startDraw);
-        window.addEventListener('mouseup', endDraw);
-        window.addEventListener('touchend', endDraw);
-        window.addEventListener('mousemove', draw);
-        window.addEventListener('touchmove', draw, { passive: false });
-
-        // 桌面側邊欄事件
-        document.getElementById('brush-size').addEventListener('input', function(e) {
-            brushSize = parseInt(e.target.value);
-        });
-        document.getElementById('shape-type').addEventListener('change', function(e) {
-            shape = e.target.value;
-            shapeStart = null;
-        });
-        document.getElementById('symmetry-count').addEventListener('change', function(e) {
-            symmetry = parseInt(e.target.value);
-        });
-
-        // controls-mobile 事件
-        if (document.getElementById('brush-size-mobile')) {
-            document.getElementById('brush-size-mobile').addEventListener('input', function(e) {
-                brushSize = parseInt(e.target.value);
-            });
-        }
-        if (document.getElementById('shape-type-mobile')) {
-            document.getElementById('shape-type-mobile').addEventListener('change', function(e) {
-                shape = e.target.value;
-                shapeStart = null;
-            });
-        }
-        if (document.getElementById('symmetry-count-mobile')) {
-            document.getElementById('symmetry-count-mobile').addEventListener('change', function(e) {
-                symmetry = parseInt(e.target.value);
-            });
-        }
-        if (document.getElementById('finish-btn-mobile')) {
-            document.getElementById('finish-btn-mobile').addEventListener('click', function() {
-                // 這裡可根據 finish-btn 的原本功能補充
-                alert('完成！');
-            });
-        }
-
-        document.querySelectorAll('.color-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                brushColor = this.getAttribute('data-color');
-                erasing = false;
-                document.querySelectorAll('.color-btn, #color-picker, #eraser-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                if (document.getElementById('color-picker')) {
-                    document.getElementById('color-picker').value = brushColor;
-                    document.getElementById('color-picker').classList.add('active');
-                }
-            });
-        });
-
-        if (document.getElementById('color-picker')) {
-            const colorPicker = document.getElementById('color-picker');
-            colorPicker.addEventListener('input', function(e) {
-                brushColor = e.target.value;
-                erasing = false;
-                document.querySelectorAll('.color-btn, #eraser-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-            });
-        }
-
-        const eraserBtn = document.getElementById('eraser-btn');
-        eraserBtn.addEventListener('click', function() {
-            erasing = true;
-            document.querySelectorAll('.color-btn, #color-picker').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-        });
-
-        document.getElementById('download-btn') && document.getElementById('download-btn').addEventListener('click', function() {
-            const link = document.createElement('a');
-            link.download = 'mandala.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    });
-    </script>
+</head>
+<body>
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="toolbar-group">
+                <div class="toolbar-group-title">選單</div>
+                <div class="toolbar-row">
+                    <a href="meditation.html" class="icon-btn" title="冥想音樂">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 17V5l12-2v12"/>
+                            <circle cx="6" cy="17" r="3"/>
+                            <circle cx="18" cy="16" r="3"/>
+                        </svg>
+                    </a>
+                    <a href="articles.html" class="icon-btn" title="每日閱讀">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6v12a2 2 0 0 0 2 2h7"/>
+                            <path d="M21 6v12a2 2 0 0 1-2 2h-7"/>
+                            <path d="M3 6a2 2 0 0 1 2-2h7v16H5a2 2 0 0 1-2-2z" fill="none"/>
+                            <path d="M21 6a2 2 0 0 0-2-2h-7v16h7a2 2 0 0 0 2-2z" fill="none"/>
+                        </svg>
+                    </a>
+                    <a href="guidance.html" class="icon-btn" title="每日指引">
+                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L12 22M2 12L22 12M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2Z" fill="none" stroke="#fff" stroke-width="2"/>
+                        </svg>
+                    </a>
+                </div>
             </div>
             <div class="toolbar-group">
-                <div class="toolbar-group-title">設定</div>
+                <div class="toolbar-group-title">筆刷</div>
                 <div class="toolbar-row">
-                    <label>形狀：</label>
-                    <select class="shape-select" id="shape-type" title="形狀選擇">
-                        <option value="free">自由</option>
-                        <option value="circle">圓形</option>
-                        <option value="line">直線</option>
-                    </select>
+                    <label for="brush-size-desktop">大小：</label>
+                    <input type="range" id="brush-size-desktop" min="1" max="100" value="10">
                 </div>
                 <div class="toolbar-row">
-                    <label>對稱：</label>
-                    <select class="symmetry-select" id="symmetry-count" title="對稱數量">
-                        <option value="0">0</option>
+                    <!-- 顏色選擇區塊，已往下調整，與繪圖工具分隔更明顯 -->
+                    <div class="color-palette" id="color-palette-desktop" style="margin-top: 24px;">
+                        <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
+                        <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
+                        <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
+                        <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
+                        <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
+                        <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
+                        <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
+                        <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <div class="toolbar-group-title">繪圖工具</div>
+                <!-- 繪圖工具區塊，已往下調整，與顏色分隔更明顯 -->
+                <div class="toolbar-row" id="shape-tools-desktop">
+                    <button class="icon-btn active" data-shape="freehand">筆</button>
+                    <button class="icon-btn" data-shape="line">直線</button>
+                    <button class="icon-btn" data-shape="circle">圓形</button>
+                    <button class="icon-btn" data-shape="square">方形</button>
+                    <button class="icon-btn" data-shape="triangle">三角</button>
+                    <button class="icon-btn" data-shape="trapezoid">梯形</button>
+                </div>
+                <div class="toolbar-row">
+                    <label for="symmetry-count-desktop">對稱：</label>
+                    <select class="symmetry-select" id="symmetry-count-desktop">
+                        <option value="0" selected>0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
-                        <option value="3">3</option>
                         <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6" selected>6</option>
+                        <option value="6">6</option>
                         <option value="8">8</option>
                         <option value="12">12</option>
+                        <option value="16">16</option>
                     </select>
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <div class="toolbar-group-title">操作</div>
+                <div class="toolbar-row">
+                    <button class="icon-btn" id="eraser-btn-desktop">橡皮擦</button>
+                    <button class="icon-btn" id="undo-btn-desktop">上一步</button>
+                    <button class="icon-btn" id="redo-btn-desktop">下一步</button>
+                    <button class="icon-btn" id="clear-btn-desktop">清空</button>
+                    <button class="icon-btn" id="save-btn-desktop">儲存</button>
                 </div>
             </div>
         </div>
 
         <div class="canvas-area">
-            <canvas id="mandala-canvas" width="800" height="600"></canvas>
+            <canvas id="mandala-canvas"></canvas>
+        </div>
+
+        <div class="controls-mobile">
+            <div class="toolbar-group">
+                <div class="toolbar-row">
+                    <label for="brush-size-mobile">大小：</label>
+                    <input type="range" id="brush-size-mobile" min="1" max="100" value="10" style="flex: 1;">
+                </div>
+                <div class="toolbar-row" id="color-palette-mobile">
+                    <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
+                    <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
+                    <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
+                    <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
+                    <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
+                    <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
+                    <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
+                    <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <div class="toolbar-row" id="shape-tools-mobile">
+                    <button class="icon-btn active" data-shape="freehand">筆</button>
+                    <button class="icon-btn" data-shape="line">─</button>
+                    <button class="icon-btn" data-shape="circle">○</button>
+                    <button class="icon-btn" data-shape="square">□</button>
+                    <button class="icon-btn" data-shape="triangle">△</button>
+                    <button class="icon-btn" data-shape="trapezoid">梯</button>
+                    <button class="icon-btn" id="eraser-btn-mobile">擦</button>
+                </div>
+                <div class="toolbar-row">
+                    <label for="symmetry-count-mobile">對稱:</label>
+                    <select class="symmetry-select" id="symmetry-count-mobile">
+                        <option value="0">0</option>
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                        <option value="6" selected>6</option>
+                        <option value="8">8</option>
+                        <option value="12">12</option>
+                    </select>
+                    <button class="icon-btn" id="undo-btn-mobile">↩️</button>
+                    <button class="icon-btn" id="redo-btn-mobile">↪️</button>
+                    <button class="icon-btn" id="clear-btn-mobile">🗑️</button>
+                    <button class="icon-btn" id="save-btn-mobile">💾</button>
+                </div>
+            </div>
         </div>
     </div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        // --- DOM Element Selection ---
+        const canvas = document.getElementById('mandala-canvas');
+        const ctx = canvas.getContext('2d');
+        const canvasArea = document.querySelector('.canvas-area');
+
+        // Controls
+        const controls = {
+            brushSize: [document.getElementById('brush-size-desktop'), document.getElementById('brush-size-mobile')],
+            colorPalettes: [document.getElementById('color-palette-desktop'), document.getElementById('color-palette-mobile')],
+            eraserBtns: [document.getElementById('eraser-btn-desktop'), document.getElementById('eraser-btn-mobile')],
+            symmetrySelects: [document.getElementById('symmetry-count-desktop'), document.getElementById('symmetry-count-mobile')],
+            shapeTools: [document.getElementById('shape-tools-desktop'), document.getElementById('shape-tools-mobile')],
+            undoBtns: [document.getElementById('undo-btn-desktop'), document.getElementById('undo-btn-mobile')],
+            redoBtns: [document.getElementById('redo-btn-desktop'), document.getElementById('redo-btn-mobile')],
+            clearBtns: [document.getElementById('clear-btn-desktop'), document.getElementById('clear-btn-mobile')],
+            saveBtns: [document.getElementById('save-btn-desktop'), document.getElementById('save-btn-mobile')],
+        };
+
+        // --- State Variables ---
+        let isDrawing = false; // For freehand drawing
+        let isDraggingShape = false; // For drawing shapes
+        let brushSize = 10;
+        let brushColor = '#000000';
+        let lastSelectedColor = '#000000'; // Store the last non-eraser color
+        let symmetry = 0;
+        let currentShape = 'freehand';
+        let lastX = 0;
+        let lastY = 0;
+        let startX = 0;
+        let startY = 0;
+        let history = [];
+        let historyIndex = -1;
+
+        // --- Canvas Setup ---
+        /**
+         * Resizes the canvas to be a square based on the available space.
+         * Restores the last saved image from history.
+         */
+        function resizeCanvas() {
+            const size = Math.min(canvasArea.clientWidth, canvasArea.clientHeight) * 0.9;
+            canvas.width = size;
+            canvas.height = size;
+            
+            redrawFromHistory();
+        }
+
+        /**
+         * Clears the canvas and saves the state.
+         * @param {boolean} save - Whether to save the state to history.
+         */
+        function clearCanvas(save = true) {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            if (save) {
+                saveState();
+            }
+        }
+
+        /**
+         * Initializes the canvas and saves the initial empty state.
+         */
+        function initializeCanvas() {
+            resizeCanvas();
+            clearCanvas(true);
+        }
+
+        // --- Drawing Logic ---
+        /**
+         * Gets the coordinates of the mouse or touch event relative to the canvas.
+         */
+        function getEventCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            return { x, y };
+        }
+
+        /**
+         * Handles the start of a drawing or dragging action.
+         */
+        function handleCanvasMouseDown(e) {
+            e.preventDefault();
+            const coords = getEventCoordinates(e);
+            
+            if (currentShape === 'freehand') {
+                isDrawing = true;
+                [lastX, lastY] = [coords.x, coords.y];
+            } else {
+                isDraggingShape = true;
+                [startX, startY] = [coords.x, coords.y];
+            }
+        }
+
+        /**
+         * Handles the movement of the mouse or touch.
+         * Draws freehand lines or previews shapes.
+         */
+        function handleCanvasMouseMove(e) {
+            if (isDrawing && currentShape === 'freehand') {
+                const coords = getEventCoordinates(e);
+                drawSymmetricalLines(lastX, lastY, coords.x, coords.y);
+                [lastX, lastY] = [coords.x, coords.y];
+            } else if (isDraggingShape) {
+                drawPreview(e);
+            }
+        }
+        
+        /**
+         * Handles the end of a drawing or dragging action.
+         * Draws the final shape and saves the state.
+         */
+        function handleCanvasMouseUp(e) {
+            if (isDrawing) {
+                isDrawing = false;
+                ctx.beginPath();
+                saveState();
+            } else if (isDraggingShape) {
+                isDraggingShape = false;
+                const coords = getEventCoordinates(e);
+                drawFinalShape(startX, startY, coords.x, coords.y);
+                saveState();
+            }
+            
+            redrawFromHistory();
+        }
+        
+        /**
+         * Draws a line with the current symmetry settings.
+         */
+        function drawSymmetricalLines(x1, y1, x2, y2) {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const segments = symmetry === 0 ? 1 : symmetry;
+
+            for (let i = 0; i < segments; i++) {
+                const angle = (Math.PI * 2 / segments) * i;
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle);
+                
+                ctx.beginPath();
+                ctx.moveTo(x1 - centerX, y1 - centerY);
+                ctx.lineTo(x2 - centerX, y2 - centerY);
+                ctx.strokeStyle = brushColor;
+                ctx.lineWidth = brushSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                
+                if (symmetry > 0) {
+                    ctx.scale(1, -1);
+                    ctx.beginPath();
+                    ctx.moveTo(x1 - centerX, y1 - centerY);
+                    ctx.lineTo(x2 - centerX, y2 - centerY);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
+
+        /**
+         * Draws the final shape with symmetry.
+         */
+        function drawFinalShape(x1, y1, x2, y2) {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const segments = symmetry === 0 ? 1 : symmetry;
+
+            for (let i = 0; i < segments; i++) {
+                const angle = (Math.PI * 2 / segments) * i;
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle);
+                
+                drawShape(x1 - centerX, y1 - centerY, x2 - centerX, y2 - centerY);
+                
+                if (symmetry > 0) {
+                    ctx.scale(1, -1);
+                    drawShape(x1 - centerX, y1 - centerY, x2 - centerX, y2 - centerY);
+                }
+                ctx.restore();
+            }
+        }
+
+        /**
+         * Encapsulates all shape drawing logic.
+         * @param {number} x1 - Start x coordinate.
+         * @param {number} y1 - Start y coordinate.
+         * @param {number} x2 - End x coordinate.
+         * @param {number} y2 - End y coordinate.
+         * @param {boolean} isPreview - Whether to draw a preview shape.
+         */
+        function drawShape(x1, y1, x2, y2, isPreview = false) {
+            ctx.strokeStyle = isPreview ? "rgba(100, 100, 100, 0.7)" : brushColor;
+            ctx.lineWidth = isPreview ? Math.max(2, brushSize / 10) : brushSize;
+            ctx.setLineDash(isPreview ? [8, 6] : []);
+
+            switch (currentShape) {
+                case 'line':
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                    break;
+                case 'circle':
+                    const radius = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+                    ctx.beginPath();
+                    ctx.arc(x1, y1, radius, 0, Math.PI * 2);
+                    ctx.stroke();
+                    break;
+                case 'square':
+                    ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+                    break;
+                case 'triangle':
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.lineTo(x1 + (x1 - x2), y2);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+                case 'trapezoid':
+                    ctx.beginPath();
+                    ctx.moveTo(x1 - (x2 - x1) / 4, y2);
+                    ctx.lineTo(x2 + (x2 - x1) / 4, y2);
+                    ctx.lineTo(x2, y1);
+                    ctx.lineTo(x1, y1);
+                    ctx.closePath();
+                    ctx.stroke();
+                    break;
+            }
+        }
+
+        /**
+         * Draws a preview of the shape being dragged.
+         */
+        function drawPreview(e) {
+            redrawFromHistory();
+            const coords = getEventCoordinates(e);
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const segments = symmetry === 0 ? 1 : symmetry;
+
+            for (let i = 0; i < segments; i++) {
+                const angle = (Math.PI * 2 / segments) * i;
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle);
+                
+                drawShape(startX - centerX, startY - centerY, coords.x - centerX, coords.y - centerY, true);
+                
+                if (symmetry > 0) {
+                    ctx.scale(1, -1);
+                    drawShape(startX - centerX, startY - centerY, coords.x - centerX, coords.y - centerY, true);
+                }
+                ctx.restore();
+            }
+        }
+
+        // --- History (Undo/Redo) Logic ---
+        /**
+         * Saves the current canvas state to the history array.
+         */
+        function saveState() {
+            if (historyIndex < history.length - 1) {
+                history.splice(historyIndex + 1);
+            }
+            history.push(canvas.toDataURL());
+            historyIndex++;
+        }
+
+        /**
+         * Goes back one step in the history.
+         */
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                redrawFromHistory();
+            }
+        }
+
+        /**
+         * Goes forward one step in the history.
+         */
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                redrawFromHistory();
+            }
+        }
+        
+        /**
+         * Clears the canvas and redraws the image from the current history state.
+         */
+        function redrawFromHistory() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            if (history[historyIndex]) {
+                const img = new Image();
+                img.src = history[historyIndex];
+                img.onload = () => {
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                };
+            }
+        }
+        
+        // --- Control Handlers ---
+        function handleBrushSizeChange(e) {
+            brushSize = e.target.value;
+            controls.brushSize.forEach(slider => slider.value = brushSize);
+        }
+
+        function handleColorChange(e) {
+            const button = e.target.closest('.color-btn');
+            if (!button) return;
+            
+            brushColor = button.dataset.color;
+            lastSelectedColor = brushColor;
+            
+            updateActiveTool(document.querySelector(`button[data-shape="freehand"]`));
+            
+            controls.colorPalettes.forEach(palette => {
+                palette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+                palette.querySelectorAll(`.color-btn[data-color="${brushColor}"]`).forEach(btn => btn.classList.add('active'));
+            });
+        }
+        
+        function handleShapeChange(e) {
+            const button = e.target.closest('.icon-btn[data-shape]');
+            if (!button) return;
+            
+            currentShape = button.dataset.shape;
+            updateActiveTool(button);
+            
+            // Reset colors and eraser state when changing shape
+            brushColor = lastSelectedColor;
+            controls.eraserBtns.forEach(btn => btn.classList.remove('active'));
+            controls.colorPalettes.forEach(palette => {
+                palette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+                palette.querySelectorAll(`.color-btn[data-color="${lastSelectedColor}"]`).forEach(btn => btn.classList.add('active'));
+            });
+        }
+
+        function handleEraserToggle() {
+            const eraserIsActive = controls.eraserBtns[0].classList.contains('active');
+            
+            if (eraserIsActive) {
+                // Deactivate eraser: revert to last selected color and freehand mode
+                brushColor = lastSelectedColor;
+                updateActiveTool(document.querySelector(`button[data-shape="freehand"]`));
+                controls.colorPalettes.forEach(palette => {
+                    palette.querySelectorAll(`.color-btn[data-color="${brushColor}"]`).forEach(btn => btn.classList.add('active'));
+                });
+            } else {
+                // Activate eraser: set color to white and mark as active
+                brushColor = '#ffffff';
+                updateActiveTool(controls.eraserBtns[0]);
+                controls.colorPalettes.forEach(palette => {
+                    palette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+                });
+            }
+        }
+        
+        /**
+         * Updates the 'active' class for the selected tool buttons across all toolbars.
+         */
+        function updateActiveTool(activeButton) {
+            // Remove 'active' from all shape and eraser buttons
+            document.querySelectorAll('.icon-btn[data-shape]').forEach(btn => btn.classList.remove('active'));
+            controls.eraserBtns.forEach(btn => btn.classList.remove('active'));
+            
+            // Add 'active' to the corresponding buttons in both desktop and mobile toolbars
+            if (activeButton.dataset.shape) {
+                const shape = activeButton.dataset.shape;
+                document.querySelectorAll(`.icon-btn[data-shape="${shape}"]`).forEach(btn => btn.classList.add('active'));
+            } else {
+                controls.eraserBtns.forEach(btn => btn.classList.add('active'));
+            }
+        }
+
+        function handleSymmetryChange(e) {
+            symmetry = parseInt(e.target.value, 10);
+            controls.symmetrySelects.forEach(select => select.value = symmetry);
+        }
+
+        function saveCanvas() {
+            const link = document.createElement('a');
+            link.download = 'mandala.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // --- Event Listeners ---
+        canvas.addEventListener('mousedown', handleCanvasMouseDown);
+        canvas.addEventListener('mousemove', handleCanvasMouseMove);
+        canvas.addEventListener('mouseup', handleCanvasMouseUp);
+        canvas.addEventListener('mouseleave', () => {
+            if (isDrawing || isDraggingShape) {
+                isDrawing = false;
+                isDraggingShape = false;
+                redrawFromHistory();
+            }
+        });
+        canvas.addEventListener('touchstart', handleCanvasMouseDown, { passive: false });
+        canvas.addEventListener('touchmove', handleCanvasMouseMove, { passive: false });
+        canvas.addEventListener('touchend', handleCanvasMouseUp);
+        
+        window.addEventListener('resize', resizeCanvas);
+
+        controls.brushSize.forEach(slider => slider.addEventListener('input', handleBrushSizeChange));
+        controls.colorPalettes.forEach(palette => palette.addEventListener('click', handleColorChange));
+        controls.shapeTools.forEach(toolbar => toolbar.addEventListener('click', handleShapeChange));
+        controls.eraserBtns.forEach(btn => btn.addEventListener('click', handleEraserToggle));
+        controls.symmetrySelects.forEach(select => select.addEventListener('change', handleSymmetryChange));
+        controls.undoBtns.forEach(btn => btn.addEventListener('click', undo));
+        controls.redoBtns.forEach(btn => btn.addEventListener('click', redo));
+        controls.clearBtns.forEach(btn => btn.addEventListener('click', () => clearCanvas(true)));
+        controls.saveBtns.forEach(btn => btn.addEventListener('click', saveCanvas));
+        
+        // --- Initialization ---
+        initializeCanvas();
+    });
+</script>
 </body>
 </html>
