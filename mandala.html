@@ -6,29 +6,28 @@
     <title>繪畫壇城</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-    .color-btn.color-blue { background-color: #3498db; }
-    .color-btn.color-red { background-color: #e74c3c; }
-    .color-btn.color-yellow { background-color: #f1c40f; }
-    .color-btn.color-green { background-color: #2ecc71; }
-    .color-btn.color-purple { background-color: #9b59b6; }
-    .color-btn.color-white { background-color: #ffffff; }
-    .color-btn.color-black { background-color: #000000; }
+        .color-btn.color-blue { background-color: #3498db; }
+        .color-btn.color-red { background-color: #e74c3c; }
+        .color-btn.color-yellow { background-color: #f1c40f; }
+        .color-btn.color-green { background-color: #2ecc71; }
+        .color-btn.color-purple { background-color: #9b59b6; }
+        .color-btn.color-white { background-color: #ffffff; }
+        .color-btn.color-black { background-color: #000000; }
+
         body {
             background: #18181c;
             color: #f3f3f3;
             font-family: 'Noto Sans TC', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* 防止滾動條 */
+            overflow: hidden;
         }
-
         .main-layout {
             display: flex;
             flex-direction: row;
             height: 100vh;
             width: 100vw;
         }
-
         .sidebar {
             width: 250px;
             min-width: 200px;
@@ -42,7 +41,7 @@
             overflow-y: auto;
             box-sizing: border-box;
         }
-        
+
         .canvas-area {
             flex: 1;
             display: flex;
@@ -55,7 +54,6 @@
             box-sizing: border-box;
             overflow: auto;
         }
-
         .toolbar-group {
             display: flex;
             flex-direction: column;
@@ -63,17 +61,15 @@
             padding-bottom: 20px;
             border-bottom: 1px solid #444;
         }
-        
+
         .toolbar-group:last-child {
             border-bottom: none;
         }
-
         .toolbar-group-title {
             font-size: 1.2em;
             font-weight: bold;
             margin-bottom: 4px;
         }
-
         .toolbar-row {
             display: flex;
             align-items: center;
@@ -83,16 +79,15 @@
         .toolbar-row-margin {
             margin-bottom: 16px;
         }
-        
+
         /* 繪畫工具樣式 */
         .sidebar button, .sidebar select, .sidebar input[type="range"] {
             font-family: inherit;
         }
-        
+
         .sidebar label {
             white-space: nowrap;
         }
-
         .icon-btn {
             position: relative;
             background: #222;
@@ -105,22 +100,20 @@
             transition: background 0.2s, box-shadow 0.2s;
             box-shadow: 0 1px 4px #0001;
         }
-        
+
         .icon-btn.active {
             background: #3498db;
             color: #fff;
         }
-        
+
         .icon-btn:hover {
             background: #444;
         }
-
         .color-palette {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
         }
-
         .color-btn {
             width: 32px;
             height: 32px;
@@ -130,12 +123,12 @@
             cursor: pointer;
             transition: border-color 0.2s, box-shadow 0.2s;
         }
-        
+
         .color-btn.active {
             border-color: #3498db;
             box-shadow: 0 0 0 2px #3498db44;
         }
-        
+
         #color-picker {
             width: 36px;
             height: 36px;
@@ -145,15 +138,13 @@
             padding: 0;
             transition: border 0.2s, box-shadow 0.2s;
         }
-        
+
         #color-picker.active {
             border: 3px solid #3498db;
             box-shadow: 0 0 0 2px #3498db44;
         }
-
         #eraser-btn.active svg g rect { fill: #e74c3c; }
         #eraser-btn.active svg g line { stroke: #e74c3c; }
-
         .shape-select, .symmetry-select {
             background: #222;
             color: #fff;
@@ -164,7 +155,6 @@
             min-width: 60px;
             cursor: pointer;
         }
-
         #mandala-canvas {
             background: #fff;
             border-radius: 16px;
@@ -176,129 +166,176 @@
             aspect-ratio: 1.5 / 1;
             display: block;
         }
-        
-        .ai-result {
-            max-width: 100%;
-            margin-top: 24px;
-            padding: 16px 24px;
-            background: #23233a;
-            border-radius: 12px;
-            color: #fff;
+        /* 新增的行動版控制區塊 */
+        .controls-mobile {
             display: none;
-            box-sizing: border-box;
         }
 
-        #download-btn, #ai-result-loading {
-            display: none;
+        /* AI 相關樣式 */
+        .ai-result {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px #0006;
         }
         
-        /* 調整手機板式 */
+        /* 媒體查詢：在小螢幕上調整佈局 */
         @media (max-width: 768px) {
-                .main-layout {
-                    flex-direction: row;
-                    height: 100vh;
-                }
-                .sidebar {
-                    width: 80px;
-                    min-width: 80px;
-                    height: 100vh;
-                    flex-direction: column;
-                    align-items: center;
-                    padding: 8px 4px;
-                    border-right: 1px solid rgba(255,255,255,0.12);
-                    border-bottom: none;
-                    box-shadow: 2px 0 8px rgba(0,0,0,0.12);
-                    overflow-y: auto;
-                }
-                .canvas-area {
-                    flex: 1;
-                    height: 100vh;
-                    padding: 8px;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .toolbar-group {
-                    flex-direction: column;
-                    align-items: center;
-                    gap: 8px;
-                    border-bottom: none;
-                    padding-bottom: 0;
-                }
-                .toolbar-row {
-                    flex-direction: column;
-                    gap: 8px;
-                    align-items: center;
-                }
-                .toolbar-group-title {
-                    display: none;
-                }
-                .color-palette {
-                    flex-direction: column;
-                    gap: 6px;
-                }
-                .color-btn, #color-picker {
-                    width: 28px;
-                    height: 28px;
-                }
-                .icon-btn {
-                    padding: 6px 8px;
-                    font-size: 0.95em;
-                }
+            .main-layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                display: none;
+            }
+            .controls-mobile {
+                display: flex;
+                flex-direction: column;
+                background: rgba(30, 30, 45, 0.98);
+                box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
+                padding: 16px;
+                gap: 16px;
+                width: 100%;
+                box-sizing: border-box;
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 10;
+            }
+            .controls-mobile .toolbar-row {
+                justify-content: space-between;
+                flex-wrap: nowrap;
+            }
+            .canvas-area {
+                padding: 20px 20px 80px 20px; /* 底部增加空間以避免被工具欄遮擋 */
+                height: auto;
+                margin-top: 150px; /* 留出上方工具欄的空間 */
+            }
+            .toolbar-group-title {
+                display: none;
+            }
+            .toolbar-group {
+                border-bottom: none;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+            .color-palette {
+                justify-content: flex-start;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="toolbar-row toolbar-row-margin">
+    <div class="main-layout">
+        <div class="controls-mobile">
+            <div class="toolbar-group">
+                <div class="toolbar-row">
+                    <button class="icon-btn" title="冥想音樂">冥想音樂</button>
+                    <button class="icon-btn" title="每日閱讀">每日閱讀</button>
+                    <button class="icon-btn" title="每日指引">每日指引</button>
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <div class="toolbar-row">
+                    <label>筆刷：</label>
+                    <input type="range" id="brush-size" min="1" max="100" value="10" title="筆刷大小">
+                    <div class="color-palette">
+                        <button class="color-btn color-blue active" data-color="#3498db" title="藍色"></button>
+                        <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
+                        <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
+                        <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
+                        <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
+                        <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
+                        <button class="color-btn color-black" data-color="#000000" title="黑色"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <div class="toolbar-row">
+                    <label>形狀：</label>
+                        <input type="range" id="brush-size" min="1" max="100" value="10" title="筆刷大小">
+                        <option value="free">自由</option>
+                        <option value="circle">圓形</option>
+                        <option value="line">直線</option>
+                    </select>
+                    <label>對稱：</label>
+                    <select class="symmetry-select" id="symmetry-count">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6" selected>6</option>
+                        <option value="8">8</option>
+                        <option value="12">12</option>
+                    </select>
+                    <button class="icon-btn" id="finish-btn" title="完成">完成</button>
+                </div>
+            </div>
+        </div>
+
         <div class="sidebar">
             <div class="toolbar-group">
-                <div class="toolbar-row toolbar-row-margin">
-                    <a href="meditation.html" class="sidebar-link">冥想音樂</a>
-                    <a href="articles.html" class="sidebar-link">每日閱讀</a>
-                    <span class="sidebar-link sidebar-link-disabled">每日指引</span>
-                </div>
-                <span class="toolbar-group-title">筆刷工具</span>
+                <button class="icon-btn" title="冥想音樂">冥想音樂</button>
+                <button class="icon-btn" title="每日閱讀">每日閱讀</button>
+                <button class="icon-btn" title="每日指引">每日指引</button>
+            </div>
+            <div class="toolbar-group">
+                <div class="toolbar-group-title">筆刷</div>
                 <div class="toolbar-row">
-                    <label for="brush-size">筆刷：</label>
-                    <input type="range" id="brush-size" min="1" max="40" value="8">
-                </div>
-                <div class="toolbar-row color-palette">
-                    <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
-                    <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
-                    <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
-                    <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
-                    <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
-                    <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
-                    <button class="color-btn color-black" data-color="#000000" title="黑色"></button>
+                    <label>大小：</label>
+                    <input type="range" id="brush-size" min="1" max="100" value="10" title="筆刷大小">
                 </div>
                 <div class="toolbar-row">
-                    <input type="color" id="color-picker" value="#3498db" title="自訂顏色">
-                    <button id="eraser-btn" class="icon-btn" title="橡皮擦">
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                            <g transform="rotate(-20 16 16)">
-                                <rect x="8" y="12" width="16" height="12" rx="4" fill="#f8b6b6" stroke="#888" stroke-width="2"/>
-                                <rect x="8" y="20" width="16" height="4" rx="2" fill="#fff" stroke="#888" stroke-width="1.2"/>
-                                <line x1="10" y1="24" x2="22" y2="24" stroke="#888" stroke-width="2" stroke-linecap="round"/>
+                    <label>顏色：</label>
+                    <div class="color-palette">
+                        <button class="color-btn color-blue active" data-color="#3498db"></button>
+                        <button class="color-btn color-red" data-color="#e74c3c"></button>
+                        <button class="color-btn color-yellow" data-color="#f1c40f"></button>
+                        <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
+                        <button class="color-btn color-purple" data-color="#9b59b6"></button>
+                        <button class="color-btn color-white" data-color="#ffffff"></button>
+                        <button class="color-btn color-black" data-color="#000000"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <div class="toolbar-group-title">工具</div>
+                <div class="toolbar-row">
+                    <button class="icon-btn" id="eraser-btn" title="橡皮擦">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <g>
+                                <path d="M12.914 1.258a1.5 1.5 0 0 1 2.122 0l4.909 4.909a1.5 1.5 0 0 1 0 2.121l-9.192 9.192a2.25 2.25 0 0 1-1.591.659h-5.46a.75.75 0 0 1-.75-.75v-5.46a2.25 2.25 0 0 1 .659-1.591L12.914 1.258Z" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M18.89 7.086 16.48 4.675" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M17.152 9.088 19.563 6.677" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </g>
                         </svg>
                     </button>
+                    <button class="icon-btn" id="undo-btn" title="上一步">上一步</button>
+                    <button class="icon-btn" id="redo-btn" title="下一步">下一步</button>
+                    <button class="icon-btn" id="clear-btn" title="清空">清空</button>
+                    <button class="icon-btn" id="save-btn" title="儲存">儲存</button>
                 </div>
             </div>
-
             <div class="toolbar-group">
-                <span class="toolbar-group-title">形狀與功能</span>
+                <div class="toolbar-group-title">設定</div>
                 <div class="toolbar-row">
-                    <label for="shape-select">形狀：</label>
-                    <select id="shape-select" class="shape-select" title="選擇形狀">
-                        <option value="free" selected>自由</option>
-                        <option value="line">直線</option>
+                    <label>形狀：</label>
+                    <select class="shape-select" id="shape-type">
+                        <option value="free">自由</option>
                         <option value="circle">圓形</option>
-                        <option value="rect">方形</option>
+                        <option value="line">直線</option>
                     </select>
                 </div>
                 <div class="toolbar-row">
-                    <label for="symmetry-select">對稱：</label>
-                    <select id="symmetry-select" class="symmetry-select" title="選擇旋轉對稱數量">
-                        <option value="0">無</option>
+                    <label>對稱：</label>
+                    <select class="symmetry-select" id="symmetry-count">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">3</option>
                         <option value="4">4</option>
@@ -308,194 +345,12 @@
                         <option value="12">12</option>
                     </select>
                 </div>
-                <div class="toolbar-row">
-                    <button id="finish-btn" class="icon-btn" title="完成">
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                            <circle cx="14" cy="14" r="13" fill="#3498db" stroke="#fff" stroke-width="2"/>
-                            <polyline points="8,15 13,20 20,9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                    <button id="download-btn" class="icon-btn">
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                            <rect x="6" y="18" width="16" height="4" rx="2" fill="#fff" stroke="#888" stroke-width="1.2"/>
-                            <path d="M14 6v12" stroke="#3498db" stroke-width="3" stroke-linecap="round"/>
-                            <polyline points="10,14 14,18 18,14" fill="none" stroke="#3498db" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </button>
-                </div>
             </div>
         </div>
+
         <div class="canvas-area">
-            <canvas id="mandala-canvas" width="1200" height="800"></canvas>
-            <div id="ai-result" class="ai-result"></div>
+            <canvas id="mandala-canvas" width="800" height="600"></canvas>
         </div>
     </div>
-    <script>
-        const canvas = document.getElementById('mandala-canvas');
-        const ctx = canvas.getContext('2d');
-        const center = { x: canvas.width / 2, y: canvas.height / 2 };
-
-        let drawing = false;
-        let last = null;
-        let brushColor = document.getElementById('color-picker').value;
-        let brushSize = parseInt(document.getElementById('brush-size').value);
-        let symmetry = parseInt(document.getElementById('symmetry-select').value);
-        let erasing = false;
-        let shape = 'free';
-        let shapeStart = null;
-
-        // 初始設定
-        // 由於原先的顏色按鈕沒有預設 active 類別，這裡選擇第一個按鈕作為預設顏色
-        const defaultColorBtn = document.querySelector('.color-btn[data-color="#3498db"]');
-        if (defaultColorBtn) {
-            defaultColorBtn.classList.add('active');
-        }
-        document.getElementById('color-picker').classList.add('active');
-
-        function pointerPos(e) {
-            const rect = canvas.getBoundingClientRect();
-            let clientX, clientY;
-            if (e.touches) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            } else {
-                clientX = e.clientX;
-                clientY = e.clientY;
-            }
-            return {
-                x: (clientX - rect.left) * canvas.width / rect.width,
-                y: (clientY - rect.top) * canvas.height / rect.height
-            };
-        }
-
-        function drawSingle(from, to, drawOn) {
-            drawOn.beginPath();
-            if (shape === 'free') {
-                drawOn.moveTo(from.x, from.y);
-                drawOn.lineTo(to.x, to.y);
-            } else if (shape === 'line') {
-                drawOn.moveTo(from.x, from.y);
-                drawOn.lineTo(to.x, to.y);
-            } else if (shape === 'circle') {
-                const r = Math.hypot(to.x - from.x, to.y - from.y);
-                drawOn.arc(from.x, from.y, r, 0, 2 * Math.PI);
-            } else if (shape === 'rect') {
-                drawOn.rect(from.x, from.y, to.x - from.x, to.y - from.y);
-            }
-            drawOn.stroke();
-        }
-
-        function drawSymmetric(from, to) {
-            const color = erasing ? '#fff' : brushColor;
-            const compOp = erasing ? 'destination-out' : 'source-over';
-
-            ctx.save();
-            ctx.strokeStyle = color;
-            ctx.lineWidth = brushSize;
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.globalCompositeOperation = compOp;
-
-            if (symmetry === 0) {
-                drawSingle(from, to, ctx);
-            } else {
-                const angle = (2 * Math.PI) / symmetry;
-                for (let i = 0; i < symmetry; i++) {
-                    ctx.save();
-                    ctx.translate(center.x, center.y);
-                    ctx.rotate(angle * i);
-                    drawSingle(
-                        { x: from.x - center.x, y: from.y - center.y },
-                        { x: to.x - center.x, y: to.y - center.y },
-                        ctx
-                    );
-                    ctx.restore();
-                }
-            }
-            ctx.restore();
-        }
-
-        function startDraw(e) {
-            e.preventDefault();
-            const pos = pointerPos(e);
-            drawing = true;
-            last = pos;
-            shapeStart = pos;
-        }
-
-        function endDraw(e) {
-            e.preventDefault();
-            drawing = false;
-            if (shape !== 'free' && shapeStart) {
-                const pos = pointerPos(e);
-                drawSymmetric(shapeStart, pos);
-                shapeStart = null;
-            }
-        }
-
-        function draw(e) {
-            e.preventDefault();
-            if (!drawing || shape !== 'free') return;
-            const pos = pointerPos(e);
-            drawSymmetric(last, pos);
-            last = pos;
-        }
-
-        canvas.addEventListener('mousedown', startDraw);
-        canvas.addEventListener('touchstart', startDraw);
-        window.addEventListener('mouseup', endDraw);
-        window.addEventListener('touchend', endDraw);
-        window.addEventListener('mousemove', draw);
-        window.addEventListener('touchmove', draw, { passive: false });
-
-        document.getElementById('brush-size').addEventListener('input', function(e) {
-            brushSize = parseInt(e.target.value);
-        });
-
-        document.getElementById('shape-select').addEventListener('change', function(e) {
-            shape = e.target.value;
-            shapeStart = null;
-        });
-
-        document.querySelectorAll('.color-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                brushColor = this.getAttribute('data-color');
-                erasing = false;
-                
-                document.querySelectorAll('.color-btn, #color-picker, #eraser-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                document.getElementById('color-picker').value = brushColor;
-                document.getElementById('color-picker').classList.add('active');
-            });
-        });
-        
-        const colorPicker = document.getElementById('color-picker');
-        colorPicker.addEventListener('input', function(e) {
-            brushColor = e.target.value;
-            erasing = false;
-            
-            document.querySelectorAll('.color-btn, #eraser-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-        });
-        
-        const eraserBtn = document.getElementById('eraser-btn');
-        eraserBtn.addEventListener('click', function() {
-            erasing = true;
-            
-            document.querySelectorAll('.color-btn, #color-picker').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-        });
-
-        document.getElementById('symmetry-select').addEventListener('change', function(e) {
-            symmetry = parseInt(e.target.value);
-        });
-
-        document.getElementById('download-btn').addEventListener('click', function() {
-            const link = document.createElement('a');
-            link.download = 'mandala.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        });
-    </script>
 </body>
 </html>
