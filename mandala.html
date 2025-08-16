@@ -199,6 +199,57 @@
             touch-action: none;
             cursor: crosshair;
         }
+
+        /* 手機版左側邊欄樣式 - 與 articles.html 一致 */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: #16213e;
+            box-shadow: 2px 0 16px #0006;
+            z-index: 200;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+            overflow-y: auto;
+        }
+        
+        #sidebar.show {
+            transform: translateX(0);
+        }
+        
+        #sidebar h2 {
+            color: #00aaff;
+            margin: 24px 0 16px 0;
+            text-align: center;
+            font-size: 1.2em;
+            padding: 16px 0 8px 0;
+        }
+        
+        .sidebar-link {
+            display: block;
+            padding: 12px 32px;
+            color: #fff;
+            font-size: 1.1em;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        #sidebar-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
+        
+        /* 手機版漢堡按鈕樣式 */
+        #hamburger {
+            box-shadow: 0 2px 8px #0004;
+        }
+        
+        #hamburger svg {
+            vertical-align: middle;
+        }
         
         /* Mobile controls section */
         .controls-mobile {
@@ -212,6 +263,11 @@
             }
             .sidebar {
                 display: none;
+            }
+            
+            /* 手機版標題區域在手機上顯示 */
+            .mobile-header {
+                display: flex;
             }
             .controls-mobile {
                 display: flex;
@@ -253,10 +309,44 @@
                 align-items: center;
                 gap: 12px;
             }
+            
+            /* 手機版標題區域樣式 */
+            .mobile-header {
+                display: none; /* 桌面版隱藏 */
+                align-items: center;
+                justify-content: space-between;
+                padding: 16px;
+                background: rgba(30, 30, 45, 0.95);
+                border-radius: 20px;
+                margin: 16px;
+                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            }
+            
+            .mobile-title {
+                color: #e0e0e0;
+                font-size: 1.5em;
+                font-weight: 300;
+                margin: 0;
+                flex: 1;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 手機版標題區域 -->
+    <div class="mobile-header">
+        <button id="hamburger" class="icon-btn" title="展開選單">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
+                <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+            </svg>
+        </button>
+        <h1 class="mobile-title">繪畫壇城</h1>
+        <div style="width: 44px;"></div> <!-- 佔位元素，保持標題置中 -->
+    </div>
+
     <div class="main-layout">
         <div class="sidebar">
             <div class="toolbar-group">
@@ -391,12 +481,36 @@
         </div>
     </div>
 
+    <!-- 手機版左側邊欄 - 與 articles.html 一致 -->
+    <nav id="sidebar">
+        <h2>選單</h2>
+        <a href="meditation.html" class="sidebar-link">冥想音樂</a>
+        <a href="articles.html" class="sidebar-link">每日閱讀</a>
+        <a href="guide.html" class="sidebar-link">每日指引</a>
+        <button id="sidebar-close" class="icon-btn" title="關閉選單">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </nav>
+
 <script>
     window.addEventListener('DOMContentLoaded', () => {
         // --- DOM Element Selection ---
         const canvas = document.getElementById('mandala-canvas');
         const ctx = canvas.getContext('2d');
         const canvasArea = document.querySelector('.canvas-area');
+
+        // 手機版側邊欄控制
+        const hamburgerBtn = document.getElementById('hamburger');
+        const sidebarNav = document.getElementById('sidebar');
+        const sidebarClose = document.getElementById('sidebar-close');
+        
+        hamburgerBtn.addEventListener('click', function() {
+            sidebarNav.classList.toggle('show');
+        });
+        
+        sidebarClose.addEventListener('click', function() {
+            sidebarNav.classList.remove('show');
+        });
 
         // Controls
         const controls = {
