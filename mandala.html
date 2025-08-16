@@ -166,166 +166,208 @@
             aspect-ratio: 1.5 / 1;
             display: block;
         }
-        /* 新增的行動版控制區塊 */
-        .controls-mobile {
-            display: none;
-        }
-
-        /* AI 相關樣式 */
-        .ai-result {
-            max-width: 100%;
-            height: auto;
-            margin-top: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 24px #0006;
-        }
-        
-        /* 媒體查詢：在小螢幕上調整佈局 */
-        @media (max-width: 768px) {
-            .main-layout {
-                flex-direction: column;
-            }
-            .sidebar {
-                display: none;
-            }
-            .controls-mobile {
-                display: flex;
-                flex-direction: column;
-                background: rgba(30, 30, 45, 0.98);
-                box-shadow: 0 2px 16px rgba(0, 0, 0, 0.18);
-                padding: 16px;
-                gap: 16px;
-                width: 100%;
-                box-sizing: border-box;
-                position: fixed;
-                top: 0;
-                left: 0;
-                z-index: 10;
-            }
-            .controls-mobile .toolbar-row {
-                justify-content: space-between;
-                flex-wrap: nowrap;
-            }
-            .canvas-area {
-                padding: 20px 20px 80px 20px; /* 底部增加空間以避免被工具欄遮擋 */
-                height: auto;
-                margin-top: 150px; /* 留出上方工具欄的空間 */
-            }
-            .toolbar-group-title {
-                display: none;
-            }
-            .toolbar-group {
-                border-bottom: none;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-            .color-palette {
-                justify-content: flex-start;
-            }
-        }
     </style>
-</head>
-<body>
-    <div class="main-layout">
-        <div class="controls-mobile">
-            <div class="toolbar-group">
-                <div class="toolbar-row">
-                    <button class="icon-btn" title="冥想音樂">冥想音樂</button>
-                    <button class="icon-btn" title="每日閱讀">每日閱讀</button>
-                    <button class="icon-btn" title="每日指引">每日指引</button>
-                </div>
-            </div>
-            <div class="toolbar-group">
-                <div class="toolbar-row">
-                    <label>筆刷：</label>
-                    <input type="range" id="brush-size" min="1" max="100" value="10" title="筆刷大小">
-                    <div class="color-palette">
-                        <button class="color-btn color-blue active" data-color="#3498db" title="藍色"></button>
-                        <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
-                        <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
-                        <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
-                        <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
-                        <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
-                        <button class="color-btn color-black" data-color="#000000" title="黑色"></button>
-                    </div>
-                </div>
-            </div>
-            <div class="toolbar-group">
-                <div class="toolbar-row">
-                    <label>形狀：</label>
-                        <input type="range" id="brush-size" min="1" max="100" value="10" title="筆刷大小">
-                        <option value="free">自由</option>
-                        <option value="circle">圓形</option>
-                        <option value="line">直線</option>
-                    </select>
-                    <label>對稱：</label>
-                    <select class="symmetry-select" id="symmetry-count">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6" selected>6</option>
-                        <option value="8">8</option>
-                        <option value="12">12</option>
-                    </select>
-                    <button class="icon-btn" id="finish-btn" title="完成">完成</button>
-                </div>
-            </div>
-        </div>
+    <script>
+    // 所有 JS 程式碼移到這裡
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('mandala-canvas');
+        const ctx = canvas.getContext('2d');
+        const center = { x: canvas.width / 2, y: canvas.height / 2 };
 
-        <div class="sidebar">
-            <div class="toolbar-group">
-                <button class="icon-btn" title="冥想音樂">冥想音樂</button>
-                <button class="icon-btn" title="每日閱讀">每日閱讀</button>
-                <button class="icon-btn" title="每日指引">每日指引</button>
-            </div>
-            <div class="toolbar-group">
-                <div class="toolbar-group-title">筆刷</div>
-                <div class="toolbar-row">
-                    <label>大小：</label>
-                    <input type="range" id="brush-size" min="1" max="100" value="10" title="筆刷大小">
-                </div>
-                <div class="toolbar-row">
-                    <label>顏色：</label>
-                    <div class="color-palette">
-                        <button class="color-btn color-blue active" data-color="#3498db"></button>
-                        <button class="color-btn color-red" data-color="#e74c3c"></button>
-                        <button class="color-btn color-yellow" data-color="#f1c40f"></button>
-                        <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
-                        <button class="color-btn color-purple" data-color="#9b59b6"></button>
-                        <button class="color-btn color-white" data-color="#ffffff"></button>
-                        <button class="color-btn color-black" data-color="#000000"></button>
-                    </div>
-                </div>
-            </div>
-            <div class="toolbar-group">
-                <div class="toolbar-group-title">工具</div>
-                <div class="toolbar-row">
-                    <button class="icon-btn" id="eraser-btn" title="橡皮擦">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <g>
-                                <path d="M12.914 1.258a1.5 1.5 0 0 1 2.122 0l4.909 4.909a1.5 1.5 0 0 1 0 2.121l-9.192 9.192a2.25 2.25 0 0 1-1.591.659h-5.46a.75.75 0 0 1-.75-.75v-5.46a2.25 2.25 0 0 1 .659-1.591L12.914 1.258Z" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M18.89 7.086 16.48 4.675" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M17.152 9.088 19.563 6.677" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </g>
-                        </svg>
-                    </button>
-                    <button class="icon-btn" id="undo-btn" title="上一步">上一步</button>
-                    <button class="icon-btn" id="redo-btn" title="下一步">下一步</button>
-                    <button class="icon-btn" id="clear-btn" title="清空">清空</button>
-                    <button class="icon-btn" id="save-btn" title="儲存">儲存</button>
-                </div>
+        let drawing = false;
+        let last = null;
+        let brushColor = document.getElementById('color-picker') ? document.getElementById('color-picker').value : '#3498db';
+        let brushSize = parseInt(document.getElementById('brush-size').value);
+        let symmetry = parseInt(document.getElementById('symmetry-count').value);
+        let erasing = false;
+        let shape = 'free';
+        let shapeStart = null;
+
+        // 初始設定
+        const defaultColorBtn = document.querySelector('.color-btn[data-color="#3498db"]');
+        if (defaultColorBtn) {
+            defaultColorBtn.classList.add('active');
+        }
+        if (document.getElementById('color-picker')) {
+            document.getElementById('color-picker').classList.add('active');
+        }
+
+        function pointerPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            return {
+                x: (clientX - rect.left) * canvas.width / rect.width,
+                y: (clientY - rect.top) * canvas.height / rect.height
+            };
+        }
+
+        function drawSingle(from, to, drawOn) {
+            drawOn.beginPath();
+            if (shape === 'free') {
+                drawOn.moveTo(from.x, from.y);
+                drawOn.lineTo(to.x, to.y);
+            } else if (shape === 'line') {
+                drawOn.moveTo(from.x, from.y);
+                drawOn.lineTo(to.x, to.y);
+            } else if (shape === 'circle') {
+                const r = Math.hypot(to.x - from.x, to.y - from.y);
+                drawOn.arc(from.x, from.y, r, 0, 2 * Math.PI);
+            } else if (shape === 'rect') {
+                drawOn.rect(from.x, from.y, to.x - from.x, to.y - from.y);
+            }
+            drawOn.stroke();
+        }
+
+        function drawSymmetric(from, to) {
+            const color = erasing ? '#fff' : brushColor;
+            const compOp = erasing ? 'destination-out' : 'source-over';
+
+            ctx.save();
+            ctx.strokeStyle = color;
+            ctx.lineWidth = brushSize;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.globalCompositeOperation = compOp;
+
+            if (symmetry === 0) {
+                drawSingle(from, to, ctx);
+            } else {
+                const angle = (2 * Math.PI) / symmetry;
+                for (let i = 0; i < symmetry; i++) {
+                    ctx.save();
+                    ctx.translate(center.x, center.y);
+                    ctx.rotate(angle * i);
+                    drawSingle(
+                        { x: from.x - center.x, y: from.y - center.y },
+                        { x: to.x - center.x, y: to.y - center.y },
+                        ctx
+                    );
+                    ctx.restore();
+                }
+            }
+            ctx.restore();
+        }
+
+        function startDraw(e) {
+            e.preventDefault();
+            const pos = pointerPos(e);
+            drawing = true;
+            last = pos;
+            shapeStart = pos;
+        }
+
+        function endDraw(e) {
+            e.preventDefault();
+            drawing = false;
+            if (shape !== 'free' && shapeStart) {
+                const pos = pointerPos(e);
+                drawSymmetric(shapeStart, pos);
+                shapeStart = null;
+            }
+        }
+
+        function draw(e) {
+            e.preventDefault();
+            if (!drawing || shape !== 'free') return;
+            const pos = pointerPos(e);
+            drawSymmetric(last, pos);
+            last = pos;
+        }
+
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('touchstart', startDraw);
+        window.addEventListener('mouseup', endDraw);
+        window.addEventListener('touchend', endDraw);
+        window.addEventListener('mousemove', draw);
+        window.addEventListener('touchmove', draw, { passive: false });
+
+        // 桌面側邊欄事件
+        document.getElementById('brush-size').addEventListener('input', function(e) {
+            brushSize = parseInt(e.target.value);
+        });
+        document.getElementById('shape-type').addEventListener('change', function(e) {
+            shape = e.target.value;
+            shapeStart = null;
+        });
+        document.getElementById('symmetry-count').addEventListener('change', function(e) {
+            symmetry = parseInt(e.target.value);
+        });
+
+        // controls-mobile 事件
+        if (document.getElementById('brush-size-mobile')) {
+            document.getElementById('brush-size-mobile').addEventListener('input', function(e) {
+                brushSize = parseInt(e.target.value);
+            });
+        }
+        if (document.getElementById('shape-type-mobile')) {
+            document.getElementById('shape-type-mobile').addEventListener('change', function(e) {
+                shape = e.target.value;
+                shapeStart = null;
+            });
+        }
+        if (document.getElementById('symmetry-count-mobile')) {
+            document.getElementById('symmetry-count-mobile').addEventListener('change', function(e) {
+                symmetry = parseInt(e.target.value);
+            });
+        }
+        if (document.getElementById('finish-btn-mobile')) {
+            document.getElementById('finish-btn-mobile').addEventListener('click', function() {
+                // 這裡可根據 finish-btn 的原本功能補充
+                alert('完成！');
+            });
+        }
+
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                brushColor = this.getAttribute('data-color');
+                erasing = false;
+                document.querySelectorAll('.color-btn, #color-picker, #eraser-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                if (document.getElementById('color-picker')) {
+                    document.getElementById('color-picker').value = brushColor;
+                    document.getElementById('color-picker').classList.add('active');
+                }
+            });
+        });
+
+        if (document.getElementById('color-picker')) {
+            const colorPicker = document.getElementById('color-picker');
+            colorPicker.addEventListener('input', function(e) {
+                brushColor = e.target.value;
+                erasing = false;
+                document.querySelectorAll('.color-btn, #eraser-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        }
+
+        const eraserBtn = document.getElementById('eraser-btn');
+        eraserBtn.addEventListener('click', function() {
+            erasing = true;
+            document.querySelectorAll('.color-btn, #color-picker').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+        });
+
+        document.getElementById('download-btn') && document.getElementById('download-btn').addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.download = 'mandala.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+    });
+    </script>
             </div>
             <div class="toolbar-group">
                 <div class="toolbar-group-title">設定</div>
                 <div class="toolbar-row">
                     <label>形狀：</label>
-                    <select class="shape-select" id="shape-type">
+                    <select class="shape-select" id="shape-type" title="形狀選擇">
                         <option value="free">自由</option>
                         <option value="circle">圓形</option>
                         <option value="line">直線</option>
@@ -333,7 +375,7 @@
                 </div>
                 <div class="toolbar-row">
                     <label>對稱：</label>
-                    <select class="symmetry-select" id="symmetry-count">
+                    <select class="symmetry-select" id="symmetry-count" title="對稱數量">
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
