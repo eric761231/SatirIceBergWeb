@@ -194,34 +194,56 @@
         
         /* 調整手機板式 */
         @media (max-width: 768px) {
-            .main-layout {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                height: auto;
-                padding: 16px;
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
-            }
-            .canvas-area {
-                height: auto;
-                padding: 16px;
-            }
-            .toolbar-group {
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                border-bottom: none;
-                padding-bottom: 0;
-            }
-            .toolbar-group-title {
-                display: none;
-            }
+                .main-layout {
+                    flex-direction: row;
+                    height: 100vh;
+                }
+                .sidebar {
+                    width: 80px;
+                    min-width: 80px;
+                    height: 100vh;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 8px 4px;
+                    border-right: 1px solid rgba(255,255,255,0.12);
+                    border-bottom: none;
+                    box-shadow: 2px 0 8px rgba(0,0,0,0.12);
+                    overflow-y: auto;
+                }
+                .canvas-area {
+                    flex: 1;
+                    height: 100vh;
+                    padding: 8px;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .toolbar-group {
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 8px;
+                    border-bottom: none;
+                    padding-bottom: 0;
+                }
+                .toolbar-row {
+                    flex-direction: column;
+                    gap: 8px;
+                    align-items: center;
+                }
+                .toolbar-group-title {
+                    display: none;
+                }
+                .color-palette {
+                    flex-direction: column;
+                    gap: 6px;
+                }
+                .color-btn, #color-picker {
+                    width: 28px;
+                    height: 28px;
+                }
+                .icon-btn {
+                    padding: 6px 8px;
+                    font-size: 0.95em;
+                }
         }
     </style>
 </head>
