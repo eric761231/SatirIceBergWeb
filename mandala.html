@@ -328,37 +328,21 @@
 </head>
 <body>
     <!-- 手機版橘色標題區塊 -->
-    <div class="mobile-header orange-header">
-        <div class="orange-title">曼荼羅</div>
-        <div class="orange-desc">內在世界連接宇宙意識</div>
-    </div>
+        <div class="mobile-header" style="display:flex;align-items:center;justify-content:space-between;padding:16px;background:rgba(30,30,45,0.95);border-radius:20px;margin:16px;box-shadow:0 15px 35px rgba(0,0,0,0.4);">
+            <button id="hamburger" class="icon-btn" title="展開選單">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+            <h1 class="mobile-title" style="color:#e0e0e0;font-size:1.5em;font-weight:300;margin:0;flex:1;text-align:center;">繪畫壇城</h1>
+            <div style="width:44px;"></div>
+        </div>
     <style>
-    /* 橘色標題區塊樣式 */
-    .orange-header {
-        background: linear-gradient(90deg, #ff9800 80%, #ffb74d 100%);
-        padding: 18px 0 10px 0;
-        text-align: center;
-        border-radius: 0 0 24px 24px;
-        margin-bottom: 0;
-        box-shadow: 0 2px 12px #0002;
-        display: none;
-    }
-    .orange-title {
-        font-size: 1.3em;
-        font-weight: bold;
-        color: #fff;
-        letter-spacing: 2px;
-    }
-    .orange-desc {
-        font-size: 1em;
-        color: #fff8;
-        margin-top: 4px;
-    }
-    @media (max-width: 768px) {
-        .orange-header { display: block; }
-        .mobile-header { display: none !important; }
-    }
     </style>
+        <div class="orange-header" style="background:linear-gradient(90deg,#ff9800 80%,#ffb74d 100%);padding:18px 0 10px 0;text-align:center;border-radius:0 0 24px 24px;margin-bottom:0;box-shadow:0 2px 12px #0002;">
+            <div class="orange-title" style="font-size:1.3em;font-weight:bold;color:#fff;letter-spacing:2px;">曼荼羅</div>
+            <div class="orange-desc" style="font-size:1em;color:#fff8;margin-top:4px;">內在世界連接宇宙意識</div>
+        </div>
 
     <div class="main-layout">
         <div class="sidebar">
@@ -446,11 +430,11 @@
 
         <!-- 畫布區域（桌面與手機版共用同一個 canvas，ID: mandala-canvas） -->
         <div class="canvas-area">
-            <canvas id="mandala-canvas"></canvas>
-        </div>
+                <canvas id="mandala-canvas" style="height:100%;width:100%;max-width:100vw;"></canvas>
+            </div>
 
         <!-- 可收合/展開的繪圖工具區塊（手機版） -->
-        <div class="controls-mobile" id="controls-mobile" style="height:48px;overflow:hidden;transition:height 0.3s;">
+        <div class="controls-mobile" id="controls-mobile" style="max-height:48px;overflow:hidden;transition:max-height 0.3s;">
             <button id="toggle-tools-btn" style="width:100%;background:#4caf50;color:#fff;font-size:1.1em;padding:8px 0;border:none;border-radius:12px 12px 0 0;box-shadow:0 -2px 8px #0002;">繪圖工具 ▼</button>
             <div id="mobile-tools-content" style="display:none;">
                 <div class="toolbar-row">
@@ -509,6 +493,23 @@
 
 <script>
     window.addEventListener('DOMContentLoaded', () => {
+        // 手機版繪圖工具收合/展開功能（maxHeight動畫）
+        const controlsMobile = document.getElementById('controls-mobile');
+        const mobileToolsContent = document.getElementById('mobile-tools-content');
+        const toggleToolsBtn = document.getElementById('toggle-tools-btn');
+        let toolsOpen = false;
+        toggleToolsBtn.addEventListener('click', function() {
+            toolsOpen = !toolsOpen;
+            if (toolsOpen) {
+                controlsMobile.style.maxHeight = '600px';
+                mobileToolsContent.style.display = 'block';
+                toggleToolsBtn.innerHTML = '繪圖工具 ▲';
+            } else {
+                controlsMobile.style.maxHeight = '48px';
+                mobileToolsContent.style.display = 'none';
+                toggleToolsBtn.innerHTML = '繪圖工具 ▼';
+            }
+        });
         // --- DOM Element Selection ---
         const canvas = document.getElementById('mandala-canvas');
         const ctx = canvas.getContext('2d');
