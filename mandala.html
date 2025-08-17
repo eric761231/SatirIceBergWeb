@@ -343,15 +343,13 @@
                 background: transparent;
             }
             #mandala-canvas {
-                /* 手機版畫布尺寸優化 - 真正充滿整個可用空間 */
+                /* 手機版畫布尺寸優化 - 垂直置中在螢幕中央 */
                 width: calc(100vw - 40px);
                 height: calc(100vh - 320px);
                 max-width: calc(100vw - 40px);
                 max-height: calc(100vh - 320px);
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+                /* 垂直置中：移除絕對定位，使用flexbox置中 */
+                position: relative;
                 /* 確保畫布在手機上正確顯示 */
                 border-radius: 12px;
                 /* 手機版畫布背景色 - 與頁面背景一致 */
@@ -393,11 +391,8 @@
                 height: calc(100vh - 280px);
                 max-width: calc(100vw - 32px);
                 max-height: calc(100vh - 280px);
-                /* 確保畫布在小螢幕上正確置中 */
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+                /* 垂直置中：使用flexbox置中，移除絕對定位 */
+                position: relative;
                 /* 小螢幕手機畫布背景色 - 與頁面背景一致 */
                 background: var(--bg-dark);
             }
@@ -446,7 +441,6 @@
             <!-- 曼荼羅標題置中調整 -->
             <span style="font-size:1.5em;font-weight:bold;color:#3498db;letter-spacing:2px;text-align:center;width:100%;">曼荼羅</span>
             <span style="font-size:1em;color:#fff;margin-top:4px;">曼荼羅是心靈的鏡子，反映你的內在世界</span>
-            <span style="font-size:0.8em;color:#888;margin-top:2px;">✨ 手機版優化完成 ✨</span>
         </div>
     </div>
 
@@ -484,39 +478,6 @@
                     </svg>
                 </button>
                 <button class="icon-btn" data-shape="line">─</button>
-                <button class="icon-btn" data-shape="splash" title="滴畫">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <path d="M12 3C12 3 6 10 6 14a6 6 0 0 0 12 0c0-4-6-11-6-11z" fill="#3498db" stroke="#fff" stroke-width="2"/>
-                    </svg>
-                </button>
-                <button class="icon-btn" data-shape="flower" title="花朵">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <circle cx="12" cy="12" r="3" fill="#e74c3c" stroke="#fff" stroke-width="1.5"/>
-                        <g>
-                            <ellipse cx="12" cy="5" rx="2" ry="4" fill="#f1c40f" opacity="0.8"/>
-                            <ellipse cx="12" cy="19" rx="2" ry="4" fill="#f1c40f" opacity="0.8"/>
-                            <ellipse cx="5" cy="12" rx="4" ry="2" fill="#f1c40f" opacity="0.8"/>
-                            <ellipse cx="19" cy="12" rx="4" ry="2" fill="#f1c40f" opacity="0.8"/>
-                        </g>
-                    </svg>
-                </button>
-                <button class="icon-btn" data-shape="cloud" title="雲朵">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <ellipse cx="10" cy="15" rx="6" ry="4" fill="#fff" opacity="0.9"/>
-                        <ellipse cx="16" cy="15" rx="4" ry="3" fill="#fff" opacity="0.7"/>
-                        <ellipse cx="13" cy="12" rx="5" ry="3" fill="#fff" opacity="0.8"/>
-                    </svg>
-                </button>
-                <button class="icon-btn" data-shape="snowflake" title="雪花">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                        <g stroke="#fff" stroke-width="2">
-                            <line x1="12" y1="3" x2="12" y2="21"/>
-                            <line x1="3" y1="12" x2="21" y2="12"/>
-                            <line x1="5" y1="5" x2="19" y2="19"/>
-                            <line x1="19" y1="5" x2="5" y2="19"/>
-                        </g>
-                    </svg>
-                </button>
                 <button class="icon-btn eraser" id="eraser-btn" title="橡皮擦">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="17" width="18" height="4" rx="2"/>
@@ -583,39 +544,6 @@
                         </svg>
                     </button>
                     <button class="icon-btn" data-shape="line">─</button>
-                    <button class="icon-btn" data-shape="splash" title="滴畫">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 3C12 3 6 10 6 14a6 6 0 0 0 12 0c0-4-6-11-6-11z" fill="#3498db" stroke="#fff" stroke-width="2"/>
-                        </svg>
-                    </button>
-                    <button class="icon-btn" data-shape="flower" title="花朵">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="3" fill="#e74c3c" stroke="#fff" stroke-width="1.5"/>
-                            <g>
-                                <ellipse cx="12" cy="5" rx="2" ry="4" fill="#f1c40f" opacity="0.8"/>
-                                <ellipse cx="12" cy="19" rx="2" ry="4" fill="#f1c40f" opacity="0.8"/>
-                                <ellipse cx="5" cy="12" rx="4" ry="2" fill="#f1c40f" opacity="0.8"/>
-                                <ellipse cx="19" cy="12" rx="4" ry="2" fill="#f1c40f" opacity="0.8"/>
-                            </g>
-                        </svg>
-                    </button>
-                    <button class="icon-btn" data-shape="cloud" title="雲朵">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <ellipse cx="10" cy="15" rx="6" ry="4" fill="#fff" opacity="0.9"/>
-                            <ellipse cx="16" cy="15" rx="4" ry="3" fill="#fff" opacity="0.7"/>
-                            <ellipse cx="13" cy="12" rx="5" ry="3" fill="#fff" opacity="0.8"/>
-                        </svg>
-                    </button>
-                    <button class="icon-btn" data-shape="snowflake" title="雪花">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                            <g stroke="#fff" stroke-width="2">
-                                <line x1="12" y1="3" x2="12" y2="21"/>
-                                <line x1="3" y1="12" x2="21" y2="12"/>
-                                <line x1="5" y1="5" x2="19" y2="19"/>
-                                <line x1="19" y1="5" x2="5" y2="19"/>
-                            </g>
-                        </svg>
-                    </button>
                     <button class="icon-btn eraser" id="eraser-btn-mobile" title="橡皮擦">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="17" width="18" height="4" rx="2"/>
@@ -719,32 +647,6 @@
         let startY = 0;
         let history = [];
         let historyIndex = -1;
-        
-        // 形狀圖片資源
-        let shapeImages = {};
-        let imagesLoaded = 0;
-        const totalImages = 4;
-
-        // --- Image Loading ---
-        function loadShapeImages() {
-            const imageNames = ['splash', 'cloud', 'snowflake', 'flower'];
-            
-            imageNames.forEach(name => {
-                const img = new Image();
-                img.onload = () => {
-                    imagesLoaded++;
-                    if (imagesLoaded === totalImages) {
-                        console.log('所有形狀圖片載入完成');
-                    }
-                };
-                img.onerror = () => {
-                    console.warn(`無法載入圖片: ${name}.svg`);
-                    imagesLoaded++;
-                };
-                img.src = `images/shapes/${name}.svg`;
-                shapeImages[name] = img;
-            });
-        }
         
         // --- Canvas Setup ---
         function resizeCanvas() {
@@ -935,46 +837,8 @@
                     ctx.lineTo(x2, y2);
                     ctx.stroke();
                     break;
-                case 'splash':
-                    // 簡化水滴繪製，確保能正常顯示
-                    const splashSize = Math.max(20, Math.abs(x2 - x1) + Math.abs(y2 - y1) + 20);
-                    ctx.beginPath();
-                    ctx.arc(x1, y1, splashSize / 2, 0, Math.PI * 2);
-                    ctx.fillStyle = brushColor;
-                    ctx.globalAlpha = 0.8;
-                    ctx.fill();
-                    ctx.globalAlpha = 1.0;
-                    break;
-                case 'flower':
-                    // 簡化花朵繪製
-                    const flowerSize = Math.max(25, Math.abs(x2 - x1) + Math.abs(y2 - y1) + 25);
-                    ctx.beginPath();
-                    ctx.arc(x1, y1, flowerSize / 2, 0, Math.PI * 2);
-                    ctx.fillStyle = brushColor;
-                    ctx.globalAlpha = 0.8;
-                    ctx.fill();
-                    ctx.globalAlpha = 1.0;
-                    break;
-                case 'cloud':
-                    // 簡化雲朵繪製
-                    const cloudWidth = Math.max(30, Math.abs(x2 - x1) + 30);
-                    const cloudHeight = Math.max(20, Math.abs(y2 - y1) + 20);
-                    ctx.beginPath();
-                    ctx.ellipse(x1, y1, cloudWidth / 2, cloudHeight / 2, 0, 0, Math.PI * 2);
-                    ctx.fillStyle = brushColor;
-                    ctx.globalAlpha = 0.8;
-                    ctx.fill();
-                    ctx.globalAlpha = 1.0;
-                    break;
-                case 'snowflake':
-                    // 簡化雪花繪製
-                    const snowflakeSize = Math.max(25, Math.abs(x2 - x1) + Math.abs(y2 - y1) + 25);
-                    ctx.beginPath();
-                    ctx.arc(x1, y1, snowflakeSize / 2, 0, Math.PI * 2);
-                    ctx.fillStyle = brushColor;
-                    ctx.globalAlpha = 0.8;
-                    ctx.fill();
-                    ctx.globalAlpha = 1.0;
+                case 'freehand':
+                    // 自由筆繪製 - 由drawSymmetricalLines處理
                     break;
             }
         }
@@ -1274,7 +1138,6 @@
         });
         
         // --- Initialization ---
-        loadShapeImages(); // 載入形狀圖片
         initializeCanvas();
     });
 </script>
