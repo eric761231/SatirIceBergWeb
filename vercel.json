@@ -22,6 +22,9 @@
     { "source": "/:file.ttf", "destination": "/:file.ttf" },
     { "source": "/:file.eot", "destination": "/:file.eot" },
     { "source": "/:file.ico", "destination": "/:file.ico" },
+    { "source": "/", "destination": "/install-app.html" },
+    { "source": "/meditation", "destination": "/meditation.html" },
+    { "source": "/app", "destination": "/meditation.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
