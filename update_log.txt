@@ -19,3 +19,24 @@ Error: Command `vercel list` requires confirmation. Use option "--yes" to confir
 >>> vercel inspect
 can only concatenate str (not "NoneType") to str
 ============================================================
+[2025-08-17 14:34:26] 更新描述:
+使用 Vercel v2 配置格式
+>>> git add .
+
+
+>>> git commit -m "使用 Vercel v2 配置格式"
+unsupported operand type(s) for +: 'NoneType' and 'str'
+
+>>> git push origin main
+To https://github.com/eric761231/SatirIceBergWeb.git
+   65a063f..64ce896  main -> main
+
+
+>>> vercel ls
+Vercel CLI 46.0.1
+Error: Command `vercel list` requires confirmation. Use option "--yes" to confirm.
+
+
+>>> vercel inspect
+can only concatenate str (not "NoneType") to str
+============================================================
