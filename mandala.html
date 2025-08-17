@@ -36,6 +36,12 @@
             padding: 0;
             overflow: hidden;
         }
+        @media (max-width: 600px) {
+            .main-layout { flex-direction: column; }
+            .sidebar, .main-layout > .sidebar { display: none !important; }
+            h1, .page-title, .toolbar-group-title { display: none !important; }
+            .canvas-area { margin-top: 0 !important; padding-top: 10px !important; }
+        }
 
         .main-layout {
             display: flex;
@@ -864,16 +870,19 @@
         desktopControls.clearBtn.addEventListener('click', () => clearCanvas(true));
         desktopControls.saveBtn.addEventListener('click', saveCanvas);
 
-        // Mobile controls listeners
-        mobileControls.brushSize.addEventListener('input', handleBrushSizeChange);
-        mobileControls.colorPalette.addEventListener('click', handleColorChange);
-        mobileControls.shapeTools.addEventListener('click', handleShapeChange);
-        mobileControls.eraserBtn.addEventListener('click', handleEraserToggle);
-        mobileControls.symmetrySelect.addEventListener('change', handleSymmetryChange);
-        mobileControls.undoBtn.addEventListener('click', undo);
-        mobileControls.redoBtn.addEventListener('click', redo);
-        mobileControls.clearBtn.addEventListener('click', () => clearCanvas(true));
-        mobileControls.saveBtn.addEventListener('click', saveCanvas);
+    // Mobile controls listeners
+    mobileControls.brushSize.addEventListener('input', handleBrushSizeChange);
+    mobileControls.colorPalette.addEventListener('click', handleColorChange);
+    mobileControls.colorPalette.addEventListener('touchstart', handleColorChange, { passive: false });
+    mobileControls.shapeTools.addEventListener('click', handleShapeChange);
+    mobileControls.shapeTools.addEventListener('touchstart', handleShapeChange, { passive: false });
+    mobileControls.eraserBtn.addEventListener('click', handleEraserToggle);
+    mobileControls.eraserBtn.addEventListener('touchstart', handleEraserToggle, { passive: false });
+    mobileControls.symmetrySelect.addEventListener('change', handleSymmetryChange);
+    mobileControls.undoBtn.addEventListener('click', undo);
+    mobileControls.redoBtn.addEventListener('click', redo);
+    mobileControls.clearBtn.addEventListener('click', () => clearCanvas(true));
+    mobileControls.saveBtn.addEventListener('click', saveCanvas);
 
         // Mobile sidebar listeners
         hamburgerBtn.addEventListener('click', function() {
