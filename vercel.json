@@ -1,17 +1,17 @@
 {
   "version": 2,
-  "routes": [
-    { "src": "/install-app", "dest": "/install-app.html" },
-    { "src": "/install-app.html", "dest": "/install-app.html" },
-    { "src": "/test-pwa", "dest": "/test-pwa.html" },
-    { "src": "/pwa-config.js", "dest": "/pwa-config.js" },
-    { "src": "/service-worker.js", "dest": "/service-worker.js" },
-    { "src": "/sw.js", "dest": "/sw.js" },
-    { "src": "/manifest.json", "dest": "/manifest.json" },
-    { "src": "/icons/(.*)", "dest": "/icons/$1" },
-    { "src": "/src/(.*)", "dest": "/src/$1" },
-    { "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|ico))", "dest": "/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/install-app", "destination": "/install-app.html" },
+    { "source": "/install-app.html", "destination": "/install-app.html" },
+    { "source": "/test-pwa", "destination": "/test-pwa.html" },
+    { "source": "/pwa-config.js", "destination": "/pwa-config.js" },
+    { "source": "/service-worker.js", "destination": "/service-worker.js" },
+    { "source": "/sw.js", "destination": "/sw.js" },
+    { "source": "/manifest.json", "destination": "/manifest.json" },
+    { "source": "/icons/(.*)", "destination": "/icons/$1" },
+    { "source": "/src/(.*)", "destination": "/src/$1" },
+    { "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|ico))", "destination": "/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
