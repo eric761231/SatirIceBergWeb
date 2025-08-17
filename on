@@ -1,5 +1,0 @@
-[33m5bf6e9b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m feat: 新增 PWA 配置系統和智能安裝管理器
-[33m9d1f2fd[m Simplify Vercel configuration
-[33m858889c[m Fix Vercel configuration for static web app
-[33m7fdc57e[m 新增 service worker 並註冊，修正 PWA 安裝提示
-[33mcfc4998[m 安裝教學優化，移除 QRCode，新增瀏覽器開啟提醒

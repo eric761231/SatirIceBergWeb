@@ -1,97 +1,34 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "**/*",
-      "use": "@vercel/static"
-    }
-  ],
   "routes": [
-    {
-      "src": "/",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/install-app",
-      "dest": "/public/install-app.html"
-    },
-    {
-      "src": "/install-app.html",
-      "dest": "/public/install-app.html"
-    },
-    {
-      "src": "/test-pwa",
-      "dest": "/public/test-pwa.html"
-    },
-    {
-      "src": "/pwa-config.js",
-      "dest": "/public/pwa-config.js"
-    },
-    {
-      "src": "/service-worker.js",
-      "dest": "/public/service-worker.js"
-    },
-    {
-      "src": "/sw.js",
-      "dest": "/sw.js"
-    },
-    {
-      "src": "/manifest.json",
-      "dest": "/manifest.json"
-    },
-    {
-      "src": "/icons/(.*)",
-      "dest": "/icons/$1"
-    },
-    {
-      "src": "/src/(.*)",
-      "dest": "/src/$1"
-    },
-    {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|ico))",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "source": "/install-app", "destination": "/install-app.html" },
+    { "source": "/install-app.html", "destination": "/install-app.html" },
+    { "source": "/test-pwa", "destination": "/test-pwa.html" },
+    { "source": "/pwa-config.js", "destination": "/pwa-config.js" },
+    { "source": "/service-worker.js", "destination": "/service-worker.js" },
+    { "source": "/sw.js", "destination": "/sw.js" },
+    { "source": "/manifest.json", "destination": "/manifest.json" },
+    { "source": "/icons/(.*)", "destination": "/icons/$1" },
+    { "source": "/src/(.*)", "destination": "/src/$1" },
+    { "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot|ico))", "destination": "/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
       "source": "/service-worker.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
     },
     {
       "source": "/sw.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }]
     },
     {
       "source": "/manifest.json",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/manifest+json"
-        }
-      ]
+      "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }]
     },
     {
       "source": "/pwa-config.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
     }
   ]
 }

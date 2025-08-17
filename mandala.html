@@ -156,6 +156,9 @@
             width: 72px;
             height: 80px;
         }
+        #color-palette-desktop {
+            margin-top: 24px;
+        }
 
         .color-btn {
             width: 32px;
@@ -264,72 +267,82 @@
             .sidebar {
                 display: none;
             }
+
+            .mobile-header-placeholder {
+                width: 44px;
+            }
             
             /* 手機版標題區域在手機上顯示 */
             .mobile-header {
                 display: flex;
             }
-            .controls-mobile {
-                display: flex;
-                flex-direction: column;
-                background: var(--bg-light);
-                box-shadow: 0 -2px 16px var(--shadow-color);
-                padding: 16px;
-                gap: 16px;
-                width: 100%;
-                box-sizing: border-box;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                z-index: 10;
-            }
-            .controls-mobile .toolbar-row {
-                justify-content: space-around;
-                flex-wrap: wrap;
-            }
-            .canvas-area {
-                padding: 10px;
-                padding-bottom: 200px;
-                height: 100%;
-                width: 100%;
-                box-sizing: border-box;
-            }
-            #mandala-canvas {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 1 / 1;
-            }
-            .toolbar-group-title {
-                display: none;
-            }
-            .toolbar-group {
-                border-bottom: none;
-                flex-direction: column;
-                justify-content: space-between;
-                align-items: center;
-                gap: 12px;
-            }
-            
-            /* 手機版標題區域樣式 */
-            .mobile-header {
-                display: none; /* 桌面版隱藏 */
-                align-items: center;
-                justify-content: space-between;
-                padding: 16px;
-                background: rgba(30, 30, 45, 0.95);
-                border-radius: 20px;
-                margin: 16px;
-                box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            }
-            
-            .mobile-title {
-                color: #e0e0e0;
-                font-size: 1.5em;
-                font-weight: 300;
-                margin: 0;
-                flex: 1;
-                text-align: center;
-            }
+        }
+        .mobile-header-placeholder {
+            width: 44px;
+        }
+        .controls-mobile {
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-light);
+            box-shadow: 0 -2px 16px var(--shadow-color);
+            padding: 16px;
+            gap: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            z-index: 10;
+        }
+        .controls-mobile .toolbar-row {
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        #brush-size-mobile {
+            flex: 1;
+        }
+        .canvas-area {
+            padding: 10px;
+            padding-bottom: 200px;
+            height: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #mandala-canvas {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1 / 1;
+        }
+        .toolbar-group-title {
+            display: none;
+        }
+        .toolbar-group {
+            border-bottom: none;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        /* 手機版標題區域樣式 */
+        .mobile-header {
+            display: none; /* 桌面版隱藏 */
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: rgba(30, 30, 45, 0.95);
+            border-radius: 20px;
+            margin: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+        
+        .mobile-title {
+            color: #e0e0e0;
+            font-size: 1.5em;
+            font-weight: 300;
+            margin: 0;
+            flex: 1;
+            text-align: center;
         }
     </style>
 </head>
@@ -340,11 +353,11 @@
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
                 <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
-                <rect x="4" y="16" width="16" height="2" rx="1" fill="currentColor"/>
+        <div class="mobile-header-placeholder"></div> <!-- 佔位元素，保持標題置中 -->
             </svg>
         </button>
         <h1 class="mobile-title">繪畫壇城</h1>
-        <div style="width: 44px;"></div> <!-- 佔位元素，保持標題置中 -->
+        <div class="mobile-header-placeholder"></div> <!-- 佔位元素，保持標題置中 -->
     </div>
 
     <div class="main-layout">
@@ -379,10 +392,10 @@
                 <div class="toolbar-row">
                     <label for="brush-size-desktop">大小：</label>
                     <input type="range" id="brush-size-desktop" min="1" max="100" value="10">
-                </div>
+                    <div class="color-palette" id="color-palette-desktop">
                 <div class="toolbar-row">
                     <!-- 顏色選擇區塊，已往下調整，與繪圖工具分隔更明顯 -->
-                    <div class="color-palette" id="color-palette-desktop" style="margin-top: 24px;">
+                    <div class="color-palette" id="color-palette-desktop">
                         <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
                         <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
                         <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
@@ -436,10 +449,10 @@
         </div>
 
         <div class="controls-mobile">
-            <div class="toolbar-group">
+                    <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
                 <div class="toolbar-row">
                     <label for="brush-size-mobile">大小：</label>
-                    <input type="range" id="brush-size-mobile" min="1" max="100" value="10" style="flex: 1;">
+                    <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
                 </div>
                 <div class="toolbar-row" id="color-palette-mobile">
                     <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
@@ -465,10 +478,10 @@
                 <div class="toolbar-row">
                     <label for="symmetry-count-mobile">對稱:</label>
                     <select class="symmetry-select" id="symmetry-count-mobile">
-                        <option value="0">0</option>
+                        <option value="0" selected>0</option>
                         <option value="2">2</option>
                         <option value="4">4</option>
-                        <option value="6" selected>6</option>
+                        <option value="6">6</option>
                         <option value="8">8</option>
                         <option value="12">12</option>
                     </select>
