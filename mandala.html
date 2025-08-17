@@ -289,16 +289,17 @@
                 flex: 1;
             }
             .canvas-area {
-                padding: 10px;
+                padding: 20px;
                 padding-bottom: 200px;
                 height: 100%;
                 width: 100%;
                 box-sizing: border-box;
             }
             #mandala-canvas {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 1 / 1;
+                width: min(90vw, calc(100vh - 300px));
+                height: min(90vw, calc(100vh - 300px));
+                max-width: 100%;
+                max-height: 100%;
             }
             .toolbar-group-title {
                 display: none;
@@ -340,7 +341,7 @@
         
         <div class="toolbar-group">
             <div class="toolbar-group-title">顏色選擇</div>
-            <div class="toolbar-row color-palette" id="color-palette">
+            <div class="toolbar-row color-palette" id="color-palette" style="flex-direction:row;flex-wrap:wrap;justify-content:center;gap:8px;">
                 <button class="color-btn color-red active" data-color="#e74c3c" title="紅色"></button>
                 <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
                 <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
@@ -430,8 +431,8 @@
         </div>
     </div>
 
-    <div class="canvas-area" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-medium);padding:10px 0 0 0;box-sizing:border-box;overflow:auto;">
-        <canvas id="mandala-canvas" style="width:90vw;height:calc(100vw * 0.9);max-width:100vw;max-height:70vh;background:#fff;border-radius:16px;box-shadow:0 4px 24px #0006;"></canvas>
+    <div class="canvas-area" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-medium);padding:20px;box-sizing:border-box;overflow:auto;">
+        <canvas id="mandala-canvas" style="width:min(90vw, 70vh);height:min(90vw, 70vh);background:#fff;border-radius:16px;box-shadow:0 4px 24px #0006;"></canvas>
     </div>
 
     <!-- 手機版繪圖工具收合區塊（橘色底） -->
@@ -443,7 +444,7 @@
                     <label for="brush-size-mobile">大小：</label>
                     <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
                 </div>
-                <div class="toolbar-row color-palette" id="color-palette-mobile">
+                <div class="toolbar-row color-palette" id="color-palette-mobile" style="flex-direction:row;flex-wrap:wrap;justify-content:center;gap:8px;">
                     <button class="color-btn color-red active" data-color="#e74c3c" title="紅色"></button>
                     <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
                     <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
@@ -600,11 +601,19 @@
 
         // --- Canvas Setup ---
         function resizeCanvas() {
-            const size = Math.min(canvasArea.clientWidth, canvasArea.clientHeight) * 0.9;
+            const containerWidth = canvasArea.clientWidth - 40; // 減去 padding
+            const containerHeight = canvasArea.clientHeight - 40;
+            const size = Math.min(containerWidth, containerHeight);
+            
             canvas.width = size;
             canvas.height = size;
             
-            redrawFromHistory();
+            // 重新繪製歷史記錄
+            if (history.length > 0) {
+                redrawFromHistory();
+            } else {
+                clearCanvas(false);
+            }
         }
 
         function clearCanvas(save = true) {
@@ -777,8 +786,8 @@
                     // 隨機雲朵：多個重疊橢圓
                     const cloudParts = 4 + Math.floor(Math.random() * 3);
                     for (let i = 0; i < cloudParts; i++) {
-                        const dx = x1 + (Math.random() - 0.5) * 40;
-                        const dy = y1 + (Math.random() - 0.5) * 20;
+                        const dx = x1 + ( (Math.random() - 0.5) * 40);
+                        const dy = y1 + ( (Math.random() - 0.5) * 20);
                         const rx = 24 + Math.random() * 12;
                         const ry = 12 + Math.random() * 8;
                         ctx.beginPath();
@@ -958,11 +967,13 @@
         }
 
         function handleEraserToggle() {
-            const eraserIsActive = desktopControls.eraserBtn && desktopControls.eraserBtn.classList.contains('active');
+            const eraserIsActive = (desktopControls.eraserBtn && desktopControls.eraserBtn.classList.contains('active')) || 
+                                  (mobileControls.eraserBtn && mobileControls.eraserBtn.classList.contains('active'));
             
             if (eraserIsActive) {
                 // Deactivate eraser: revert to last selected color and freehand mode
                 brushColor = lastSelectedColor;
+                currentShape = 'freehand';
                 updateActiveTool(document.querySelector(`button[data-shape="freehand"]`));
                 if (desktopControls.colorPalette) {
                     const desktopBtn = desktopControls.colorPalette.querySelector(`button[data-color="${brushColor}"]`);
@@ -975,7 +986,8 @@
             } else {
                 // Activate eraser: set color to white and mark as active
                 brushColor = '#ffffff';
-                updateActiveTool(desktopControls.eraserBtn);
+                currentShape = 'freehand';
+                updateActiveTool(desktopControls.eraserBtn || mobileControls.eraserBtn);
                 if (desktopControls.colorPalette) {
                     desktopControls.colorPalette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
                 }
@@ -987,19 +999,38 @@
         
         function updateActiveTool(activeButton) {
             // Remove 'active' from all shape and eraser buttons on both toolbars
-            desktopControls.shapeTools.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
-            mobileControls.shapeTools.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
-            desktopControls.eraserBtn.classList.remove('active');
-            mobileControls.eraserBtn.classList.remove('active');
+            if (desktopControls.shapeTools) {
+                desktopControls.shapeTools.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+            }
+            if (mobileControls.shapeTools) {
+                mobileControls.shapeTools.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+            }
+            if (desktopControls.eraserBtn) {
+                desktopControls.eraserBtn.classList.remove('active');
+            }
+            if (mobileControls.eraserBtn) {
+                mobileControls.eraserBtn.classList.remove('active');
+            }
             
             // Add 'active' to the corresponding buttons
-            if (activeButton.dataset.shape) {
+            if (activeButton && activeButton.dataset && activeButton.dataset.shape) {
                 const shape = activeButton.dataset.shape;
-                desktopControls.shapeTools.querySelector(`[data-shape="${shape}"]`).classList.add('active');
-                mobileControls.shapeTools.querySelector(`[data-shape="${shape}"]`).classList.add('active');
-            } else {
-                desktopControls.eraserBtn.classList.add('active');
-                mobileControls.eraserBtn.classList.add('active');
+                if (desktopControls.shapeTools) {
+                    const desktopBtn = desktopControls.shapeTools.querySelector(`[data-shape="${shape}"]`);
+                    if (desktopBtn) desktopBtn.classList.add('active');
+                }
+                if (mobileControls.shapeTools) {
+                    const mobileBtn = mobileControls.shapeTools.querySelector(`[data-shape="${shape}"]`);
+                    if (mobileBtn) mobileBtn.classList.add('active');
+                }
+            } else if (activeButton && (activeButton.id === 'eraser-btn' || activeButton.id === 'eraser-btn-mobile')) {
+                // This is an eraser button
+                if (desktopControls.eraserBtn) {
+                    desktopControls.eraserBtn.classList.add('active');
+                }
+                if (mobileControls.eraserBtn) {
+                    mobileControls.eraserBtn.classList.add('active');
+                }
             }
         }
 
