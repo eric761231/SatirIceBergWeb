@@ -59,12 +59,12 @@
         .canvas-area {
             flex-grow: 1;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             background: var(--bg-medium);
             height: 100vh;
             width: 100%;
-            padding: 20px;
+            padding: 10px 20px 20px 20px;
             box-sizing: border-box;
             overflow: auto;
             position: relative;
@@ -335,7 +335,7 @@
                 box-sizing: border-box;
                 position: relative;
                 display: flex;
-                align-items: center;
+                align-items: flex-start;
                 justify-content: center;
                 /* 手機版畫布區域置中優化 */
                 overflow: hidden;
@@ -402,6 +402,9 @@
                 overflow: hidden;
                 /* 小螢幕手機背景色調整 - 消除暗色區域 */
                 background: transparent;
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
             }
             /* 小螢幕手機標題優化 */
             .mobile-header {
@@ -690,7 +693,7 @@
                 const canvasArea = document.querySelector('.canvas-area');
                 if (canvasArea) {
                     canvasArea.style.justifyContent = 'center';
-                    canvasArea.style.alignItems = 'center';
+                    canvasArea.style.alignItems = 'flex-start';
                 }
             } else {
                 // 桌面版：考慮側邊欄寬度

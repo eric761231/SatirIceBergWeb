@@ -186,33 +186,61 @@
             }
         }
 
-        /* 手機橫向模式優化 */
-        @media (max-width: 600px) and (orientation: landscape) {
+        /* 手機橫向模式優化 - 修正寫法 */
+        @media screen and (max-width: 600px) and (orientation: landscape) {
             .yoga-container {
-                padding: 16px 20px 24px 20px;
-                margin-top: 12px;
+                padding: 12px 16px 20px 16px !important;
+                margin-top: 8px !important;
             }
             
             .yoga-title {
-                font-size: 1.4em;
-                margin-bottom: 16px;
+                font-size: 1.3em !important;
+                margin-bottom: 12px !important;
             }
 
             .video-wrapper {
-                padding: 12px 4px;
-                margin: 12px 0;
+                padding: 8px 4px !important;
+                margin: 8px 0 !important;
             }
 
             .video-wrapper iframe {
-                width: 100%;
-                height: 70vh;
-                max-height: 350px;
-                border-radius: 8px;
+                width: 100% !important;
+                height: 65vh !important;
+                max-height: 300px !important;
+                border-radius: 8px !important;
             }
 
             .video-info {
-                font-size: 1em;
-                margin-top: 16px;
+                font-size: 0.9em !important;
+                margin-top: 12px !important;
+            }
+        }
+
+        /* 額外的橫向模式檢測 */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .yoga-container {
+                padding: 8px 12px 16px 12px !important;
+                margin-top: 4px !important;
+            }
+            
+            .yoga-title {
+                font-size: 1.2em !important;
+                margin-bottom: 8px !important;
+            }
+
+            .video-wrapper {
+                padding: 4px 2px !important;
+                margin: 4px 0 !important;
+            }
+
+            .video-wrapper iframe {
+                height: 60vh !important;
+                max-height: 250px !important;
+            }
+
+            .video-info {
+                font-size: 0.8em !important;
+                margin-top: 8px !important;
             }
         }
 
@@ -233,37 +261,6 @@
                 border-radius: 0;
             }
         }
-
-        /* 橫向模式下的額外優化 */
-        body.landscape-mode .yoga-container {
-            padding: 12px 16px 20px 16px;
-            margin-top: 8px;
-        }
-
-        body.landscape-mode .yoga-title {
-            font-size: 1.3em;
-            margin-bottom: 12px;
-        }
-
-        body.landscape-mode .video-wrapper {
-            padding: 8px 2px;
-            margin: 8px 0;
-        }
-
-        body.landscape-mode .video-info {
-            font-size: 0.9em;
-            margin-top: 12px;
-        }
-
-        /* 支援 iOS Safari 的橫向模式 */
-        @supports (-webkit-touch-callout: none) {
-            @media (orientation: landscape) and (max-width: 600px) {
-                .video-wrapper iframe {
-                    height: 65vh !important;
-                    max-height: 300px !important;
-                }
-            }
-        }
     </style>
 </head>
 <body>
@@ -281,7 +278,7 @@
                 <path d="M18 6L6 18M6 6l12 12"/>
             </svg>
         </button>
-        <h2>導航選單</h2>
+        <h2>選單</h2>
         <a href="mandala.html" class="sidebar-link">曼荼羅</a>
         <a href="articles.html" class="sidebar-link">每日閱讀</a>
         <a href="meditation.html" class="sidebar-link">冥想音樂</a>
@@ -341,42 +338,95 @@
         function adjustVideoForOrientation() {
             const videoWrapper = document.querySelector('.video-wrapper');
             const iframe = videoWrapper.querySelector('iframe');
-            const isLandscape = window.innerWidth > window.innerHeight;
-            const isMobile = window.innerWidth <= 600;
+            const container = document.querySelector('.yoga-container');
+            const title = document.querySelector('.yoga-title');
+            const videoInfo = document.querySelector('.video-info');
             
-            if (isMobile && isLandscape) {
-                // 手機橫向模式
-                iframe.style.height = '70vh';
-                iframe.style.maxHeight = '350px';
-                document.body.classList.add('landscape-mode');
+            // 檢測是否為手機橫向模式
+            const isMobile = window.innerWidth <= 600;
+            const isLandscape = window.innerWidth > window.innerHeight;
+            const isMobileLandscape = isMobile && isLandscape;
+            
+            console.log('方向檢測:', {
+                width: window.innerWidth,
+                height: window.innerHeight,
+                isMobile,
+                isLandscape,
+                isMobileLandscape
+            });
+            
+            if (isMobileLandscape) {
+                // 手機橫向模式 - 強制應用樣式
+                container.style.padding = '8px 12px 16px 12px';
+                container.style.marginTop = '4px';
+                title.style.fontSize = '1.2em';
+                title.style.marginBottom = '8px';
+                videoWrapper.style.padding = '4px 2px';
+                videoWrapper.style.margin = '4px 0';
+                iframe.style.height = '60vh';
+                iframe.style.maxHeight = '250px';
+                videoInfo.style.fontSize = '0.8em';
+                videoInfo.style.marginTop = '8px';
+                
+                console.log('應用手機橫向樣式');
             } else {
-                // 直向模式或其他裝置
+                // 直向模式或其他裝置 - 重置樣式
+                container.style.padding = '';
+                container.style.marginTop = '';
+                title.style.fontSize = '';
+                title.style.marginBottom = '';
+                videoWrapper.style.padding = '';
+                videoWrapper.style.margin = '';
                 iframe.style.height = isMobile ? '250px' : '400px';
-                iframe.style.maxHeight = 'none';
-                document.body.classList.remove('landscape-mode');
+                iframe.style.maxHeight = '';
+                videoInfo.style.fontSize = '';
+                videoInfo.style.marginTop = '';
+                
+                console.log('應用直向樣式');
             }
         }
 
         // 監聽螢幕方向變化
         window.addEventListener('orientationchange', () => {
+            console.log('螢幕方向變化事件觸發');
             // 延遲執行，等待方向變化完成
-            setTimeout(adjustVideoForOrientation, 100);
+            setTimeout(adjustVideoForOrientation, 300);
         });
 
         // 監聽視窗大小變化
         window.addEventListener('resize', () => {
+            console.log('視窗大小變化事件觸發');
             adjustVideoForOrientation();
         });
 
         // 頁面載入時執行一次
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('頁面載入完成，執行方向檢測');
             adjustVideoForOrientation();
         });
 
         // 支援螢幕方向 API
         if (screen.orientation) {
-            screen.orientation.addEventListener('change', adjustVideoForOrientation);
+            screen.orientation.addEventListener('change', () => {
+                console.log('Screen Orientation API 變化事件觸發');
+                setTimeout(adjustVideoForOrientation, 100);
+            });
         }
+
+        // 額外的檢測方法：定期檢查
+        setInterval(() => {
+            const currentWidth = window.innerWidth;
+            const currentHeight = window.innerHeight;
+            
+            // 如果寬高比例發生顯著變化，重新調整
+            if (Math.abs(currentWidth - window.lastWidth) > 50 || 
+                Math.abs(currentHeight - window.lastHeight) > 50) {
+                console.log('檢測到顯著尺寸變化，重新調整');
+                adjustVideoForOrientation();
+                window.lastWidth = currentWidth;
+                window.lastHeight = currentHeight;
+            }
+        }, 1000);
     </script>
 </body>
 </html>
