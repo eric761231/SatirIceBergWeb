@@ -324,10 +324,11 @@
                 justify-content: center;
             }
             #mandala-canvas {
-                width: min(85vw, calc(100vh - 320px));
-                height: min(85vw, calc(100vh - 320px));
-                max-width: calc(100vw - 40px);
-                max-height: calc(100vh - 240px);
+                /* 手機版畫布尺寸優化 - 自動充滿螢幕剩餘空間 */
+                width: calc(100vw - 20px);
+                height: calc(100vh - 320px);
+                max-width: calc(100vw - 20px);
+                max-height: calc(100vh - 320px);
                 position: absolute;
                 top: 50%;
                 left: 50%;
@@ -401,7 +402,7 @@
                 <path d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
         </button>
-        <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
             <span style="font-size:1.5em;font-weight:bold;color:#3498db;letter-spacing:2px;">曼荼羅</span>
             <span style="font-size:1em;color:#fff;margin-top:4px;">曼荼羅是心靈的鏡子，反映你的內在世界</span>
         </div>
@@ -710,10 +711,26 @@
             
             let size;
             if (isMobile) {
-                // 手機版：考慮標題欄和底部工具列的高度
-                const availableHeight = window.innerHeight - 120 - 200; // 減去標題欄和工具列高度
-                const availableWidth = window.innerWidth - 40; // 減去左右邊距
+                // 手機版：自動充滿螢幕剩餘空間
+                const headerHeight = 120; // 標題欄高度
+                const toolsHeight = 200;  // 底部工具列高度
+                const margin = 20;        // 左右邊距
+                
+                const availableHeight = window.innerHeight - headerHeight - toolsHeight;
+                const availableWidth = window.innerWidth - margin;
+                
+                // 手機版畫布應該更大，更接近螢幕邊緣
                 size = Math.min(availableWidth, availableHeight);
+                
+                // 確保畫布不會太小
+                if (size < 300) {
+                    size = Math.min(window.innerWidth - 10, window.innerHeight - 280);
+                }
+                
+                // 手機版畫布優先使用寬度，讓畫布更寬
+                if (availableWidth > availableHeight) {
+                    size = availableWidth;
+                }
             } else {
                 // 桌面版：考慮側邊欄寬度
                 const containerWidth = canvasArea.clientWidth - 40;
@@ -849,9 +866,18 @@
         }
 
         function drawShape(x1, y1, x2, y2, isPreview = false) {
-            ctx.strokeStyle = isPreview ? "rgba(100, 100, 100, 0.7)" : brushColor;
-            ctx.lineWidth = isPreview ? Math.max(2, brushSize / 10) : brushSize;
-            ctx.setLineDash(isPreview ? [8, 6] : []);
+            // 重置畫布狀態
+            ctx.setLineDash([]);
+            ctx.globalAlpha = 1.0;
+            
+            if (isPreview) {
+                ctx.strokeStyle = "rgba(100, 100, 100, 0.7)";
+                ctx.lineWidth = Math.max(2, brushSize / 10);
+                ctx.setLineDash([8, 6]);
+            } else {
+                ctx.strokeStyle = brushColor;
+                ctx.lineWidth = brushSize;
+            }
 
             switch (currentShape) {
                 case 'line':
@@ -861,83 +887,45 @@
                     ctx.stroke();
                     break;
                 case 'waterdrop':
-                    // 使用水滴圖片
-                    if (shapeImages.waterdrop && !isPreview) {
-                        const size = Math.abs(x2 - x1) + 32;
-                        const img = shapeImages.waterdrop;
-                        ctx.save();
-                        ctx.translate(x1, y1);
-                        ctx.globalAlpha = 0.8;
-                        ctx.drawImage(img, -size/2, -size/2, size, size);
-                        ctx.restore();
-                    } else {
-                        // 預覽模式或圖片未載入時使用簡單繪製
-                        ctx.beginPath();
-                        ctx.arc(x1, y1, Math.abs(x2 - x1) / 2 + 16, 0, Math.PI * 2);
-                        ctx.fillStyle = brushColor;
-                        ctx.globalAlpha = 0.7;
-                        ctx.fill();
-                        ctx.globalAlpha = 1.0;
-                    }
+                    // 簡化水滴繪製，確保能正常顯示
+                    const waterdropSize = Math.max(20, Math.abs(x2 - x1) + Math.abs(y2 - y1) + 20);
+                    ctx.beginPath();
+                    ctx.arc(x1, y1, waterdropSize / 2, 0, Math.PI * 2);
+                    ctx.fillStyle = brushColor;
+                    ctx.globalAlpha = 0.8;
+                    ctx.fill();
+                    ctx.globalAlpha = 1.0;
                     break;
                 case 'flower':
-                    // 使用花朵圖片
-                    if (shapeImages.flower && !isPreview) {
-                        const size = Math.abs(x2 - x1) + 48;
-                        const img = shapeImages.flower;
-                        ctx.save();
-                        ctx.translate(x1, y1);
-                        ctx.globalAlpha = 0.9;
-                        ctx.drawImage(img, -size/2, -size/2, size, size);
-                        ctx.restore();
-                    } else {
-                        // 預覽模式或圖片未載入時使用簡單繪製
-                        ctx.beginPath();
-                        ctx.arc(x1, y1, Math.abs(x2 - x1) / 2 + 20, 0, Math.PI * 2);
-                        ctx.fillStyle = brushColor;
-                        ctx.globalAlpha = 0.8;
-                        ctx.fill();
-                    }
+                    // 簡化花朵繪製
+                    const flowerSize = Math.max(25, Math.abs(x2 - x1) + Math.abs(y2 - y1) + 25);
+                    ctx.beginPath();
+                    ctx.arc(x1, y1, flowerSize / 2, 0, Math.PI * 2);
+                    ctx.fillStyle = brushColor;
+                    ctx.globalAlpha = 0.8;
+                    ctx.fill();
+                    ctx.globalAlpha = 1.0;
                     break;
                 case 'cloud':
-                    // 使用雲朵圖片
-                    if (shapeImages.cloud && !isPreview) {
-                        const size = Math.abs(x2 - x1) + 40;
-                        const img = shapeImages.cloud;
-                        ctx.save();
-                        ctx.translate(x1, y1);
-                        ctx.globalAlpha = 0.8;
-                        ctx.drawImage(img, -size/2, -size/2, size, size);
-                        ctx.restore();
-                    } else {
-                        // 預覽模式或圖片未載入時使用簡單繪製
-                        ctx.beginPath();
-                        ctx.ellipse(x1, y1, Math.abs(x2 - x1) / 2 + 20, Math.abs(y2 - y1) / 2 + 10, 0, 0, Math.PI * 2);
-                        ctx.fillStyle = "#fff";
-                        ctx.globalAlpha = 0.8;
-                        ctx.fill();
-                        ctx.globalAlpha = 1.0;
-                    }
+                    // 簡化雲朵繪製
+                    const cloudWidth = Math.max(30, Math.abs(x2 - x1) + 30);
+                    const cloudHeight = Math.max(20, Math.abs(y2 - y1) + 20);
+                    ctx.beginPath();
+                    ctx.ellipse(x1, y1, cloudWidth / 2, cloudHeight / 2, 0, 0, Math.PI * 2);
+                    ctx.fillStyle = brushColor;
+                    ctx.globalAlpha = 0.8;
+                    ctx.fill();
+                    ctx.globalAlpha = 1.0;
                     break;
                 case 'snowflake':
-                    // 使用雪花圖片
-                    if (shapeImages.snowflake && !isPreview) {
-                        const size = Math.abs(x2 - x1) + 40;
-                        const img = shapeImages.snowflake;
-                        ctx.save();
-                        ctx.translate(x1, y1);
-                        ctx.globalAlpha = 0.9;
-                        ctx.drawImage(img, -size/2, -size/2, size, size);
-                        ctx.restore();
-                    } else {
-                        // 預覽模式或圖片未載入時使用簡單繪製
-                        ctx.beginPath();
-                        ctx.arc(x1, y1, Math.abs(x2 - x1) / 2 + 20, 0, Math.PI * 2);
-                        ctx.fillStyle = "#fff";
-                        ctx.globalAlpha = 0.8;
-                        ctx.fill();
-                        ctx.globalAlpha = 1.0;
-                    }
+                    // 簡化雪花繪製
+                    const snowflakeSize = Math.max(25, Math.abs(x2 - x1) + Math.abs(y2 - y1) + 25);
+                    ctx.beginPath();
+                    ctx.arc(x1, y1, snowflakeSize / 2, 0, Math.PI * 2);
+                    ctx.fillStyle = brushColor;
+                    ctx.globalAlpha = 0.8;
+                    ctx.fill();
+                    ctx.globalAlpha = 1.0;
                     break;
             }
         }
