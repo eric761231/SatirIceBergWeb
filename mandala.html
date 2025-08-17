@@ -189,10 +189,21 @@
             box-shadow: 0 4px 24px #0006;
             touch-action: none;
             cursor: crosshair;
-            max-width: calc(100vw - 340px);
-            max-height: calc(100vh - 40px);
-            width: min(calc(100vw - 340px), calc(100vh - 40px));
-            height: min(calc(100vw - 340px), calc(100vh - 40px));
+            /* 響應式畫布尺寸調整 */
+            max-width: calc(100vw - 40px); /* 手機版左右各留20px邊距 */
+            max-height: calc(100vh - 200px); /* 手機版上下留出空間給標題和工具列 */
+            width: min(calc(100vw - 40px), calc(100vh - 200px));
+            height: min(calc(100vw - 40px), calc(100vh - 200px));
+        }
+
+        /* 桌面版畫布尺寸 */
+        @media (min-width: 769px) {
+            #mandala-canvas {
+                max-width: calc(100vw - 340px);
+                max-height: calc(100vh - 40px);
+                width: min(calc(100vw - 340px), calc(100vh - 40px));
+                height: min(calc(100vw - 340px), calc(100vh - 40px));
+            }
         }
 
         /* Mobile specific styles */
@@ -288,6 +299,10 @@
 
             .mobile-header {
                 display: flex;
+                /* 手機版標題置中優化 */
+                justify-content: center;
+                align-items: center;
+                text-align: center;
             }
 
             .controls-mobile {
@@ -322,17 +337,25 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                /* 手機版畫布區域置中優化 */
+                overflow: hidden;
+                /* 手機版背景色調整 - 消除暗色區域 */
+                background: transparent;
             }
             #mandala-canvas {
-                /* 手機版畫布尺寸優化 - 自動充滿螢幕剩餘空間 */
-                width: calc(100vw - 20px);
+                /* 手機版畫布尺寸優化 - 真正充滿整個可用空間 */
+                width: calc(100vw - 40px);
                 height: calc(100vh - 320px);
-                max-width: calc(100vw - 20px);
+                max-width: calc(100vw - 40px);
                 max-height: calc(100vh - 320px);
                 position: absolute;
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
+                /* 確保畫布在手機上正確顯示 */
+                border-radius: 12px;
+                /* 手機版畫布背景色 - 與頁面背景一致 */
+                background: var(--bg-dark);
             }
             .toolbar-group-title {
                 display: none;
@@ -347,6 +370,7 @@
             
             /* 手機版顏色按鈕優化 */
             .controls-mobile .color-palette {
+                display: grid;
                 grid-template-columns: repeat(4, 1fr);
                 gap: 10px;
                 width: 100%;
@@ -364,13 +388,29 @@
         /* 額外的響應式設計 */
         @media (max-width: 480px) {
             #mandala-canvas {
-                width: min(80vw, calc(100vh - 280px));
-                height: min(80vw, calc(100vh - 280px));
+                /* 小螢幕手機畫布尺寸優化 */
+                width: calc(100vw - 32px);
+                height: calc(100vh - 280px);
                 max-width: calc(100vw - 32px);
-                max-height: calc(100vh - 200px);
+                max-height: calc(100vh - 280px);
+                /* 確保畫布在小螢幕上正確置中 */
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                /* 小螢幕手機畫布背景色 - 與頁面背景一致 */
+                background: var(--bg-dark);
             }
             .canvas-area {
                 padding: 0;
+                /* 小螢幕手機畫布區域優化 */
+                overflow: hidden;
+                /* 小螢幕手機背景色調整 - 消除暗色區域 */
+                background: transparent;
+            }
+            /* 小螢幕手機標題優化 */
+            .mobile-header {
+                padding: 8px 16px;
             }
         }
         
@@ -403,7 +443,8 @@
             </svg>
         </button>
         <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
-            <span style="font-size:1.5em;font-weight:bold;color:#3498db;letter-spacing:2px;">曼荼羅</span>
+            <!-- 曼荼羅標題置中調整 -->
+            <span style="font-size:1.5em;font-weight:bold;color:#3498db;letter-spacing:2px;text-align:center;width:100%;">曼荼羅</span>
             <span style="font-size:1em;color:#fff;margin-top:4px;">曼荼羅是心靈的鏡子，反映你的內在世界</span>
             <span style="font-size:0.8em;color:#888;margin-top:2px;">✨ 手機版優化完成 ✨</span>
         </div>
@@ -443,7 +484,7 @@
                     </svg>
                 </button>
                 <button class="icon-btn" data-shape="line">─</button>
-                <button class="icon-btn" data-shape="waterdrop" title="水滴">
+                <button class="icon-btn" data-shape="splash" title="滴畫">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M12 3C12 3 6 10 6 14a6 6 0 0 0 12 0c0-4-6-11-6-11z" fill="#3498db" stroke="#fff" stroke-width="2"/>
                     </svg>
@@ -542,7 +583,7 @@
                         </svg>
                     </button>
                     <button class="icon-btn" data-shape="line">─</button>
-                    <button class="icon-btn" data-shape="waterdrop" title="水滴">
+                    <button class="icon-btn" data-shape="splash" title="滴畫">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path d="M12 3C12 3 6 10 6 14a6 6 0 0 0 12 0c0-4-6-11-6-11z" fill="#3498db" stroke="#fff" stroke-width="2"/>
                         </svg>
@@ -686,7 +727,7 @@
 
         // --- Image Loading ---
         function loadShapeImages() {
-            const imageNames = ['waterdrop', 'cloud', 'snowflake', 'flower'];
+            const imageNames = ['splash', 'cloud', 'snowflake', 'flower'];
             
             imageNames.forEach(name => {
                 const img = new Image();
@@ -731,6 +772,13 @@
                 // 手機版畫布優先使用寬度，讓畫布更寬
                 if (availableWidth > availableHeight) {
                     size = availableWidth;
+                }
+                
+                // 手機版畫布置中調整
+                const canvasArea = document.querySelector('.canvas-area');
+                if (canvasArea) {
+                    canvasArea.style.justifyContent = 'center';
+                    canvasArea.style.alignItems = 'center';
                 }
             } else {
                 // 桌面版：考慮側邊欄寬度
@@ -887,11 +935,11 @@
                     ctx.lineTo(x2, y2);
                     ctx.stroke();
                     break;
-                case 'waterdrop':
+                case 'splash':
                     // 簡化水滴繪製，確保能正常顯示
-                    const waterdropSize = Math.max(20, Math.abs(x2 - x1) + Math.abs(y2 - y1) + 20);
+                    const splashSize = Math.max(20, Math.abs(x2 - x1) + Math.abs(y2 - y1) + 20);
                     ctx.beginPath();
-                    ctx.arc(x1, y1, waterdropSize / 2, 0, Math.PI * 2);
+                    ctx.arc(x1, y1, splashSize / 2, 0, Math.PI * 2);
                     ctx.fillStyle = brushColor;
                     ctx.globalAlpha = 0.8;
                     ctx.fill();
