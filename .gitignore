@@ -121,3 +121,4 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 >>>>>>> 09d91cdc0b5b9c6f0152c10c424cbd2c9ac89208
+.vercel
