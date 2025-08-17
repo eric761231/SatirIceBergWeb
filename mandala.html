@@ -137,12 +137,14 @@
         }
 
         .color-palette {
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: row;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
             gap: 8px;
-            width: 72px;
-            height: 80px;
+            justify-content: center;
+            align-items: center;
+            width: 160px;
+            margin: 0 auto;
         }
 
         .color-btn {
@@ -359,14 +361,14 @@
                     <input type="range" id="brush-size" min="1" max="100" value="10">
                 </div>
                 <div class="toolbar-row color-palette" id="color-palette">
-                    <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
-                    <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
+                    <button class="color-btn color-red active" data-color="#e74c3c" title="紅色"></button>
                     <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
                     <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
                     <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
                     <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
                     <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
                     <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
+                    <button class="color-btn color-black" data-color="#000000" title="黑色"></button>
                 </div>
             </div>
 
@@ -416,15 +418,15 @@
                 <label for="brush-size-mobile">大小：</label>
                 <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
             </div>
-            <div class="toolbar-row" id="color-palette-mobile">
-                <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
-                <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
+            <div class="toolbar-row color-palette" id="color-palette-mobile">
+                <button class="color-btn color-red active" data-color="#e74c3c" title="紅色"></button>
                 <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
                 <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
                 <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
                 <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
                 <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
                 <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
+                <button class="color-btn color-black" data-color="#000000" title="黑色"></button>
             </div>
             <div class="toolbar-group">
                 <div class="toolbar-row" id="shape-tools-mobile">
