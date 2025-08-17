@@ -36,10 +36,15 @@
             padding: 0;
             overflow: hidden;
         }
+        /* 手機版排版優化：隱藏側邊欄、標題，畫布上調 */
         @media (max-width: 600px) {
+            /* 主區塊改為直向排列 */
             .main-layout { flex-direction: column; }
+            /* 隱藏側邊欄 */
             .sidebar, .main-layout > .sidebar { display: none !important; }
+            /* 隱藏標題與工具群組標題 */
             h1, .page-title, .toolbar-group-title { display: none !important; }
+            /* 畫布區域上調，減少上方空間 */
             .canvas-area { margin-top: 0 !important; padding-top: 10px !important; }
         }
 
@@ -322,14 +327,38 @@
     </style>
 </head>
 <body>
-    <div class="mobile-header">
-        <button id="hamburger" class="icon-btn" title="展開選單">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-        </button>
-        <h1 class="mobile-title">繪畫壇城</h1>
-        <div style="width: 44px;"></div> </div>
+    <!-- 手機版橘色標題區塊 -->
+    <div class="mobile-header orange-header">
+        <div class="orange-title">曼荼羅</div>
+        <div class="orange-desc">內在世界連接宇宙意識</div>
+    </div>
+    <style>
+    /* 橘色標題區塊樣式 */
+    .orange-header {
+        background: linear-gradient(90deg, #ff9800 80%, #ffb74d 100%);
+        padding: 18px 0 10px 0;
+        text-align: center;
+        border-radius: 0 0 24px 24px;
+        margin-bottom: 0;
+        box-shadow: 0 2px 12px #0002;
+        display: none;
+    }
+    .orange-title {
+        font-size: 1.3em;
+        font-weight: bold;
+        color: #fff;
+        letter-spacing: 2px;
+    }
+    .orange-desc {
+        font-size: 1em;
+        color: #fff8;
+        margin-top: 4px;
+    }
+    @media (max-width: 768px) {
+        .orange-header { display: block; }
+        .mobile-header { display: none !important; }
+    }
+    </style>
 
     <div class="main-layout">
         <div class="sidebar">
@@ -415,49 +444,54 @@
             </div>
         </div>
 
+        <!-- 畫布區域（桌面與手機版共用同一個 canvas，ID: mandala-canvas） -->
         <div class="canvas-area">
             <canvas id="mandala-canvas"></canvas>
         </div>
 
-        <div class="controls-mobile">
-            <div class="toolbar-row">
-                <label for="brush-size-mobile">大小：</label>
-                <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
-            </div>
-            <div class="toolbar-row color-palette" id="color-palette-mobile">
-                <button class="color-btn color-red active" data-color="#e74c3c" title="紅色"></button>
-                <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
-                <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
-                <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
-                <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
-                <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
-                <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
-                <button class="color-btn color-black" data-color="#000000" title="黑色"></button>
-            </div>
-            <div class="toolbar-group">
-                <div class="toolbar-row" id="shape-tools-mobile">
-                    <button class="icon-btn active" data-shape="freehand">筆</button>
-                    <button class="icon-btn" data-shape="line">─</button>
-                    <button class="icon-btn" data-shape="circle">○</button>
-                    <button class="icon-btn" data-shape="square">□</button>
-                    <button class="icon-btn" data-shape="triangle">△</button>
-                    <button class="icon-btn" data-shape="trapezoid">梯</button>
-                    <button class="icon-btn eraser" id="eraser-btn-mobile">擦</button>
-                </div>
+        <!-- 可收合/展開的繪圖工具區塊（手機版） -->
+        <div class="controls-mobile" id="controls-mobile" style="height:48px;overflow:hidden;transition:height 0.3s;">
+            <button id="toggle-tools-btn" style="width:100%;background:#4caf50;color:#fff;font-size:1.1em;padding:8px 0;border:none;border-radius:12px 12px 0 0;box-shadow:0 -2px 8px #0002;">繪圖工具 ▼</button>
+            <div id="mobile-tools-content" style="display:none;">
                 <div class="toolbar-row">
-                    <label for="symmetry-count-mobile">對稱:</label>
-                    <select class="symmetry-select" id="symmetry-count-mobile">
-                        <option value="0" selected>0</option>
-                        <option value="2">2</option>
-                        <option value="4">4</option>
-                        <option value="6">6</option>
-                        <option value="8">8</option>
-                        <option value="12">12</option>
-                    </select>
-                    <button class="icon-btn" id="undo-btn-mobile">↩️</button>
-                    <button class="icon-btn" id="redo-btn-mobile">↪️</button>
-                    <button class="icon-btn" id="clear-btn-mobile">🗑️</button>
-                    <button class="icon-btn" id="save-btn-mobile">💾</button>
+                    <label for="brush-size-mobile">大小：</label>
+                    <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
+                </div>
+                <div class="toolbar-row color-palette" id="color-palette-mobile">
+                    <button class="color-btn color-red active" data-color="#e74c3c" title="紅色"></button>
+                    <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
+                    <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
+                    <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
+                    <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
+                    <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
+                    <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
+                    <button class="color-btn color-black" data-color="#000000" title="黑色"></button>
+                </div>
+                <div class="toolbar-group">
+                    <div class="toolbar-row" id="shape-tools-mobile">
+                        <button class="icon-btn active" data-shape="freehand">筆</button>
+                        <button class="icon-btn" data-shape="line">─</button>
+                        <button class="icon-btn" data-shape="circle">○</button>
+                        <button class="icon-btn" data-shape="square">□</button>
+                        <button class="icon-btn" data-shape="triangle">△</button>
+                        <button class="icon-btn" data-shape="trapezoid">梯</button>
+                        <button class="icon-btn eraser" id="eraser-btn-mobile">擦</button>
+                    </div>
+                    <div class="toolbar-row">
+                        <label for="symmetry-count-mobile">對稱:</label>
+                        <select class="symmetry-select" id="symmetry-count-mobile">
+                            <option value="0" selected>0</option>
+                            <option value="2">2</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                            <option value="12">12</option>
+                        </select>
+                        <button class="icon-btn" id="undo-btn-mobile">↩️</button>
+                        <button class="icon-btn" id="redo-btn-mobile">↪️</button>
+                        <button class="icon-btn" id="clear-btn-mobile">🗑️</button>
+                        <button class="icon-btn" id="save-btn-mobile">💾</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -870,19 +904,25 @@
         desktopControls.clearBtn.addEventListener('click', () => clearCanvas(true));
         desktopControls.saveBtn.addEventListener('click', saveCanvas);
 
-    // Mobile controls listeners
-    mobileControls.brushSize.addEventListener('input', handleBrushSizeChange);
-    mobileControls.colorPalette.addEventListener('click', handleColorChange);
-    mobileControls.colorPalette.addEventListener('touchstart', handleColorChange, { passive: false });
-    mobileControls.shapeTools.addEventListener('click', handleShapeChange);
-    mobileControls.shapeTools.addEventListener('touchstart', handleShapeChange, { passive: false });
-    mobileControls.eraserBtn.addEventListener('click', handleEraserToggle);
-    mobileControls.eraserBtn.addEventListener('touchstart', handleEraserToggle, { passive: false });
-    mobileControls.symmetrySelect.addEventListener('change', handleSymmetryChange);
-    mobileControls.undoBtn.addEventListener('click', undo);
-    mobileControls.redoBtn.addEventListener('click', redo);
-    mobileControls.clearBtn.addEventListener('click', () => clearCanvas(true));
-    mobileControls.saveBtn.addEventListener('click', saveCanvas);
+        // --- 手機版控制元件事件監聽 ---
+        // 筆刷大小調整（滑桿）
+        mobileControls.brushSize.addEventListener('input', handleBrushSizeChange);
+        // 顏色選擇（支援點擊與觸控，讓手機也能選顏色）
+        mobileControls.colorPalette.addEventListener('click', handleColorChange);
+        mobileControls.colorPalette.addEventListener('touchstart', handleColorChange, { passive: false });
+        // 形狀工具（支援點擊與觸控，手機可切換形狀）
+        mobileControls.shapeTools.addEventListener('click', handleShapeChange);
+        mobileControls.shapeTools.addEventListener('touchstart', handleShapeChange, { passive: false });
+        // 橡皮擦（支援點擊與觸控，手機可切換橡皮擦）
+        mobileControls.eraserBtn.addEventListener('click', handleEraserToggle);
+        mobileControls.eraserBtn.addEventListener('touchstart', handleEraserToggle, { passive: false });
+        // 對稱選擇（下拉選單）
+        mobileControls.symmetrySelect.addEventListener('change', handleSymmetryChange);
+        // 撤銷/重做/清除/儲存（按鈕）
+        mobileControls.undoBtn.addEventListener('click', undo);
+        mobileControls.redoBtn.addEventListener('click', redo);
+        mobileControls.clearBtn.addEventListener('click', () => clearCanvas(true));
+        mobileControls.saveBtn.addEventListener('click', saveCanvas);
 
         // Mobile sidebar listeners
         hamburgerBtn.addEventListener('click', function() {
