@@ -22,7 +22,7 @@
         .color-btn.color-blue { background-color: #3498db; }
         .color-btn.color-red { background-color: #e74c3c; }
         .color-btn.color-yellow { background-color: #f1c40f; }
-    .color-btn.color-orange { background-color: #ff9800; }
+        .color-btn.color-orange { background-color: #ff9800; }
         .color-btn.color-green { background-color: #2ecc71; }
         .color-btn.color-purple { background-color: #9b59b6; }
         .color-btn.color-white { background-color: #ffffff; border-color: #888; }
@@ -34,7 +34,7 @@
             font-family: 'Noto Sans TC', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* 防止滾動條影響佈局 */
+            overflow: hidden;
         }
 
         .main-layout {
@@ -44,16 +44,15 @@
             width: 100vw;
         }
 
-        /* 側邊欄樣式 */
+        /* Sidebar styles */
         .sidebar {
-            /* 寬度從「每日閱讀」的 240px 調整為 300px，讓畫布區域有更多空間 */
             width: 300px;
             background: #16213e; 
             box-shadow: 2px 0 16px #0006;
             padding: 24px;
-            box-sizing: border-box; /* 確保 padding 不增加總寬度 */
+            box-sizing: border-box;
             overflow-y: auto;
-            display: flex; /* 讓內部工具組垂直排列 */
+            display: flex;
             flex-direction: column;
         }
 
@@ -76,21 +75,10 @@
             gap: 12px;
             padding-bottom: 20px;
         }
-        /* 各分隔線獨立設定 */
-        .toolbar-group:nth-child(1) {
-            border-bottom: 1px solid #16213e;
-            margin-top: 2px;
-        }
-        .toolbar-group:nth-child(2) {
-            border-bottom: 1px solid #16213e;
-            padding-bottom: 0;
-        }
-        .toolbar-group:nth-child(3) {
-            border-bottom: 1px solid #16213e;
-            margin-top: 88px;
-        }
-        .toolbar-group:last-child {
-            border-bottom: none;
+        /* Separator lines for desktop */
+        .toolbar-group:not(:last-child) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 16px;
         }
 
         .toolbar-group-title {
@@ -156,9 +144,6 @@
             width: 72px;
             height: 80px;
         }
-        #color-palette-desktop {
-            margin-top: 24px;
-        }
 
         .color-btn {
             width: 32px;
@@ -179,7 +164,7 @@
             box-shadow: 0 0 0 3px var(--primary-accent);
         }
 
-        #eraser-btn-desktop.active, #eraser-btn-mobile.active {
+        .icon-btn.eraser.active {
             background: var(--danger-accent);
             border-color: var(--danger-accent);
         }
@@ -203,8 +188,32 @@
             cursor: crosshair;
         }
 
-        /* 手機版左側邊欄樣式 - 與 articles.html 一致 */
-        #sidebar {
+        /* Mobile specific styles */
+        .controls-mobile {
+            display: none;
+        }
+
+        .mobile-header {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: rgba(30, 30, 45, 0.95);
+            border-radius: 20px;
+            margin: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .mobile-title {
+            color: #e0e0e0;
+            font-size: 1.5em;
+            font-weight: 300;
+            margin: 0;
+            flex: 1;
+            text-align: center;
+        }
+
+        #mobile-nav {
             position: fixed;
             top: 0;
             left: 0;
@@ -218,11 +227,11 @@
             overflow-y: auto;
         }
         
-        #sidebar.show {
+        #mobile-nav.show {
             transform: translateX(0);
         }
-        
-        #sidebar h2 {
+
+        #mobile-nav h2 {
             color: #00aaff;
             margin: 24px 0 16px 0;
             text-align: center;
@@ -230,7 +239,7 @@
             padding: 16px 0 8px 0;
         }
         
-        .sidebar-link {
+        .nav-link {
             display: block;
             padding: 12px 32px;
             color: #fff;
@@ -238,25 +247,11 @@
             text-decoration: none;
             text-align: center;
         }
-        
-        #sidebar-close {
+
+        #nav-close {
             position: absolute;
             top: 16px;
             right: 16px;
-        }
-        
-        /* 手機版漢堡按鈕樣式 */
-        #hamburger {
-            box-shadow: 0 2px 8px #0004;
-        }
-        
-        #hamburger svg {
-            vertical-align: middle;
-        }
-        
-        /* Mobile controls section */
-        .controls-mobile {
-            display: none;
         }
         
         /* Responsive design for smaller screens */
@@ -268,97 +263,65 @@
                 display: none;
             }
 
-            .mobile-header-placeholder {
-                width: 44px;
-            }
-            
-            /* 手機版標題區域在手機上顯示 */
             .mobile-header {
                 display: flex;
             }
-        }
-        .mobile-header-placeholder {
-            width: 44px;
-        }
-        .controls-mobile {
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-light);
-            box-shadow: 0 -2px 16px var(--shadow-color);
-            padding: 16px;
-            gap: 16px;
-            width: 100%;
-            box-sizing: border-box;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            z-index: 10;
-        }
-        .controls-mobile .toolbar-row {
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-        #brush-size-mobile {
-            flex: 1;
-        }
-        .canvas-area {
-            padding: 10px;
-            padding-bottom: 200px;
-            height: 100%;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        #mandala-canvas {
-            width: 100%;
-            height: auto;
-            aspect-ratio: 1 / 1;
-        }
-        .toolbar-group-title {
-            display: none;
-        }
-        .toolbar-group {
-            border-bottom: none;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }
-        
-        /* 手機版標題區域樣式 */
-        .mobile-header {
-            display: none; /* 桌面版隱藏 */
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            background: rgba(30, 30, 45, 0.95);
-            border-radius: 20px;
-            margin: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-        }
-        
-        .mobile-title {
-            color: #e0e0e0;
-            font-size: 1.5em;
-            font-weight: 300;
-            margin: 0;
-            flex: 1;
-            text-align: center;
+
+            .controls-mobile {
+                display: flex;
+                flex-direction: column;
+                background: var(--bg-light);
+                box-shadow: 0 -2px 16px var(--shadow-color);
+                padding: 16px;
+                gap: 16px;
+                width: 100%;
+                box-sizing: border-box;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                z-index: 10;
+            }
+            .controls-mobile .toolbar-row {
+                justify-content: space-around;
+                flex-wrap: wrap;
+            }
+            #brush-size-mobile {
+                flex: 1;
+            }
+            .canvas-area {
+                padding: 10px;
+                padding-bottom: 200px;
+                height: 100%;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            #mandala-canvas {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+            }
+            .toolbar-group-title {
+                display: none;
+            }
+            .toolbar-group {
+                border-bottom: none;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 手機版標題區域 -->
     <div class="mobile-header">
         <button id="hamburger" class="icon-btn" title="展開選單">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="4" y="6" width="16" height="2" rx="1" fill="currentColor"/>
-                <rect x="4" y="11" width="16" height="2" rx="1" fill="currentColor"/>
-        <div class="mobile-header-placeholder"></div> <!-- 佔位元素，保持標題置中 -->
+                <path d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
         </button>
         <h1 class="mobile-title">繪畫壇城</h1>
-        <div class="mobile-header-placeholder"></div> <!-- 佔位元素，保持標題置中 -->
-    </div>
+        <div style="width: 44px;"></div> </div>
 
     <div class="main-layout">
         <div class="sidebar">
@@ -382,35 +345,34 @@
                     </a>
                     <a href="guidance.html" class="icon-btn" title="每日指引">
                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2L12 22M2 12L22 12M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2Z" fill="none" stroke="#fff" stroke-width="2"/>
+                            <circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="2" fill="none"/>
+                            <path d="M12 2v20M2 12h20"/>
                         </svg>
                     </a>
                 </div>
             </div>
+
             <div class="toolbar-group">
                 <div class="toolbar-group-title">筆刷</div>
                 <div class="toolbar-row">
-                    <label for="brush-size-desktop">大小：</label>
-                    <input type="range" id="brush-size-desktop" min="1" max="100" value="10">
-                    <div class="color-palette" id="color-palette-desktop">
-                <div class="toolbar-row">
-                    <!-- 顏色選擇區塊，已往下調整，與繪圖工具分隔更明顯 -->
-                    <div class="color-palette" id="color-palette-desktop">
-                        <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
-                        <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
-                        <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
-                        <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
-                        <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
-                        <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
-                        <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
-                        <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
-                    </div>
+                    <label for="brush-size">大小：</label>
+                    <input type="range" id="brush-size" min="1" max="100" value="10">
+                </div>
+                <div class="toolbar-row color-palette" id="color-palette">
+                    <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
+                    <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
+                    <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
+                    <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
+                    <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
+                    <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
+                    <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
+                    <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
                 </div>
             </div>
+
             <div class="toolbar-group">
                 <div class="toolbar-group-title">繪圖工具</div>
-                <!-- 繪圖工具區塊，已往下調整，與顏色分隔更明顯 -->
-                <div class="toolbar-row" id="shape-tools-desktop">
+                <div class="toolbar-row" id="shape-tools">
                     <button class="icon-btn active" data-shape="freehand">筆</button>
                     <button class="icon-btn" data-shape="line">直線</button>
                     <button class="icon-btn" data-shape="circle">圓形</button>
@@ -419,8 +381,8 @@
                     <button class="icon-btn" data-shape="trapezoid">梯形</button>
                 </div>
                 <div class="toolbar-row">
-                    <label for="symmetry-count-desktop">對稱：</label>
-                    <select class="symmetry-select" id="symmetry-count-desktop">
+                    <label for="symmetry-count">對稱：</label>
+                    <select class="symmetry-select" id="symmetry-count">
                         <option value="0" selected>0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -432,14 +394,15 @@
                     </select>
                 </div>
             </div>
+
             <div class="toolbar-group">
                 <div class="toolbar-group-title">操作</div>
                 <div class="toolbar-row">
-                    <button class="icon-btn" id="eraser-btn-desktop">橡皮擦</button>
-                    <button class="icon-btn" id="undo-btn-desktop">上一步</button>
-                    <button class="icon-btn" id="redo-btn-desktop">下一步</button>
-                    <button class="icon-btn" id="clear-btn-desktop">清空</button>
-                    <button class="icon-btn" id="save-btn-desktop">儲存</button>
+                    <button class="icon-btn eraser" id="eraser-btn">橡皮擦</button>
+                    <button class="icon-btn" id="undo-btn">上一步</button>
+                    <button class="icon-btn" id="redo-btn">下一步</button>
+                    <button class="icon-btn" id="clear-btn">清空</button>
+                    <button class="icon-btn" id="save-btn">儲存</button>
                 </div>
             </div>
         </div>
@@ -449,21 +412,19 @@
         </div>
 
         <div class="controls-mobile">
-                    <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
-                <div class="toolbar-row">
-                    <label for="brush-size-mobile">大小：</label>
-                    <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
-                </div>
-                <div class="toolbar-row" id="color-palette-mobile">
-                    <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
-                    <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
-                    <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
-                    <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
-                    <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
-                    <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
-                    <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
-                    <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
-                </div>
+            <div class="toolbar-row">
+                <label for="brush-size-mobile">大小：</label>
+                <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
+            </div>
+            <div class="toolbar-row" id="color-palette-mobile">
+                <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
+                <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
+                <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
+                <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
+                <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
+                <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
+                <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
+                <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
             </div>
             <div class="toolbar-group">
                 <div class="toolbar-row" id="shape-tools-mobile">
@@ -473,7 +434,7 @@
                     <button class="icon-btn" data-shape="square">□</button>
                     <button class="icon-btn" data-shape="triangle">△</button>
                     <button class="icon-btn" data-shape="trapezoid">梯</button>
-                    <button class="icon-btn" id="eraser-btn-mobile">擦</button>
+                    <button class="icon-btn eraser" id="eraser-btn-mobile">擦</button>
                 </div>
                 <div class="toolbar-row">
                     <label for="symmetry-count-mobile">對稱:</label>
@@ -494,13 +455,12 @@
         </div>
     </div>
 
-    <!-- 手機版左側邊欄 - 與 articles.html 一致 -->
-    <nav id="sidebar">
+    <nav id="mobile-nav">
         <h2>選單</h2>
-        <a href="meditation.html" class="sidebar-link">冥想音樂</a>
-        <a href="articles.html" class="sidebar-link">每日閱讀</a>
-        <a href="guide.html" class="sidebar-link">每日指引</a>
-        <button id="sidebar-close" class="icon-btn" title="關閉選單">
+        <a href="meditation.html" class="nav-link">冥想音樂</a>
+        <a href="articles.html" class="nav-link">每日閱讀</a>
+        <a href="guide.html" class="nav-link">每日指引</a>
+        <button id="nav-close" class="icon-btn" title="關閉選單">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
     </nav>
@@ -511,39 +471,44 @@
         const canvas = document.getElementById('mandala-canvas');
         const ctx = canvas.getContext('2d');
         const canvasArea = document.querySelector('.canvas-area');
-
-        // 手機版側邊欄控制
-        const hamburgerBtn = document.getElementById('hamburger');
-        const sidebarNav = document.getElementById('sidebar');
-        const sidebarClose = document.getElementById('sidebar-close');
         
-        hamburgerBtn.addEventListener('click', function() {
-            sidebarNav.classList.toggle('show');
-        });
+        // Desktop controls (main)
+        const desktopControls = {
+            brushSize: document.getElementById('brush-size'),
+            colorPalette: document.getElementById('color-palette'),
+            shapeTools: document.getElementById('shape-tools'),
+            eraserBtn: document.getElementById('eraser-btn'),
+            symmetrySelect: document.getElementById('symmetry-count'),
+            undoBtn: document.getElementById('undo-btn'),
+            redoBtn: document.getElementById('redo-btn'),
+            clearBtn: document.getElementById('clear-btn'),
+            saveBtn: document.getElementById('save-btn'),
+        };
         
-        sidebarClose.addEventListener('click', function() {
-            sidebarNav.classList.remove('show');
-        });
-
-        // Controls
-        const controls = {
-            brushSize: [document.getElementById('brush-size-desktop'), document.getElementById('brush-size-mobile')],
-            colorPalettes: [document.getElementById('color-palette-desktop'), document.getElementById('color-palette-mobile')],
-            eraserBtns: [document.getElementById('eraser-btn-desktop'), document.getElementById('eraser-btn-mobile')],
-            symmetrySelects: [document.getElementById('symmetry-count-desktop'), document.getElementById('symmetry-count-mobile')],
-            shapeTools: [document.getElementById('shape-tools-desktop'), document.getElementById('shape-tools-mobile')],
-            undoBtns: [document.getElementById('undo-btn-desktop'), document.getElementById('undo-btn-mobile')],
-            redoBtns: [document.getElementById('redo-btn-desktop'), document.getElementById('redo-btn-mobile')],
-            clearBtns: [document.getElementById('clear-btn-desktop'), document.getElementById('clear-btn-mobile')],
-            saveBtns: [document.getElementById('save-btn-desktop'), document.getElementById('save-btn-mobile')],
+        // Mobile controls
+        const mobileControls = {
+            brushSize: document.getElementById('brush-size-mobile'),
+            colorPalette: document.getElementById('color-palette-mobile'),
+            shapeTools: document.getElementById('shape-tools-mobile'),
+            eraserBtn: document.getElementById('eraser-btn-mobile'),
+            symmetrySelect: document.getElementById('symmetry-count-mobile'),
+            undoBtn: document.getElementById('undo-btn-mobile'),
+            redoBtn: document.getElementById('redo-btn-mobile'),
+            clearBtn: document.getElementById('clear-btn-mobile'),
+            saveBtn: document.getElementById('save-btn-mobile'),
         };
 
+        // Mobile sidebar control
+        const hamburgerBtn = document.getElementById('hamburger');
+        const sidebarNav = document.getElementById('mobile-nav');
+        const sidebarClose = document.getElementById('nav-close');
+        
         // --- State Variables ---
-        let isDrawing = false; // For freehand drawing
-        let isDraggingShape = false; // For drawing shapes
+        let isDrawing = false;
+        let isDraggingShape = false;
         let brushSize = 10;
         let brushColor = '#000000';
-        let lastSelectedColor = '#000000'; // Store the last non-eraser color
+        let lastSelectedColor = '#000000';
         let symmetry = 0;
         let currentShape = 'freehand';
         let lastX = 0;
@@ -554,10 +519,6 @@
         let historyIndex = -1;
 
         // --- Canvas Setup ---
-        /**
-         * Resizes the canvas to be a square based on the available space.
-         * Restores the last saved image from history.
-         */
         function resizeCanvas() {
             const size = Math.min(canvasArea.clientWidth, canvasArea.clientHeight) * 0.9;
             canvas.width = size;
@@ -566,10 +527,6 @@
             redrawFromHistory();
         }
 
-        /**
-         * Clears the canvas and saves the state.
-         * @param {boolean} save - Whether to save the state to history.
-         */
         function clearCanvas(save = true) {
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -578,18 +535,12 @@
             }
         }
 
-        /**
-         * Initializes the canvas and saves the initial empty state.
-         */
         function initializeCanvas() {
             resizeCanvas();
             clearCanvas(true);
         }
 
         // --- Drawing Logic ---
-        /**
-         * Gets the coordinates of the mouse or touch event relative to the canvas.
-         */
         function getEventCoordinates(e) {
             const rect = canvas.getBoundingClientRect();
             const clientX = e.clientX || e.touches[0].clientX;
@@ -599,9 +550,6 @@
             return { x, y };
         }
 
-        /**
-         * Handles the start of a drawing or dragging action.
-         */
         function handleCanvasMouseDown(e) {
             e.preventDefault();
             const coords = getEventCoordinates(e);
@@ -615,10 +563,6 @@
             }
         }
 
-        /**
-         * Handles the movement of the mouse or touch.
-         * Draws freehand lines or previews shapes.
-         */
         function handleCanvasMouseMove(e) {
             if (isDrawing && currentShape === 'freehand') {
                 const coords = getEventCoordinates(e);
@@ -629,10 +573,6 @@
             }
         }
         
-        /**
-         * Handles the end of a drawing or dragging action.
-         * Draws the final shape and saves the state.
-         */
         function handleCanvasMouseUp(e) {
             if (isDrawing) {
                 isDrawing = false;
@@ -648,9 +588,6 @@
             redrawFromHistory();
         }
         
-        /**
-         * Draws a line with the current symmetry settings.
-         */
         function drawSymmetricalLines(x1, y1, x2, y2) {
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
@@ -682,9 +619,6 @@
             }
         }
 
-        /**
-         * Draws the final shape with symmetry.
-         */
         function drawFinalShape(x1, y1, x2, y2) {
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
@@ -706,14 +640,6 @@
             }
         }
 
-        /**
-         * Encapsulates all shape drawing logic.
-         * @param {number} x1 - Start x coordinate.
-         * @param {number} y1 - Start y coordinate.
-         * @param {number} x2 - End x coordinate.
-         * @param {number} y2 - End y coordinate.
-         * @param {boolean} isPreview - Whether to draw a preview shape.
-         */
         function drawShape(x1, y1, x2, y2, isPreview = false) {
             ctx.strokeStyle = isPreview ? "rgba(100, 100, 100, 0.7)" : brushColor;
             ctx.lineWidth = isPreview ? Math.max(2, brushSize / 10) : brushSize;
@@ -755,9 +681,6 @@
             }
         }
 
-        /**
-         * Draws a preview of the shape being dragged.
-         */
         function drawPreview(e) {
             redrawFromHistory();
             const coords = getEventCoordinates(e);
@@ -783,9 +706,6 @@
         }
 
         // --- History (Undo/Redo) Logic ---
-        /**
-         * Saves the current canvas state to the history array.
-         */
         function saveState() {
             if (historyIndex < history.length - 1) {
                 history.splice(historyIndex + 1);
@@ -794,9 +714,6 @@
             historyIndex++;
         }
 
-        /**
-         * Goes back one step in the history.
-         */
         function undo() {
             if (historyIndex > 0) {
                 historyIndex--;
@@ -804,9 +721,6 @@
             }
         }
 
-        /**
-         * Goes forward one step in the history.
-         */
         function redo() {
             if (historyIndex < history.length - 1) {
                 historyIndex++;
@@ -814,9 +728,6 @@
             }
         }
         
-        /**
-         * Clears the canvas and redraws the image from the current history state.
-         */
         function redrawFromHistory() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
@@ -834,7 +745,8 @@
         // --- Control Handlers ---
         function handleBrushSizeChange(e) {
             brushSize = e.target.value;
-            controls.brushSize.forEach(slider => slider.value = brushSize);
+            desktopControls.brushSize.value = brushSize;
+            mobileControls.brushSize.value = brushSize;
         }
 
         function handleColorChange(e) {
@@ -844,14 +756,16 @@
             brushColor = button.dataset.color;
             lastSelectedColor = brushColor;
             
-            updateActiveTool(document.querySelector(`button[data-shape="freehand"]`));
+            // Sync active classes across both palettes
+            desktopControls.colorPalette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            mobileControls.colorPalette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
             
-            controls.colorPalettes.forEach(palette => {
-                palette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
-                palette.querySelectorAll(`.color-btn[data-color="${brushColor}"]`).forEach(btn => btn.classList.add('active'));
-            });
+            desktopControls.colorPalette.querySelector(`button[data-color="${brushColor}"]`).classList.add('active');
+            mobileControls.colorPalette.querySelector(`button[data-color="${brushColor}"]`).classList.add('active');
+            
+            updateActiveTool(document.querySelector(`button[data-shape="freehand"]`));
         }
-        
+
         function handleShapeChange(e) {
             const button = e.target.closest('.icon-btn[data-shape]');
             if (!button) return;
@@ -861,53 +775,56 @@
             
             // Reset colors and eraser state when changing shape
             brushColor = lastSelectedColor;
-            controls.eraserBtns.forEach(btn => btn.classList.remove('active'));
-            controls.colorPalettes.forEach(palette => {
-                palette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
-                palette.querySelectorAll(`.color-btn[data-color="${lastSelectedColor}"]`).forEach(btn => btn.classList.add('active'));
-            });
+            desktopControls.eraserBtn.classList.remove('active');
+            mobileControls.eraserBtn.classList.remove('active');
+            
+            desktopControls.colorPalette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            mobileControls.colorPalette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            
+            desktopControls.colorPalette.querySelector(`button[data-color="${lastSelectedColor}"]`).classList.add('active');
+            mobileControls.colorPalette.querySelector(`button[data-color="${lastSelectedColor}"]`).classList.add('active');
         }
 
         function handleEraserToggle() {
-            const eraserIsActive = controls.eraserBtns[0].classList.contains('active');
+            const eraserIsActive = desktopControls.eraserBtn.classList.contains('active');
             
             if (eraserIsActive) {
                 // Deactivate eraser: revert to last selected color and freehand mode
                 brushColor = lastSelectedColor;
                 updateActiveTool(document.querySelector(`button[data-shape="freehand"]`));
-                controls.colorPalettes.forEach(palette => {
-                    palette.querySelectorAll(`.color-btn[data-color="${brushColor}"]`).forEach(btn => btn.classList.add('active'));
-                });
+                desktopControls.colorPalette.querySelector(`button[data-color="${brushColor}"]`).classList.add('active');
+                mobileControls.colorPalette.querySelector(`button[data-color="${brushColor}"]`).classList.add('active');
             } else {
                 // Activate eraser: set color to white and mark as active
                 brushColor = '#ffffff';
-                updateActiveTool(controls.eraserBtns[0]);
-                controls.colorPalettes.forEach(palette => {
-                    palette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
-                });
+                updateActiveTool(desktopControls.eraserBtn);
+                desktopControls.colorPalette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+                mobileControls.colorPalette.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
             }
         }
         
-        /**
-         * Updates the 'active' class for the selected tool buttons across all toolbars.
-         */
         function updateActiveTool(activeButton) {
-            // Remove 'active' from all shape and eraser buttons
-            document.querySelectorAll('.icon-btn[data-shape]').forEach(btn => btn.classList.remove('active'));
-            controls.eraserBtns.forEach(btn => btn.classList.remove('active'));
+            // Remove 'active' from all shape and eraser buttons on both toolbars
+            desktopControls.shapeTools.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+            mobileControls.shapeTools.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+            desktopControls.eraserBtn.classList.remove('active');
+            mobileControls.eraserBtn.classList.remove('active');
             
-            // Add 'active' to the corresponding buttons in both desktop and mobile toolbars
+            // Add 'active' to the corresponding buttons
             if (activeButton.dataset.shape) {
                 const shape = activeButton.dataset.shape;
-                document.querySelectorAll(`.icon-btn[data-shape="${shape}"]`).forEach(btn => btn.classList.add('active'));
+                desktopControls.shapeTools.querySelector(`[data-shape="${shape}"]`).classList.add('active');
+                mobileControls.shapeTools.querySelector(`[data-shape="${shape}"]`).classList.add('active');
             } else {
-                controls.eraserBtns.forEach(btn => btn.classList.add('active'));
+                desktopControls.eraserBtn.classList.add('active');
+                mobileControls.eraserBtn.classList.add('active');
             }
         }
 
         function handleSymmetryChange(e) {
             symmetry = parseInt(e.target.value, 10);
-            controls.symmetrySelects.forEach(select => select.value = symmetry);
+            desktopControls.symmetrySelect.value = symmetry;
+            mobileControls.symmetrySelect.value = symmetry;
         }
 
         function saveCanvas() {
@@ -934,15 +851,36 @@
         
         window.addEventListener('resize', resizeCanvas);
 
-        controls.brushSize.forEach(slider => slider.addEventListener('input', handleBrushSizeChange));
-        controls.colorPalettes.forEach(palette => palette.addEventListener('click', handleColorChange));
-        controls.shapeTools.forEach(toolbar => toolbar.addEventListener('click', handleShapeChange));
-        controls.eraserBtns.forEach(btn => btn.addEventListener('click', handleEraserToggle));
-        controls.symmetrySelects.forEach(select => select.addEventListener('change', handleSymmetryChange));
-        controls.undoBtns.forEach(btn => btn.addEventListener('click', undo));
-        controls.redoBtns.forEach(btn => btn.addEventListener('click', redo));
-        controls.clearBtns.forEach(btn => btn.addEventListener('click', () => clearCanvas(true)));
-        controls.saveBtns.forEach(btn => btn.addEventListener('click', saveCanvas));
+        // Desktop controls listeners
+        desktopControls.brushSize.addEventListener('input', handleBrushSizeChange);
+        desktopControls.colorPalette.addEventListener('click', handleColorChange);
+        desktopControls.shapeTools.addEventListener('click', handleShapeChange);
+        desktopControls.eraserBtn.addEventListener('click', handleEraserToggle);
+        desktopControls.symmetrySelect.addEventListener('change', handleSymmetryChange);
+        desktopControls.undoBtn.addEventListener('click', undo);
+        desktopControls.redoBtn.addEventListener('click', redo);
+        desktopControls.clearBtn.addEventListener('click', () => clearCanvas(true));
+        desktopControls.saveBtn.addEventListener('click', saveCanvas);
+
+        // Mobile controls listeners
+        mobileControls.brushSize.addEventListener('input', handleBrushSizeChange);
+        mobileControls.colorPalette.addEventListener('click', handleColorChange);
+        mobileControls.shapeTools.addEventListener('click', handleShapeChange);
+        mobileControls.eraserBtn.addEventListener('click', handleEraserToggle);
+        mobileControls.symmetrySelect.addEventListener('change', handleSymmetryChange);
+        mobileControls.undoBtn.addEventListener('click', undo);
+        mobileControls.redoBtn.addEventListener('click', redo);
+        mobileControls.clearBtn.addEventListener('click', () => clearCanvas(true));
+        mobileControls.saveBtn.addEventListener('click', saveCanvas);
+
+        // Mobile sidebar listeners
+        hamburgerBtn.addEventListener('click', function() {
+            sidebarNav.classList.toggle('show');
+        });
+        
+        sidebarClose.addEventListener('click', function() {
+            sidebarNav.classList.remove('show');
+        });
         
         // --- Initialization ---
         initializeCanvas();
