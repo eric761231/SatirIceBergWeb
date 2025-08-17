@@ -167,12 +167,22 @@ class PWAInstallManager {
     
     // 顯示手動安裝說明
     showManualInstallInstructions() {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        // 更準確的 iOS 檢測邏輯
+        const isIOS = () => {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isIPad = /ipad/.test(userAgent) || 
+                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const isIPhone = /iphone/.test(userAgent);
+            const isIPod = /ipod/.test(userAgent);
+            
+            return isIPad || isIPhone || isIPod;
+        };
+        
         const isAndroid = /Android/.test(navigator.userAgent);
         
         let message = '請使用支援PWA的瀏覽器，或已安裝/不支援安裝提示';
         
-        if (isIOS) {
+        if (isIOS()) {
             message = '請點選 Safari 下方的「分享」按鈕，然後選擇「加入主畫面」';
         } else if (isAndroid) {
             message = '請點選瀏覽器選單中的「安裝 App」選項';

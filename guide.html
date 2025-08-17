@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每日指引</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 漢堡按鈕樣式 */
+        #hamburger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 300;
+            box-shadow: 0 2px 8px #0004;
+        }
+
+        /* 側邊欄樣式 */
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: #16213e;
+            box-shadow: 2px 0 16px #0006;
+            z-index: 200;
+            transform: translateX(-100%);
+            transition: transform 0.3s;
+            overflow-y: auto;
+        }
+
+        #sidebar.show {
+            transform: translateX(0);
+        }
+
+        #sidebar h2 {
+            color: #00aaff;
+            margin: 24px 0 16px 0;
+            text-align: center;
+            font-size: 1.2em;
+            padding: 16px 0 8px 0;
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 12px 32px;
+            color: #fff;
+            font-size: 1.1em;
+            text-decoration: none;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .sidebar-link:hover {
+            background: #0f3460;
+        }
+
+        #sidebar-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
+
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            background: transparent;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            border: 1px solid rgba(255,255,255,0.12);
+            transition: background 0.2s, box-shadow 0.2s;
+            padding: 0;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .icon-btn:hover {
+            background: #16213e;
+        }
+
+        .guide-container {
+            background: rgba(30, 30, 45, 0.95);
+            border-radius: 20px;
+            padding: 28px 40px 40px 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            max-width: 800px;
+            width: 90%;
+            margin-top: 24px;
+            position: relative;
+        }
+
+        .guide-title {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 300;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+
+        .daily-quote {
+            background: rgba(30, 30, 45, 0.9);
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quote-text {
+            font-size: 1.4em;
+            line-height: 1.8;
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .quote-author {
+            font-size: 1em;
+            color: #00aaff;
+            font-style: italic;
+        }
+
+        .quote-date {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 1.2em;
+            color: #00aaff;
+            text-align: center;
+            width: 100%;
+            left: 0;
+            right: 0;
+        }
+
+        .refresh-btn {
+            background: #00aaff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .refresh-btn:hover {
+            background: #0099cc;
+        }
+
+        .refresh-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+
+        .stats-info {
+            background: rgba(30, 30, 45, 0.7);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #7F8C8D;
+        }
+
+        @media (max-width: 600px) {
+            .guide-container {
+                padding: 20px 24px 32px 24px;
+                margin-top: 16px;
+            }
+            
+            .guide-title {
+                font-size: 1.6em;
+                margin-bottom: 20px;
+            }
+
+            .daily-quote {
+                padding: 30px 20px;
+                min-height: 180px;
+            }
+
+            .quote-text {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 漢堡按鈕 -->
+    <button id="hamburger" class="icon-btn" title="展開選單">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+    </button>
+
+    <!-- 側邊欄 -->
+    <div id="sidebar">
+        <button id="sidebar-close" class="icon-btn" title="關閉選單">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+        </button>
+        <h2>導航選單</h2>
+        <a href="mandala.html" class="sidebar-link">曼荼羅</a>
+        <a href="articles.html" class="sidebar-link">每日閱讀</a>
+        <a href="meditation.html" class="sidebar-link">冥想音樂</a>
+        <a href="yoga.html" class="sidebar-link">瑜珈</a>
+    </div>
+
+    <div class="guide-container">
+        <h1 class="guide-title">每日指引</h1>
+        
+        <div class="daily-quote">
+            <div class="quote-date" id="quote-date"></div>
+            <div class="quote-text" id="quote-text">載入中...</div>
+        </div>
+    </div>
+
+    <script>
+        // 每日指引語錄庫
+        let dailyQuotes = [];
+
+        // 側邊欄控制
+        const hamburger = document.getElementById('hamburger');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarClose = document.getElementById('sidebar-close');
+
+        // 開啟側邊欄
+        hamburger.addEventListener('click', () => {
+            sidebar.classList.add('show');
+        });
+
+        // 關閉側邊欄
+        sidebarClose.addEventListener('click', () => {
+            sidebar.classList.remove('show');
+        });
+
+        // 點擊側邊欄外部關閉
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+
+        // ESC 鍵關閉側邊欄
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                sidebar.classList.remove('show');
+            }
+        });
+
+        // 載入指引內容
+        async function loadGuideContent() {
+            try {
+                const response = await fetch('guide/guideList.txt');
+                const content = await response.text();
+                
+                // 解析文件內容，只顯示以 # 開頭的內容，並移除 # 符號
+                dailyQuotes = content
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line && line.startsWith('#') && line.length > 1)
+                    .map(line => line.substring(1).trim()); // 移除 # 符號
+                
+                console.log(`成功載入 ${dailyQuotes.length} 條指引`);
+                
+                // 載入完成後初始化系統
+                new DailyGuideSystem();
+            } catch (error) {
+                console.error('載入指引內容失敗:', error);
+                // 如果載入失敗，使用預設內容
+                dailyQuotes = [
+                    "擁有我擁有的",
+                    "體驗我的體驗",
+                    "依照我的原則過生命",
+                    "我擁有結果，結果不等於我",
+                    "我沒有自由；我將覺醒作為我的自由",
+                    "我沒有力量；我將自然的韻律作為我的力量",
+                    "我沒有威信；我將誠實作為我的威信",
+                    "我沒有敵人；我將冷漠及不關心作為我的敵人",
+                    "我沒有朋友；我將天地作為我的朋友",
+                    "我沒有規條；我將自發性與適應性作為我的規條",
+                    "我沒有戰術；我將準確的行動作為我的戰術",
+                    "我沒有戰略；我將空與實作為我的戰略",
+                    "我沒有盔甲；我將靜與直覺作為我的盔甲",
+                    "我沒有武器；我將勇氣與警覺作為我的武器",
+                    "我沒有盾牌；我將對生命的崇敬作為我的盾牌",
+                    "我沒有軍服；我將溫柔與同情作為我的軍服",
+                    "我沒有勝利；我將和諧與均衡作為我的勝利",
+                    "我沒有報酬；我將淚與笑作為我的報酬",
+                    "我沒有家；我將現在的一刻作為我的家",
+                    "我沒有生與死；我將呼吸的起伏作為我的生與死",
+                    "我生命中的力量來自我的區分",
+                    "世界的發生取決於我的參與，而我的參與根據我做出的區分決定",
+                    "此地無物可取不是此地無物可取",
+                    "榮耀你的對手",
+                    "無所期待，為一切做好準備",
+                    "將打擊視為禮物",
+                    "保護自己，保護你的對手",
+                    "你知道要做什麼",
+                    "做好準備，回到中心點，平衡",
+                    "與我的有關的是什麼",
+                    "若要如何，全憑自己",
+                    "人是不會改變的，但人可以擴展",
+                    "外在實相即是內在投射",
+                    "人生沒有意義，人生的意義，由你自己給予",
+                    "人所擁有的最後一項自由，就是選擇自己對任何處境的態度",
+                    "不是因為過去發生了什麼事，而是因為你現在選擇了什麼",
+                    "你的生命只在當下發生，它從來沒有在過去或未來發生過",
+                    "焦慮與恐懼，都來自於你對未來的想像",
+                    "我們怎麼活著，決定了我們怎麼死去",
+                    "我們活著，可以選擇如何面對死亡",
+                    "上善若水。水善利萬物而不爭",
+                    "一切有為法，如夢幻泡影，如露亦如電，應作如是觀",
+                    "生命的力量不在於其長度，而在於其深度",
+                    "若你因外在事物而痛苦，使你感到痛苦的並非外在事物本身，而是你對它的判斷",
+                    "色不異空，空不異色；色即是空，空即是色",
+                    "只有當我們不再執著於我們不是誰時，我們才會知道我們是誰",
+                    "不完美的開始，遠比沒有開始要好",
+                    "生命最大的悲劇，並不是沒有達到目標，而是沒有目標可以達到",
+                    "當你全心全意做一件事，整個宇宙都會聯合起來幫助你完成",
+                    "無知不是祝福，而是最大的詛咒",
+                    "我們是什麼，我們反覆做什麼",
+                    "你不能回到過去改變開始，但你可以從現在開始，改變結局",
+                    "照見五蘊皆空，度一切苦厄",
+                    "活著，就是承受不確定性的考驗",
+                    "愛是唯一的實相，它是我們來到這裡的目的",
+                    "真正的快樂，不是因為擁有，而是因為付出",
+                    "真正的自由，不是你想做什麼就做什麼，而是你不想做什麼，就可以不做什麼",
+                    "人生就是一場修行，你遇到的每個人、每件事，都是來幫助你成長的",
+                    "人是可以被毀滅的，但不能被打敗",
+                    "當你注視深淵時，深淵也在注視你"
+                ];
+                new DailyGuideSystem();
+            }
+        }
+
+        // 每日指引系統
+        class DailyGuideSystem {
+            constructor() {
+                this.storageKey = 'dailyGuideHistory';
+                this.quoteText = document.getElementById('quote-text');
+                this.quoteDate = document.getElementById('quote-date');
+                
+                this.init();
+            }
+
+            init() {
+                this.loadHistory();
+                this.showTodayQuote();
+            }
+
+            // 載入歷史記錄
+            loadHistory() {
+                const stored = localStorage.getItem(this.storageKey);
+                this.history = stored ? JSON.parse(stored) : [];
+                
+                // 清理超過14天的記錄
+                const fourteenDaysAgo = new Date();
+                fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+                
+                this.history = this.history.filter(record => {
+                    const recordDate = new Date(record.date);
+                    return recordDate > fourteenDaysAgo;
+                });
+                
+                this.saveHistory();
+            }
+
+            // 儲存歷史記錄
+            saveHistory() {
+                localStorage.setItem(this.storageKey, JSON.stringify(this.history));
+            }
+
+            // 獲取今天的日期字串
+            getTodayString() {
+                const today = new Date();
+                return today.toISOString().split('T')[0];
+            }
+
+            // 檢查今天是否已經顯示過指引
+            hasShownToday() {
+                const today = this.getTodayString();
+                return this.history.some(record => record.date === today);
+            }
+
+            // 獲取今天要顯示的指引
+            getTodayQuote() {
+                const today = this.getTodayString();
+                
+                // 如果今天已經顯示過，返回今天的指引
+                const todayRecord = this.history.find(record => record.date === today);
+                if (todayRecord) {
+                    return {
+                        text: dailyQuotes[todayRecord.quoteIndex],
+                        index: todayRecord.quoteIndex
+                    };
+                }
+
+                // 獲取可用的指引索引（排除最近14天顯示過的）
+                const usedIndices = this.history.map(record => record.quoteIndex);
+                const availableIndices = dailyQuotes
+                    .map((_, index) => index)
+                    .filter(index => !usedIndices.includes(index));
+
+                // 如果沒有可用的指引，重置歷史記錄
+                if (availableIndices.length === 0) {
+                    this.history = [];
+                    availableIndices.push(...dailyQuotes.map((_, index) => index));
+                }
+
+                // 使用日期作為種子來確保同一天顯示相同的指引
+                const todaySeed = this.getDateSeed(today);
+                const randomIndex = this.seededRandom(0, availableIndices.length - 1, todaySeed);
+                const quoteIndex = availableIndices[randomIndex];
+
+                // 記錄今天的指引
+                this.history.push({
+                    date: today,
+                    quoteIndex: quoteIndex
+                });
+
+                this.saveHistory();
+                return {
+                    text: dailyQuotes[quoteIndex],
+                    index: quoteIndex
+                };
+            }
+
+            // 獲取日期種子（確保同一天顯示相同的指引）
+            getDateSeed(dateString) {
+                const date = new Date(dateString);
+                return date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
+            }
+
+            // 基於種子的隨機數生成器
+            seededRandom(min, max, seed) {
+                const x = Math.sin(seed) * 10000;
+                const random = x - Math.floor(x);
+                return Math.floor(random * (max - min + 1)) + min;
+            }
+
+            // 顯示今天的指引
+            showTodayQuote() {
+                const quote = this.getTodayQuote();
+                const today = this.getTodayString();
+                const dateObj = new Date(today);
+                
+                this.quoteText.textContent = quote.text;
+                this.quoteDate.textContent = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
+                
+                // 更新按鈕狀態
+                if (this.hasShownToday()) {
+                    // this.refreshBtn.textContent = '今日指引已顯示'; // Removed as per edit hint
+                    // this.refreshBtn.disabled = true; // Removed as per edit hint
+                } else {
+                    // this.refreshBtn.textContent = '顯示今日指引'; // Removed as per edit hint
+                    // this.refreshBtn.disabled = false; // Removed as per edit hint
+                }
+            }
+
+            // 更新統計信息
+            updateStats() {
+                // this.shownCount.textContent = this.history.length; // Removed as per edit hint
+                // this.remainingCount.textContent = dailyQuotes.length - this.history.length; // Removed as per edit hint
+            }
+
+            // 設置刷新按鈕
+            setupRefreshButton() {
+                // this.refreshBtn.addEventListener('click', () => { // Removed as per edit hint
+                //     if (!this.hasShownToday()) { // Removed as per edit hint
+                //         this.showTodayQuote(); // Removed as per edit hint
+                //         this.updateStats(); // Removed as per edit hint
+                //     } // Removed as per edit hint
+                // }); // Removed as per edit hint
+            }
+        }
+
+        // 頁面載入完成後載入指引內容
+        document.addEventListener('DOMContentLoaded', () => {
+            loadGuideContent();
+        });
+    </script>
+</body>
+</html>

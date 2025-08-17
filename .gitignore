@@ -1,124 +1,20 @@
-<<<<<<< HEAD
-# OSX
-#
+# 忽略大視頻文件
+yoga_video/*.mp4
+yoga_video/*.avi
+yoga_video/*.mov
+
+# 忽略音頻文件
+meditationMusic/*.mp3
+
+# 忽略其他大文件
+*.exe
+*.zip
+*.rar
+
+# 忽略系統文件
 .DS_Store
+Thumbs.db
 
-# Xcode
-#
-build/
-*.pbxuser
-!default.pbxuser
-*.mode1v3
-!default.mode1v3
-*.mode2v3
-!default.mode2v3
-*.perspectivev3
-!default.perspectivev3
-xcuserdata
-*.xccheckout
-*.moved-aside
-DerivedData
-*.hmap
-*.ipa
-*.xcuserstate
-ios/.xcode.env.local
-
-# Android/IntelliJ
-#
-build/
-.idea
-.gradle
-local.properties
-*.iml
-*.hprof
-.cxx/
-*.keystore
-!debug.keystore
-
-# node.js
-#
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# fastlane
-#
-fastlane/report.xml
-fastlane/Preview.html
-fastlane/screenshots
-fastlane/test_output
-
-# Bundle artifacts
-*.jsbundle
-
-# CocoaPods
-/ios/Pods/
-=======
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
-node_modules/
->>>>>>> 09d91cdc0b5b9c6f0152c10c424cbd2c9ac89208
-
-# Expo
-.expo/
-dist/
-web-build/
-<<<<<<< HEAD
-
-# Flipper
-ios/Pods/Flipper*
-=======
-expo-env.d.ts
-
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
->>>>>>> 09d91cdc0b5b9c6f0152c10c424cbd2c9ac89208
-
-# Metro
-.metro-health-check*
-
-<<<<<<< HEAD
-# Temporary files created by Metro to check the health of the file watcher
-.metro-health-check*
-
-# Testing
-/coverage
-
-# Yarn
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-=======
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
->>>>>>> 09d91cdc0b5b9c6f0152c10c424cbd2c9ac89208
-.vercel
+# 忽略日誌文件
+*.log
+update_log.txt

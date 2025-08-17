@@ -153,7 +153,18 @@
         const androidGuide = document.getElementById('android-guide');
         let deferredPrompt = null;
 
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        // 更準確的 iOS 檢測邏輯
+        const isIOS = () => {
+            // 檢測 iOS 設備（包括 iPad）
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isIPad = /ipad/.test(userAgent) || 
+                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            const isIPhone = /iphone/.test(userAgent);
+            const isIPod = /ipod/.test(userAgent);
+            
+            return isIPad || isIPhone || isIPod;
+        };
+
         const isInStandaloneMode = () =>
             (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
 
@@ -165,7 +176,7 @@
         });
 
         installBtn.addEventListener('click', async () => {
-            if (isIOS) {
+            if (isIOS()) {
                 alert('iOS 用戶請依照下方的教學手動安裝。');
                 window.scrollTo(0, document.body.scrollHeight);
             } else if (deferredPrompt) {
@@ -188,7 +199,7 @@
             if (isInStandaloneMode()) {
                 installBtn.textContent = '已在主畫面開啟';
                 installBtn.disabled = true;
-            } else if (isIOS) {
+            } else if (isIOS()) {
                 installBtn.textContent = 'iOS 手動安裝教學';
                 iosGuide.style.display = 'block';
                 androidGuide.style.display = 'none';
