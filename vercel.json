@@ -1,8 +1,7 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/install-app", "destination": "/install-app.html" },
-    { "source": "/install-app.html", "destination": "/install-app.html" },
+    
     { "source": "/test-pwa", "destination": "/test-pwa.html" },
     { "source": "/pwa-config.js", "destination": "/pwa-config.js" },
     { "source": "/service-worker.js", "destination": "/service-worker.js" },
@@ -22,7 +21,7 @@
     { "source": "/:file.ttf", "destination": "/:file.ttf" },
     { "source": "/:file.eot", "destination": "/:file.eot" },
     { "source": "/:file.ico", "destination": "/:file.ico" },
-    { "source": "/", "destination": "/install-app.html" },
+    { "source": "/", "destination": "/index.html" },
     { "source": "/meditation", "destination": "/meditation.html" },
     { "source": "/app", "destination": "/meditation.html" },
     { "source": "/(.*)", "destination": "/index.html" }
