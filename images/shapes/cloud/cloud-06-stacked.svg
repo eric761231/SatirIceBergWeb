@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="320" viewBox="0 0 512 320" fill="none">
+<defs>
+  <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#e0f2fe"/>
+    <stop offset="100%" stop-color="#ffffff"/>
+  </linearGradient>
+  <linearGradient id="cloud" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="100%" stop-color="#e5e7eb"/>
+  </linearGradient>
+  <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+  </filter>
+  <filter id="softer" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+  </filter>
+</defs><g transform="translate(0,0)" opacity="0.65"><path d="M140 206 c-18 -30 18 -62 60 -50 c14 -24 48 -28 72 -6 c24 -8 52 6 56 26 c22 0 38 14 38 32 c0 24 -18 40 -42 40H168 c-30 0 -56 -18 -56 -40 c0 -14 12 -26 28 -30z" fill="#ffffff" stroke="#cbd5e1"/></g><g transform="translate(0,4)" opacity="0.55"><path d="M140 218 c-18 -30 18 -62 60 -50 c14 -24 48 -28 72 -6 c24 -8 52 6 56 26 c22 0 38 14 38 32 c0 24 -18 40 -42 40H168 c-30 0 -56 -18 -56 -40 c0 -14 12 -26 28 -30z" fill="#ffffff" stroke="#cbd5e1"/></g><g transform="translate(0,8)" opacity="0.45"><path d="M140 232 c-18 -30 18 -62 60 -50 c14 -24 48 -28 72 -6 c24 -8 52 6 56 26 c22 0 38 14 38 32 c0 24 -18 40 -42 40H168 c-30 0 -56 -18 -56 -40 c0 -14 12 -26 28 -30z" fill="#ffffff" stroke="#cbd5e1"/></g></svg>

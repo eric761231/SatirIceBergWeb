@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+<defs>
+  <linearGradient id="g_light" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#a5f3fc"/>
+    <stop offset="100%" stop-color="#06b6d4"/>
+  </linearGradient>
+  <linearGradient id="g_blue" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#60a5fa"/>
+    <stop offset="100%" stop-color="#0284c7"/>
+  </linearGradient>
+  <filter id="blurSmall" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="1.6"/>
+  </filter>
+</defs><g fill="url(#g_blue)" stroke="#075985" stroke-width="1.6"><path d="M80 116 C96 84,116 60,140 54 C172 46,200 68,212 96 C220 118,204 150,178 162 C148 176,110 170,84 154 Z"/><path d="M40 120 L220 90" stroke="#0ea5e9" stroke-width="0.8" opacity="0.5" fill="none"/><path d="M58 114 L220 86" stroke="#0ea5e9" stroke-width="1.2000000000000002" opacity="0.5" fill="none"/><path d="M76 108 L220 82" stroke="#0ea5e9" stroke-width="1.6" opacity="0.5" fill="none"/><path d="M94 102 L220 78" stroke="#0ea5e9" stroke-width="2.0" opacity="0.5" fill="none"/></g></svg>

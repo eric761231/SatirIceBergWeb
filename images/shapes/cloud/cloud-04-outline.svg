@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="320" viewBox="0 0 512 320" fill="none">
+<defs>
+  <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#e0f2fe"/>
+    <stop offset="100%" stop-color="#ffffff"/>
+  </linearGradient>
+  <linearGradient id="cloud" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="100%" stop-color="#e5e7eb"/>
+  </linearGradient>
+  <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+  </filter>
+  <filter id="softer" x="-30%" y="-30%" width="160%" height="160%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+  </filter>
+</defs><path d="M120 220 C126 190, 166 174, 196 190 C212 170, 252 166, 280 186 C306 176, 340 182, 356 202 C386 204, 404 220, 404 236 C404 260, 380 268, 350 268 H160 C130 268, 116 252, 116 236 C116 228, 118 224, 120 220 Z" fill="none" stroke="#64748b" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>

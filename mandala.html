@@ -64,9 +64,11 @@
             justify-content: center;
             background: var(--bg-medium);
             height: 100vh;
+            width: 100%;
             padding: 20px;
             box-sizing: border-box;
             overflow: auto;
+            position: relative;
         }
 
         .toolbar-group {
@@ -141,8 +143,9 @@
             flex-wrap: wrap;
             flex-direction: row;
             gap: 8px;
-            width: 72px;
-            height: 80px;
+            width: auto;
+            height: auto;
+            justify-content: center;
         }
 
         .color-btn {
@@ -186,11 +189,31 @@
             box-shadow: 0 4px 24px #0006;
             touch-action: none;
             cursor: crosshair;
+            max-width: calc(100vw - 340px);
+            max-height: calc(100vh - 40px);
+            width: min(calc(100vw - 340px), calc(100vh - 40px));
+            height: min(calc(100vw - 340px), calc(100vh - 40px));
         }
 
         /* Mobile specific styles */
         .controls-mobile {
             display: none;
+        }
+        
+        /* 手機版顏色按鈕特殊樣式 */
+        .controls-mobile .color-palette {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+        
+        .controls-mobile .color-btn {
+            width: 40px;
+            height: 40px;
+            margin: 0;
         }
 
         .mobile-header {
@@ -282,24 +305,33 @@
                 z-index: 10;
             }
             .controls-mobile .toolbar-row {
-                justify-content: space-around;
+                justify-content: center;
                 flex-wrap: wrap;
+                gap: 12px;
             }
             #brush-size-mobile {
                 flex: 1;
+                min-width: 120px;
             }
             .canvas-area {
-                padding: 20px;
-                padding-bottom: 200px;
-                height: 100%;
-                width: 100%;
+                padding: 0;
+                height: 100vh;
+                width: 100vw;
                 box-sizing: border-box;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
             #mandala-canvas {
-                width: min(90vw, calc(100vh - 300px));
-                height: min(90vw, calc(100vh - 300px));
-                max-width: 100%;
-                max-height: 100%;
+                width: min(85vw, calc(100vh - 320px));
+                height: min(85vw, calc(100vh - 320px));
+                max-width: calc(100vw - 40px);
+                max-height: calc(100vh - 240px);
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
             }
             .toolbar-group-title {
                 display: none;
@@ -307,9 +339,55 @@
             .toolbar-group {
                 border-bottom: none;
                 flex-direction: column;
-                justify-content: space-between;
+                justify-content: center;
                 align-items: center;
-                gap: 12px;
+                gap: 16px;
+            }
+            
+            /* 手機版顏色按鈕優化 */
+            .controls-mobile .color-palette {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+                width: 100%;
+                max-width: 320px;
+                margin: 0 auto;
+            }
+            
+            .controls-mobile .color-btn {
+                width: 44px;
+                height: 44px;
+                margin: 0;
+            }
+        }
+        
+        /* 額外的響應式設計 */
+        @media (max-width: 480px) {
+            #mandala-canvas {
+                width: min(80vw, calc(100vh - 280px));
+                height: min(80vw, calc(100vh - 280px));
+                max-width: calc(100vw - 32px);
+                max-height: calc(100vh - 200px);
+            }
+            .canvas-area {
+                padding: 0;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            #mandala-canvas {
+                width: min(calc(100vw - 360px), calc(100vh - 60px));
+                height: min(calc(100vw - 360px), calc(100vh - 60px));
+                max-width: calc(100vw - 360px);
+                max-height: calc(100vh - 60px);
+            }
+        }
+        
+        @media (min-width: 1025px) {
+            #mandala-canvas {
+                width: min(calc(100vw - 380px), calc(100vh - 80px));
+                height: min(calc(100vw - 380px), calc(100vh - 80px));
+                max-width: calc(100vw - 380px);
+                max-height: calc(100vh - 80px);
             }
         }
     </style>
@@ -323,7 +401,7 @@
                 <path d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
         </button>
-        <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start;">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
             <span style="font-size:1.5em;font-weight:bold;color:#3498db;letter-spacing:2px;">曼荼羅</span>
             <span style="font-size:1em;color:#fff;margin-top:4px;">曼荼羅是心靈的鏡子，反映你的內在世界</span>
         </div>
@@ -341,7 +419,7 @@
         
         <div class="toolbar-group">
             <div class="toolbar-group-title">顏色選擇</div>
-            <div class="toolbar-row color-palette" id="color-palette" style="flex-direction:row;flex-wrap:wrap;justify-content:center;gap:8px;">
+            <div class="toolbar-row color-palette" id="color-palette">
                 <button class="color-btn color-red active" data-color="#e74c3c" title="紅色"></button>
                 <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
                 <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
@@ -431,8 +509,8 @@
         </div>
     </div>
 
-    <div class="canvas-area" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-medium);padding:20px;box-sizing:border-box;overflow:auto;">
-        <canvas id="mandala-canvas" style="width:min(90vw, 70vh);height:min(90vw, 70vh);background:#fff;border-radius:16px;box-shadow:0 4px 24px #0006;"></canvas>
+    <div class="canvas-area">
+        <canvas id="mandala-canvas"></canvas>
     </div>
 
     <!-- 手機版繪圖工具收合區塊（橘色底） -->
@@ -444,7 +522,7 @@
                     <label for="brush-size-mobile">大小：</label>
                     <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
                 </div>
-                <div class="toolbar-row color-palette" id="color-palette-mobile" style="flex-direction:row;flex-wrap:wrap;justify-content:center;gap:8px;">
+                <div class="toolbar-row color-palette" id="color-palette-mobile">
                     <button class="color-btn color-red active" data-color="#e74c3c" title="紅色"></button>
                     <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
                     <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
@@ -598,12 +676,53 @@
         let startY = 0;
         let history = [];
         let historyIndex = -1;
+        
+        // 形狀圖片資源
+        let shapeImages = {};
+        let imagesLoaded = 0;
+        const totalImages = 4;
 
+        // --- Image Loading ---
+        function loadShapeImages() {
+            const imageNames = ['waterdrop', 'cloud', 'snowflake', 'flower'];
+            
+            imageNames.forEach(name => {
+                const img = new Image();
+                img.onload = () => {
+                    imagesLoaded++;
+                    if (imagesLoaded === totalImages) {
+                        console.log('所有形狀圖片載入完成');
+                    }
+                };
+                img.onerror = () => {
+                    console.warn(`無法載入圖片: ${name}.svg`);
+                    imagesLoaded++;
+                };
+                img.src = `images/shapes/${name}.svg`;
+                shapeImages[name] = img;
+            });
+        }
+        
         // --- Canvas Setup ---
         function resizeCanvas() {
-            const containerWidth = canvasArea.clientWidth - 40; // 減去 padding
-            const containerHeight = canvasArea.clientHeight - 40;
-            const size = Math.min(containerWidth, containerHeight);
+            // 檢測是否為手機版
+            const isMobile = window.innerWidth <= 768;
+            
+            let size;
+            if (isMobile) {
+                // 手機版：考慮標題欄和底部工具列的高度
+                const availableHeight = window.innerHeight - 120 - 200; // 減去標題欄和工具列高度
+                const availableWidth = window.innerWidth - 40; // 減去左右邊距
+                size = Math.min(availableWidth, availableHeight);
+            } else {
+                // 桌面版：考慮側邊欄寬度
+                const containerWidth = canvasArea.clientWidth - 40;
+                const containerHeight = canvasArea.clientHeight - 40;
+                size = Math.min(containerWidth, containerHeight);
+            }
+            
+            // 確保最小尺寸
+            size = Math.max(size, 200);
             
             canvas.width = size;
             canvas.height = size;
@@ -742,16 +861,19 @@
                     ctx.stroke();
                     break;
                 case 'waterdrop':
-                    // 水滴揮灑：隨機生成多個小圓，模擬水滴濺灑
-                    const dropCount = 8 + Math.floor(Math.random() * 6);
-                    for (let i = 0; i < dropCount; i++) {
-                        const angle = Math.random() * Math.PI * 2;
-                        const dist = Math.random() * 40 + 10;
-                        const dx = x1 + Math.cos(angle) * dist;
-                        const dy = y1 + Math.sin(angle) * dist;
-                        const r = Math.random() * 8 + 4;
+                    // 使用水滴圖片
+                    if (shapeImages.waterdrop && !isPreview) {
+                        const size = Math.abs(x2 - x1) + 32;
+                        const img = shapeImages.waterdrop;
+                        ctx.save();
+                        ctx.translate(x1, y1);
+                        ctx.globalAlpha = 0.8;
+                        ctx.drawImage(img, -size/2, -size/2, size, size);
+                        ctx.restore();
+                    } else {
+                        // 預覽模式或圖片未載入時使用簡單繪製
                         ctx.beginPath();
-                        ctx.arc(dx, dy, r, 0, Math.PI * 2);
+                        ctx.arc(x1, y1, Math.abs(x2 - x1) / 2 + 16, 0, Math.PI * 2);
                         ctx.fillStyle = brushColor;
                         ctx.globalAlpha = 0.7;
                         ctx.fill();
@@ -759,84 +881,63 @@
                     }
                     break;
                 case 'flower':
-                    // 隨機花朵：中心圓+多個橢圓花瓣
-                    const petalCount = 6 + Math.floor(Math.random() * 3);
-                    const flowerRadius = Math.abs(x2 - x1) / 2 + 12;
-                    // 花瓣
-                    for (let i = 0; i < petalCount; i++) {
-                        const angle = (Math.PI * 2 / petalCount) * i;
+                    // 使用花朵圖片
+                    if (shapeImages.flower && !isPreview) {
+                        const size = Math.abs(x2 - x1) + 48;
+                        const img = shapeImages.flower;
                         ctx.save();
                         ctx.translate(x1, y1);
-                        ctx.rotate(angle);
+                        ctx.globalAlpha = 0.9;
+                        ctx.drawImage(img, -size/2, -size/2, size, size);
+                        ctx.restore();
+                    } else {
+                        // 預覽模式或圖片未載入時使用簡單繪製
                         ctx.beginPath();
-                        ctx.ellipse(0, -flowerRadius, flowerRadius / 2, flowerRadius, 0, 0, Math.PI * 2);
-                        ctx.fillStyle = "#f1c40f";
+                        ctx.arc(x1, y1, Math.abs(x2 - x1) / 2 + 20, 0, Math.PI * 2);
+                        ctx.fillStyle = brushColor;
                         ctx.globalAlpha = 0.8;
                         ctx.fill();
-                        ctx.globalAlpha = 1.0;
-                        ctx.restore();
                     }
-                    // 中心圓
-                    ctx.beginPath();
-                    ctx.arc(x1, y1, flowerRadius / 2.5, 0, Math.PI * 2);
-                    ctx.fillStyle = brushColor;
-                    ctx.fill();
                     break;
                 case 'cloud':
-                    // 隨機雲朵：多個重疊橢圓
-                    const cloudParts = 4 + Math.floor(Math.random() * 3);
-                    for (let i = 0; i < cloudParts; i++) {
-                        const dx = x1 + ( (Math.random() - 0.5) * 40);
-                        const dy = y1 + ( (Math.random() - 0.5) * 20);
-                        const rx = 24 + Math.random() * 12;
-                        const ry = 12 + Math.random() * 8;
+                    // 使用雲朵圖片
+                    if (shapeImages.cloud && !isPreview) {
+                        const size = Math.abs(x2 - x1) + 40;
+                        const img = shapeImages.cloud;
+                        ctx.save();
+                        ctx.translate(x1, y1);
+                        ctx.globalAlpha = 0.8;
+                        ctx.drawImage(img, -size/2, -size/2, size, size);
+                        ctx.restore();
+                    } else {
+                        // 預覽模式或圖片未載入時使用簡單繪製
                         ctx.beginPath();
-                        ctx.ellipse(dx, dy, rx, ry, 0, 0, Math.PI * 2);
+                        ctx.ellipse(x1, y1, Math.abs(x2 - x1) / 2 + 20, Math.abs(y2 - y1) / 2 + 10, 0, 0, Math.PI * 2);
                         ctx.fillStyle = "#fff";
                         ctx.globalAlpha = 0.8;
                         ctx.fill();
                         ctx.globalAlpha = 1.0;
                     }
-                    // 雲朵邊緣描邊
-                    ctx.beginPath();
-                    ctx.ellipse(x1, y1, 40, 18, 0, 0, Math.PI * 2);
-                    ctx.strokeStyle = "#ccc";
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
                     break;
                 case 'snowflake':
-                    // 隨機雪花冰晶：中心+多條放射線
-                    const snowCount = 6 + Math.floor(Math.random() * 3);
-                    const snowRadius = Math.abs(x2 - x1) / 2 + 18;
-                    ctx.save();
-                    ctx.translate(x1, y1);
-                    for (let i = 0; i < snowCount; i++) {
-                        const angle = (Math.PI * 2 / snowCount) * i;
+                    // 使用雪花圖片
+                    if (shapeImages.snowflake && !isPreview) {
+                        const size = Math.abs(x2 - x1) + 40;
+                        const img = shapeImages.snowflake;
                         ctx.save();
-                        ctx.rotate(angle);
-                        ctx.beginPath();
-                        ctx.moveTo(0, 0);
-                        ctx.lineTo(0, -snowRadius);
-                        ctx.strokeStyle = "#fff";
-                        ctx.lineWidth = 2;
-                        ctx.stroke();
-                        // 小分支
-                        ctx.beginPath();
-                        ctx.moveTo(0, -snowRadius * 0.7);
-                        ctx.lineTo(-6, -snowRadius * 0.8);
-                        ctx.moveTo(0, -snowRadius * 0.7);
-                        ctx.lineTo(6, -snowRadius * 0.8);
-                        ctx.strokeStyle = "#fff";
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
+                        ctx.translate(x1, y1);
+                        ctx.globalAlpha = 0.9;
+                        ctx.drawImage(img, -size/2, -size/2, size, size);
                         ctx.restore();
+                    } else {
+                        // 預覽模式或圖片未載入時使用簡單繪製
+                        ctx.beginPath();
+                        ctx.arc(x1, y1, Math.abs(x2 - x1) / 2 + 20, 0, Math.PI * 2);
+                        ctx.fillStyle = "#fff";
+                        ctx.globalAlpha = 0.8;
+                        ctx.fill();
+                        ctx.globalAlpha = 1.0;
                     }
-                    // 中心圓
-                    ctx.beginPath();
-                    ctx.arc(0, 0, snowRadius / 5, 0, Math.PI * 2);
-                    ctx.fillStyle = "#b3e6ff";
-                    ctx.fill();
-                    ctx.restore();
                     break;
             }
         }
@@ -1136,6 +1237,7 @@
         });
         
         // --- Initialization ---
+        loadShapeImages(); // 載入形狀圖片
         initializeCanvas();
     });
 </script>

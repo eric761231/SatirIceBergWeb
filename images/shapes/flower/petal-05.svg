@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+<defs>
+  <linearGradient id="g5" x1="0%" y1="0%" x2="0%" y2="100%">
+    <stop offset="0%" stop-color="#e9d5ff"/>
+    <stop offset="100%" stop-color="#8b5cf6"/>
+  </linearGradient>
+</defs><path d="M128 30 Q 86.0 60.0, 84 70 Q 72.0 81.0, 72 92 Q 63.0 104.0, 66 116 Q 59.0 127.0, 64 138 Q 59.0 149.0, 66 160 Q 64.0 169.0, 74 178 Q 74.0 186.0, 86 194 Q 88.0 201.0, 102 208 Q 109.0 215.0, 128 222  L 128 222 Q 147.0 215.0, 154 208 Q 168.0 201.0, 170 194 Q 182.0 186.0, 182 178 Q 192.0 169.0, 190 160 Q 197.0 149.0, 192 138 Q 197.0 127.0, 190 116 Q 193.0 104.0, 184 92 Q 184.0 81.0, 172 70 Q 170.0 60.0, 156 50 Q 148.0 40.0, 128 30 Z" fill="url(#g5)" stroke="#111827" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" /></svg>
