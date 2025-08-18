@@ -6,6 +6,7 @@
     <title>瑜珈練習</title>
     
     <style>
+        /* 基礎樣式 - 保持不變 */
         * {
             margin: 0;
             padding: 0;
@@ -32,9 +33,10 @@
             width: 90%;
             margin-top: 24px;
             position: relative;
+            transition: all 0.3s ease;
         }
 
-        /* 漢堡按鈕樣式 */
+        /* 漢堡按鈕 & 側邊欄樣式 - 保持不變 */
         #hamburger {
             position: fixed;
             top: 20px;
@@ -43,7 +45,6 @@
             box-shadow: 0 2px 8px #0004;
         }
 
-        /* 側邊欄樣式 */
         #sidebar {
             position: fixed;
             top: 0;
@@ -116,6 +117,7 @@
             font-weight: 300;
             margin-bottom: 24px;
             color: #00aaff;
+            transition: font-size 0.3s ease, margin-bottom 0.3s ease;
         }
 
         .video-wrapper {
@@ -125,6 +127,7 @@
             margin: 20px 0;
             text-align: center;
             position: relative;
+            transition: padding 0.3s ease, margin 0.3s ease;
         }
 
         .fullscreen-btn {
@@ -138,7 +141,7 @@
             padding: 8px;
             cursor: pointer;
             z-index: 10;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .fullscreen-btn:hover {
@@ -150,64 +153,49 @@
             height: 20px;
         }
 
-        .orientation-test-btn {
+        .orientation-test-btn, .debug-btn {
             position: absolute;
             top: 30px;
+            border: none;
+            border-radius: 8px;
+            padding: 8px;
+            cursor: pointer;
+            z-index: 10;
+            transition: background 0.3s ease;
+        }
+        .orientation-test-btn {
             right: 80px;
             background: rgba(52, 152, 219, 0.8);
             color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 8px;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.3s ease;
         }
-
         .orientation-test-btn:hover {
             background: rgba(52, 152, 219, 1);
         }
-
-        .orientation-test-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
         .orientation-test-btn.active {
             background: rgba(231, 76, 60, 0.8);
         }
-
         .orientation-test-btn.active:hover {
             background: rgba(231, 76, 60, 1);
         }
-
         .debug-btn {
-            position: absolute;
-            top: 30px;
             right: 130px;
             background: rgba(46, 204, 113, 0.8);
             color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 8px;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.3s ease;
         }
-
         .debug-btn:hover {
             background: rgba(46, 204, 113, 1);
         }
-
-        .debug-btn svg {
+        .orientation-test-btn svg, .debug-btn svg {
             width: 20px;
             height: 20px;
         }
 
         .video-wrapper video {
+            width: 100%;
+            height: 400px;
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, height 0.3s ease;
         }
 
         .video-wrapper video:hover {
@@ -215,33 +203,27 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
 
-        /* 全螢幕優化 */
-        .video-wrapper video:fullscreen {
-            border-radius: 0;
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-
-        .video-wrapper video:-webkit-full-screen {
-            border-radius: 0;
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-
-        .video-wrapper video:-moz-full-screen {
-            border-radius: 0;
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-
         .video-info {
             text-align: center;
             margin-top: 20px;
             color: #ffffff;
             font-size: 1.1em;
+            transition: font-size 0.3s ease, margin-top 0.3s ease;
+        }
+        
+        /* 全螢幕樣式 - 使用偽類，不需額外 class */
+        video:fullscreen,
+        video:-webkit-full-screen,
+        video:-moz-full-screen {
+            border-radius: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
         }
 
-        @media (max-width: 600px) {
+        /* -------------------------- */
+        /* 手機直向模式 (Portrait) 優化 */
+        /* -------------------------- */
+        @media screen and (max-width: 600px) and (orientation: portrait) {
             .yoga-container {
                 padding: 20px 24px 32px 24px;
                 margin-top: 16px;
@@ -258,119 +240,69 @@
             }
 
             .video-wrapper video {
-                width: 100%;
                 height: 250px;
-                border-radius: 8px;
             }
         }
 
-        /* 手機橫向模式優化 - 修正寫法 */
-        @media screen and (max-width: 600px) and (orientation: landscape) {
+        /* -------------------------- */
+        /* 手機橫向模式 (Landscape) 優化 */
+        /* -------------------------- */
+        @media screen and (max-width: 900px) and (orientation: landscape) {
+            body {
+                justify-content: flex-start; /* 橫向模式下內容靠上對齊，更適合螢幕空間 */
+                align-items: center;
+            }
             .yoga-container {
-                padding: 12px 16px 20px 16px !important;
-                margin-top: 8px !important;
+                padding: 8px 16px 16px 16px;
+                margin-top: 8px;
+                width: 95%; /* 橫向模式下佔用更多寬度 */
             }
             
             .yoga-title {
-                font-size: 1.3em !important;
-                margin-bottom: 12px !important;
+                font-size: 1.3em;
+                margin-bottom: 12px;
             }
 
             .video-wrapper {
-                padding: 8px 4px !important;
-                margin: 8px 0 !important;
+                padding: 8px 4px;
+                margin: 8px 0;
             }
 
             .video-wrapper video {
-                width: 100% !important;
-                height: 65vh !important;
-                max-height: 300px !important;
-                border-radius: 8px !important;
+                height: 65vh; /* 橫向模式下使用vh單位更靈活 */
+                max-height: 350px;
             }
 
             .video-info {
-                font-size: 0.9em !important;
-                margin-top: 12px !important;
+                font-size: 0.9em;
+                margin-top: 12px;
             }
 
-            /* 橫向模式時隱藏全螢幕按鈕 */
+            /* 橫向模式時，通常影片自帶全螢幕按鈕，可隱藏自定義按鈕 */
             .fullscreen-btn {
-                display: none !important;
-            }
-        }
-
-        /* 額外的橫向模式檢測 */
-        @media screen and (max-height: 500px) and (orientation: landscape) {
-            .yoga-container {
-                padding: 8px 12px 16px 12px !important;
-                margin-top: 4px !important;
-            }
-            
-            .yoga-title {
-                font-size: 1.2em !important;
-                margin-bottom: 8px !important;
+                display: none;
             }
 
-            .video-wrapper {
-                padding: 4px 2px !important;
-                margin: 4px 0 !important;
+            /* 將按鈕位置調整到不影響觀看的角落 */
+            .orientation-test-btn, .debug-btn {
+                top: 8px;
+                right: 8px;
+                padding: 4px;
             }
 
-            .video-wrapper video {
-                height: 60vh !important;
-                max-height: 250px !important;
-            }
-
-            .video-info {
-                font-size: 0.8em !important;
-                margin-top: 8px !important;
-            }
-
-            /* 橫向模式時隱藏全螢幕按鈕 */
-            .fullscreen-btn {
-                display: none !important;
-            }
-        }
-
-        /* 全螢幕模式下的優化 */
-        @media (max-width: 768px) {
-            .video-wrapper video:fullscreen {
-                width: 100vw !important;
-                height: 100vh !important;
-                border-radius: 0;
-            }
-        }
-
-        /* 橫向全螢幕優化 */
-        @media (orientation: landscape) {
-            .video-wrapper video:fullscreen {
-                width: 100vw !important;
-                height: 100vh !important;
-                border-radius: 0;
-            }
-        }
-
-        /* Pixel 9 Pro 等裝置的特殊優化 */
-        @media screen and (max-width: 600px) {
-            .video-wrapper video {
-                /* 強制啟用觸控手勢 */
-                touch-action: manipulation;
-                /* 優化移動端播放 */
-                -webkit-user-select: none;
-                user-select: none;
+            .debug-btn {
+                right: 56px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 漢堡按鈕 -->
     <button id="hamburger" class="icon-btn" title="展開選單">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
     </button>
 
-    <!-- 側邊欄 -->
     <div id="sidebar">
         <button id="sidebar-close" class="icon-btn" title="關閉選單">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -390,7 +322,6 @@
             <video 
                 controls 
                 preload="metadata" 
-                style="width: 100%; height: 400px; border-radius: 12px;"
                 webkit-playsinline="true"
                 playsinline="true"
                 x5-playsinline="true"
@@ -400,24 +331,9 @@
                 <source src="https://drive.google.com/uc?export=download&id=1_5c4Ztn3foio2Pz_I2CvU5Pq1UMttNY5" type="video/mp4">
                 您的瀏覽器不支援影片播放。
             </video>
-            <!-- 自定義全螢幕按鈕 -->
             <button id="fullscreen-btn" class="fullscreen-btn" title="全螢幕播放">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-                </svg>
-            </button>
-            <!-- 頁面轉向測試按鈕 -->
-            <button id="orientation-test-btn" class="orientation-test-btn" title="測試頁面轉向">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 12h18M3 6h18M3 18h18"/>
-                    <path d="M9 6v12M15 6v12"/>
-                </svg>
-            </button>
-            <!-- 調試按鈕 -->
-            <button id="debug-btn" class="debug-btn" title="調試方向檢測">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <path d="M12 6v6l4 2"/>
                 </svg>
             </button>
         </div>
@@ -431,308 +347,75 @@
         const hamburger = document.getElementById('hamburger');
         const sidebar = document.getElementById('sidebar');
         const sidebarClose = document.getElementById('sidebar-close');
+        const yogaContainer = document.querySelector('.yoga-container');
+        const video = document.querySelector('.video-wrapper video');
 
-        // 開啟側邊欄
         hamburger.addEventListener('click', () => {
             sidebar.classList.add('show');
         });
-
-        // 關閉側邊欄
         sidebarClose.addEventListener('click', () => {
             sidebar.classList.remove('show');
         });
-
-        // 點擊側邊欄外部關閉
         document.addEventListener('click', (e) => {
             if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
                 sidebar.classList.remove('show');
             }
         });
-
-        // ESC 鍵關閉側邊欄
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 sidebar.classList.remove('show');
             }
         });
 
-        // 螢幕方向檢測和影片大小調整
-        function adjustVideoForOrientation() {
-            const videoWrapper = document.querySelector('.video-wrapper');
-            const video = videoWrapper.querySelector('video');
-            const container = document.querySelector('.yoga-container');
-            const title = document.querySelector('.yoga-title');
-            const videoInfo = document.querySelector('.video-info');
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            
-            // 檢測是否為手機橫向模式
-            const isMobile = window.innerWidth <= 600;
-            const isLandscape = window.innerWidth > window.innerHeight;
-            const isMobileLandscape = isMobile && isLandscape;
-            
-            console.log('方向檢測:', {
-                width: window.innerWidth,
-                height: window.innerHeight,
-                isMobile,
-                isLandscape,
-                isMobileLandscape
-            });
-            
-            if (isMobileLandscape) {
-                // 手機橫向模式 - 強制應用樣式
-                container.style.padding = '8px 12px 16px 12px';
-                container.style.marginTop = '4px';
-                title.style.fontSize = '1.2em';
-                title.style.marginBottom = '8px';
-                videoWrapper.style.padding = '4px 2px';
-                videoWrapper.style.margin = '4px 0';
-                video.style.height = '60vh';
-                video.style.maxHeight = '250px';
-                videoInfo.style.fontSize = '0.8em';
-                videoInfo.style.marginTop = '8px';
-                
-                // 橫向模式時隱藏全螢幕按鈕
-                if (fullscreenBtn) fullscreenBtn.style.display = 'none';
-                
-                console.log('應用手機橫向樣式');
-            } else {
-                // 直向模式或其他裝置 - 重置樣式
-                container.style.padding = '';
-                container.style.marginTop = '';
-                title.style.fontSize = '';
-                title.style.marginBottom = '';
-                videoWrapper.style.padding = '';
-                videoWrapper.style.margin = '';
-                video.style.height = isMobile ? '250px' : '400px';
-                video.style.maxHeight = '';
-                videoInfo.style.fontSize = '';
-                videoInfo.style.marginTop = '';
-                
-                // 直向模式時顯示全螢幕按鈕
-                if (fullscreenBtn) fullscreenBtn.style.display = 'block';
-                
-                console.log('應用直向樣式');
-            }
-        }
-
         // 全螢幕控制功能
-        function toggleFullscreen() {
-            const video = document.querySelector('video');
-            const videoWrapper = document.querySelector('.video-wrapper');
-            
-            if (!document.fullscreenElement) {
-                // 進入全螢幕
-                if (video.requestFullscreen) {
-                    video.requestFullscreen();
-                } else if (video.webkitRequestFullscreen) {
-                    video.webkitRequestFullscreen();
-                } else if (video.mozRequestFullScreen) {
-                    video.mozRequestFullScreen();
-                } else if (video.msRequestFullscreen) {
-                    video.msRequestFullscreen();
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    if (video.requestFullscreen) {
+                        video.requestFullscreen();
+                    } else if (video.webkitEnterFullscreen) { // 針對 iOS Safari
+                        video.webkitEnterFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    }
                 }
-            } else {
-                // 退出全螢幕
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
-                }
-            }
+            });
         }
 
-        // 全螢幕狀態變化監聽
         function handleFullscreenChange() {
-            const video = document.querySelector('video');
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            
-            if (document.fullscreenElement || document.webkitFullscreenElement || 
-                document.mozFullScreenElement || document.msFullscreenElement) {
-                // 進入全螢幕
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
                 console.log('進入全螢幕模式');
-                if (fullscreenBtn) fullscreenBtn.innerHTML = `
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
-                    </svg>
-                `;
-                fullscreenBtn.title = '退出全螢幕';
+                yogaContainer.classList.add('hide'); // 進入全螢幕時隱藏主容器
             } else {
-                // 退出全螢幕
                 console.log('退出全螢幕模式');
-                if (fullscreenBtn) fullscreenBtn.innerHTML = `
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-                `;
-                fullscreenBtn.title = '全螢幕播放';
+                yogaContainer.classList.remove('hide'); // 退出全螢幕時顯示主容器
             }
         }
 
-        // 頁面轉向測試功能
-        function toggleOrientationTest() {
-            const orientationBtn = document.getElementById('orientation-test-btn');
-            const container = document.querySelector('.yoga-container');
-            const videoWrapper = document.querySelector('.video-wrapper');
-            const video = videoWrapper.querySelector('video');
-            const title = document.querySelector('.yoga-title');
-            const videoInfo = document.querySelector('.video-info');
-            
-            // 切換測試模式
-            if (orientationBtn.classList.contains('active')) {
-                // 退出測試模式，恢復正常
-                orientationBtn.classList.remove('active');
-                orientationBtn.title = '測試頁面轉向';
-                orientationBtn.style.background = 'rgba(52, 152, 219, 0.8)';
-                
-                // 恢復正常樣式
-                container.style.padding = '';
-                container.style.marginTop = '';
-                title.style.fontSize = '';
-                title.style.marginBottom = '';
-                videoWrapper.style.padding = '';
-                videoWrapper.style.margin = '';
-                video.style.height = '';
-                video.style.maxHeight = '';
-                videoInfo.style.fontSize = '';
-                videoInfo.style.marginTop = '';
-                
-                console.log('退出轉向測試模式，恢復正常樣式');
-            } else {
-                // 進入測試模式，強制橫向樣式
-                orientationBtn.classList.add('active');
-                orientationBtn.title = '退出轉向測試';
-                orientationBtn.style.background = 'rgba(231, 76, 60, 0.8)';
-                
-                // 強制應用橫向樣式
-                container.style.padding = '8px 12px 16px 12px';
-                container.style.marginTop = '4px';
-                title.style.fontSize = '1.2em';
-                title.style.marginBottom = '8px';
-                videoWrapper.style.padding = '4px 2px';
-                videoWrapper.style.margin = '4px 0';
-                video.style.height = '60vh';
-                video.style.maxHeight = '250px';
-                videoInfo.style.fontSize = '0.8em';
-                videoInfo.style.marginTop = '8px';
-                
-                console.log('進入轉向測試模式，強制應用橫向樣式');
-            }
-        }
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
-        // 手動觸發方向檢測
-        function manualOrientationDetection() {
-            console.log('手動觸發方向檢測');
-            console.log('當前視窗尺寸:', {
-                width: window.innerWidth,
-                height: window.innerHeight,
-                ratio: (window.innerWidth / window.innerHeight).toFixed(2)
-            });
-            
-            // 檢測是否為手機
-            const isMobile = window.innerWidth <= 600;
-            console.log('是否為手機:', isMobile);
-            
-            // 檢測方向
-            const isLandscape = window.innerWidth > window.innerHeight;
-            console.log('是否為橫向:', isLandscape);
-            
-            // 執行方向調整
-            adjustVideoForOrientation();
-        }
-
-        // 監聽螢幕方向變化
+        // 監聽螢幕旋轉事件
         window.addEventListener('orientationchange', () => {
-            console.log('螢幕方向變化事件觸發');
-            // 延遲執行，等待方向變化完成
-            setTimeout(adjustVideoForOrientation, 300);
+            // 在 iOS 上，'orientationchange' 事件可能沒有立即反映正確的寬高，所以延遲處理
+            setTimeout(() => {
+                console.log('螢幕方向變化事件觸發，已重新繪製');
+                // 這裡不需要做任何事，因為 CSS Media Query 會自動處理樣式變化
+            }, 300);
         });
 
-        // 監聽視窗大小變化
-        window.addEventListener('resize', () => {
-            console.log('視窗大小變化事件觸發');
-            adjustVideoForOrientation();
-        });
-
-        // 頁面載入時執行一次
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('頁面載入完成，執行方向檢測');
-            adjustVideoForOrientation();
-            
-            // 綁定全螢幕按鈕事件
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            if (fullscreenBtn) {
-                fullscreenBtn.addEventListener('click', toggleFullscreen);
-            }
-            
-            // 綁定全螢幕狀態變化事件
-            document.addEventListener('fullscreenchange', handleFullscreenChange);
-            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-            document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-            // 綁定轉向測試按鈕事件
-            const orientationTestBtn = document.getElementById('orientation-test-btn');
-            if (orientationTestBtn) {
-                orientationTestBtn.addEventListener('click', toggleOrientationTest);
-            }
-
-            // 綁定調試按鈕事件
-            const debugBtn = document.getElementById('debug-btn');
-            if (debugBtn) {
-                debugBtn.addEventListener('click', manualOrientationDetection);
-            }
-        });
-
-        // 支援螢幕方向 API
-        if (screen.orientation) {
-            screen.orientation.addEventListener('change', () => {
-                console.log('Screen Orientation API 變化事件觸發');
-                setTimeout(adjustVideoForOrientation, 100);
-            });
-        }
-
-        // 額外的檢測方法：定期檢查
-        setInterval(() => {
-            const currentWidth = window.innerWidth;
-            const currentHeight = window.innerHeight;
-            
-            // 如果寬高比例發生顯著變化，重新調整
-            if (Math.abs(currentWidth - window.lastWidth) > 50 || 
-                Math.abs(currentHeight - window.lastHeight) > 50) {
-                console.log('檢測到顯著尺寸變化，重新調整');
-                adjustVideoForOrientation();
-                window.lastWidth = currentWidth;
-                window.lastHeight = currentHeight;
-            }
-        }, 1000);
-
-        // 強制橫向模式檢測（針對 Pixel 9 Pro 等裝置）
-        function forceLandscapeDetection() {
-            const video = document.querySelector('video');
-            const isMobile = window.innerWidth <= 600;
-            
-            if (isMobile && video) {
-                // 添加觸控事件來強制橫向檢測
-                video.addEventListener('touchstart', () => {
-                    console.log('影片觸控開始，檢測方向');
-                    setTimeout(adjustVideoForOrientation, 100);
-                });
-                
-                // 添加手勢事件
-                video.addEventListener('gesturestart', () => {
-                    console.log('手勢開始，檢測方向');
-                    adjustVideoForOrientation();
-                });
-            }
-        }
-
-        // 頁面載入完成後執行強制檢測
-        window.addEventListener('load', () => {
-            setTimeout(forceLandscapeDetection, 1000);
-        });
+        // 移除多餘的偵測和調試按鈕
+        const orientationTestBtn = document.getElementById('orientation-test-btn');
+        if (orientationTestBtn) orientationTestBtn.remove();
+        const debugBtn = document.getElementById('debug-btn');
+        if (debugBtn) debugBtn.remove();
     </script>
 </body>
 </html>
