@@ -650,7 +650,7 @@
             position: relative;
         }
 
-        /* 橫向模式下的工具列優化 - 通用響應式設計 */
+        /* 橫向模式下的工具列優化 - 基礎樣式 */
         .force-landscape .tools-section-desktop {
             position: fixed;
             top: 20px;
@@ -675,187 +675,125 @@
             height: calc(100vw - 200px);
         }
 
-        /* 大螢幕橫向模式優化 (平板以上) */
-        @media (min-width: 769px) {
-            .force-landscape .tools-section-desktop {
-                top: 30px;
-                right: 30px;
-                padding: 20px;
-                max-width: 85vh;
-            }
-
-            .force-landscape .canvas-area {
-                margin-top: 100px;
-                margin-right: 250px;
-                width: calc(100vh - 250px);
-                height: calc(100vw - 250px);
-            }
-
-            .force-landscape .mandala-title {
-                font-size: 2.2em;
-                margin-bottom: 12px;
-            }
-
-            .force-landscape .mandala-subtitle {
-                font-size: 1.1em;
-            }
-
-            .force-landscape .toolbar-group-desktop {
-                min-width: 180px;
-                margin-bottom: 15px;
-            }
-
-            .force-landscape .color-palette-grid {
-                grid-template-columns: repeat(7, 1fr);
-                gap: 6px;
-            }
-
-            .force-landscape .icon-btn {
-                width: 38px;
-                height: 38px;
-            }
-
-            .force-landscape .color-btn-small {
-                width: 26px;
-                height: 26px;
-            }
+        /* 橫向模式下的標題和副標題優化 */
+        .force-landscape .mandala-title {
+            font-size: 1.8em;
+            margin-bottom: 10px;
         }
 
-        /* 中等螢幕橫向模式優化 (一般平板) */
-        @media (min-width: 481px) and (max-width: 768px) {
-            .force-landscape .tools-section-desktop {
-                top: 15px;
-                right: 15px;
-                padding: 12px;
-                max-width: 75vh;
-            }
-
-            .force-landscape .canvas-area {
-                margin-top: 70px;
-                margin-right: 180px;
-                width: calc(100vh - 180px);
-                height: calc(100vw - 180px);
-            }
-
-            .force-landscape .mandala-title {
-                font-size: 1.8em;
-                margin-bottom: 10px;
-            }
-
-            .force-landscape .mandala-subtitle {
-                font-size: 1em;
-            }
-
-            .force-landscape .toolbar-group-desktop {
-                min-width: 160px;
-                margin-bottom: 12px;
-            }
-
-            .force-landscape .color-palette-grid {
-                grid-template-columns: repeat(6, 1fr);
-                gap: 5px;
-            }
-
-            .force-landscape .icon-btn {
-                width: 35px;
-                height: 35px;
-            }
-
-            .force-landscape .color-btn-small {
-                width: 24px;
-                height: 24px;
-            }
+        .force-landscape .mandala-subtitle {
+            font-size: 1em;
         }
 
-        /* 小螢幕手機橫向模式優化 */
-        @media (max-width: 480px) {
-            .force-landscape .tools-section-desktop {
-                top: 10px;
-                right: 10px;
-                padding: 10px;
-                max-width: 70vh;
-            }
-
-            .force-landscape .canvas-area {
-                margin-top: 60px;
-                margin-right: 140px;
-                width: calc(100vh - 140px);
-                height: calc(100vw - 140px);
-            }
-
-            .force-landscape .mandala-title {
-                font-size: 1.5em;
-                margin-bottom: 8px;
-            }
-
-            .force-landscape .mandala-subtitle {
-                font-size: 0.9em;
-            }
-
-            .force-landscape .toolbar-group-desktop {
-                min-width: 140px;
-                margin-bottom: 10px;
-            }
-
-            .force-landscape .toolbar-group-title {
-                font-size: 0.8em;
-            }
-
-            .force-landscape .icon-btn {
-                width: 32px;
-                height: 32px;
-            }
-
-            .force-landscape .color-btn-small {
-                width: 22px;
-                height: 22px;
-            }
+        /* 橫向模式下的工具組優化 */
+        .force-landscape .toolbar-group-desktop {
+            min-width: 160px;
+            margin-bottom: 12px;
         }
 
-        /* 超寬螢幕橫向模式優化 (寬螢幕平板/小筆電) */
-        @media (min-width: 1024px) {
-            .force-landscape .tools-section-desktop {
-                top: 40px;
-                right: 40px;
-                padding: 25px;
-                max-width: 90vh;
-            }
+        /* 橫向模式下的顏色調色盤優化 */
+        .force-landscape .color-palette-grid {
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+        }
 
-            .force-landscape .canvas-area {
-                margin-top: 120px;
-                margin-right: 300px;
-                width: calc(100vh - 300px);
-                height: calc(100vw - 300px);
-            }
+        /* 橫向模式下的按鈕優化 */
+        .force-landscape .icon-btn {
+            width: 35px;
+            height: 35px;
+        }
 
-            .force-landscape .mandala-title {
-                font-size: 2.5em;
-                margin-bottom: 15px;
-            }
+        .force-landscape .color-btn-small {
+            width: 24px;
+            height: 24px;
+        }
 
-            .force-landscape .mandala-subtitle {
-                font-size: 1.2em;
-            }
+        /* 小螢幕橫向模式特殊優化 */
+        .force-landscape .tools-section-desktop.small-screen {
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            max-width: 70vh;
+        }
 
-            .force-landscape .toolbar-group-desktop {
-                min-width: 200px;
-                margin-bottom: 18px;
-            }
+        .force-landscape .canvas-area.small-screen {
+            margin-top: 60px;
+            margin-right: 140px;
+            width: calc(100vh - 140px);
+            height: calc(100vw - 140px);
+        }
 
-            .force-landscape .color-palette-grid {
-                grid-template-columns: repeat(8, 1fr);
-                gap: 8px;
-            }
+        .force-landscape .mandala-title.small-screen {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
 
-            .force-landscape .icon-btn {
-                width: 42px;
-                height: 42px;
-            }
+        .force-landscape .mandala-subtitle.small-screen {
+            font-size: 0.9em;
+        }
 
-            .force-landscape .color-btn-small {
-                width: 30px;
-                height: 30px;
-            }
+        .force-landscape .toolbar-group-desktop.small-screen {
+            min-width: 140px;
+            margin-bottom: 10px;
+        }
+
+        .force-landscape .color-palette-grid.small-screen {
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+        }
+
+        .force-landscape .icon-btn.small-screen {
+            width: 32px;
+            height: 32px;
+        }
+
+        .force-landscape .color-btn-small.small-screen {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* 大螢幕橫向模式特殊優化 */
+        .force-landscape .tools-section-desktop.large-screen {
+            top: 30px;
+            right: 30px;
+            padding: 20px;
+            max-width: 85vh;
+        }
+
+        .force-landscape .canvas-area.large-screen {
+            margin-top: 100px;
+            margin-right: 250px;
+            width: calc(100vh - 250px);
+            height: calc(100vw - 250px);
+        }
+
+        .force-landscape .mandala-title.large-screen {
+            font-size: 2.2em;
+            margin-bottom: 12px;
+        }
+
+        .force-landscape .mandala-subtitle.large-screen {
+            font-size: 1.1em;
+        }
+
+        .force-landscape .toolbar-group-desktop.large-screen {
+            min-width: 180px;
+            margin-bottom: 15px;
+        }
+
+        .force-landscape .color-palette-grid.large-screen {
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+        }
+
+        .force-landscape .icon-btn.large-screen {
+            width: 38px;
+            height: 38px;
+        }
+
+        .force-landscape .color-btn-small.large-screen {
+            width: 26px;
+            height: 26px;
         }
 
         /* 橫向模式提示 */
@@ -1315,50 +1253,30 @@
                 const screenWidth = window.screen.width;
                 const screenHeight = window.screen.height;
                 const minDimension = Math.min(screenWidth, screenHeight);
-                const maxDimension = Math.max(screenWidth, screenHeight);
                 
-                // 計算最佳佈局參數
-                let toolMargin, canvasMargin, titleSize, subtitleSize;
+                // 移除所有尺寸相關的CSS類別
+                document.body.classList.remove('small-screen', 'large-screen');
                 
-                if (minDimension >= 1024) {
-                    // 超寬螢幕 (寬螢幕平板/小筆電)
-                    toolMargin = 40;
-                    canvasMargin = 300;
-                    titleSize = '2.5em';
-                    subtitleSize = '1.2em';
+                // 根據螢幕尺寸添加對應的CSS類別
+                if (minDimension <= 480) {
+                    // 小螢幕 (手機)
+                    document.body.classList.add('small-screen');
+                    console.log('橫向模式: 小螢幕佈局已啟用');
                 } else if (minDimension >= 769) {
                     // 大螢幕 (平板以上)
-                    toolMargin = 30;
-                    canvasMargin = 250;
-                    titleSize = '2.2em';
-                    subtitleSize = '1.1em';
-                } else if (minDimension >= 481) {
-                    // 中等螢幕 (一般平板)
-                    toolMargin = 15;
-                    canvasMargin = 180;
-                    titleSize = '1.8em';
-                    subtitleSize = '1em';
+                    document.body.classList.add('large-screen');
+                    console.log('橫向模式: 大螢幕佈局已啟用');
                 } else {
-                    // 小螢幕 (手機)
-                    toolMargin = 10;
-                    canvasMargin = 140;
-                    titleSize = '1.5em';
-                    subtitleSize = '0.9em';
+                    // 中等螢幕 (一般平板) - 使用預設佈局
+                    console.log('橫向模式: 中等螢幕佈局已啟用');
                 }
-                
-                // 動態調整CSS變數
-                document.documentElement.style.setProperty('--landscape-tool-margin', toolMargin + 'px');
-                document.documentElement.style.setProperty('--landscape-canvas-margin', canvasMargin + 'px');
-                document.documentElement.style.setProperty('--landscape-title-size', titleSize);
-                document.documentElement.style.setProperty('--landscape-subtitle-size', subtitleSize);
                 
                 console.log('橫向模式佈局已調整:', {
                     screenWidth,
                     screenHeight,
                     minDimension,
-                    maxDimension,
-                    toolMargin,
-                    canvasMargin
+                    layout: document.body.classList.contains('small-screen') ? 'small' : 
+                           document.body.classList.contains('large-screen') ? 'large' : 'medium'
                 });
             }
 
