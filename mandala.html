@@ -448,170 +448,7 @@
 
 
 
-        /* 強制橫向模式樣式 */
-        .force-landscape {
-            transform: rotate(90deg);
-            transform-origin: center center;
-            width: 100vh !important;
-            height: 100vw !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            overflow: hidden;
-        }
 
-        .force-landscape .app-container-desktop {
-            transform: rotate(90deg);
-            transform-origin: center center;
-            width: 100vh;
-            height: 100vw;
-            position: relative;
-        }
-
-        /* 橫向模式下的工具列優化 */
-        .force-landscape .tools-section-desktop {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.9);
-            border-radius: 10px;
-            padding: 8px;
-            backdrop-filter: blur(10px);
-            max-width: 50vh;
-            max-height: 70vh;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            border: 2px solid rgba(0, 170, 255, 0.3);
-        }
-
-        .force-landscape .canvas-area {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: calc(100vh - 100px);
-            height: calc(100vw - 100px);
-            z-index: 100;
-            background: var(--tool-bg-color);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* 橫向模式下的標題和副標題優化 */
-        .force-landscape .mandala-title {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-            text-align: center;
-        }
-
-        .force-landscape .mandala-subtitle {
-            font-size: 0.8em;
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        /* 橫向模式下的工具組優化 */
-        .force-landscape .toolbar-group-desktop {
-            min-width: auto;
-            margin-bottom: 5px;
-            padding: 3px;
-            border: none;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-        }
-
-        .force-landscape .toolbar-group-title {
-            font-size: 0.7em;
-            margin-bottom: 3px;
-            color: var(--main-color);
-        }
-
-        .force-landscape .toolbar-group-content {
-            gap: 3px;
-        }
-
-        /* 橫向模式下的顏色調色盤優化 */
-        .force-landscape .color-palette-grid {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 3px;
-            max-width: 80px;
-        }
-
-        /* 橫向模式下的按鈕優化 */
-        .force-landscape .icon-btn {
-            width: 28px;
-            height: 28px;
-        }
-
-        .force-landscape .color-btn-small {
-            width: 18px;
-            height: 18px;
-        }
-
-        /* 橫向模式下的滑桿和選擇器優化 */
-        .force-landscape input[type="range"] {
-            width: 60px;
-            height: 4px;
-        }
-
-        .force-landscape select {
-            font-size: 0.7em;
-            padding: 1px 3px;
-        }
-
-        .force-landscape .slider-label label {
-            font-size: 0.7em;
-            margin-bottom: 1px;
-        }
-
-        /* 橫向模式提示 */
-        .landscape-notice {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            z-index: 2000;
-            display: none;
-        }
-
-        .landscape-notice.show {
-            display: block;
-        }
-
-        /* 橫向模式切換按鈕 */
-        .landscape-toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 170, 255, 0.8);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            cursor: pointer;
-            z-index: 1001;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .landscape-toggle-btn:hover {
-            background: rgba(0, 170, 255, 1);
-        }
-
-        .force-landscape .landscape-toggle-btn {
-            transform: rotate(90deg);
-            transform-origin: center center;
-        }
 
         /* 響應式設計 - 統一使用平板配置 */
         @media (max-width: 768px) {
@@ -707,17 +544,7 @@
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <!-- 橫向模式提示 -->
-    <div class="landscape-notice" id="landscapeNotice">
-        <h3>🔄 橫向模式已啟用</h3>
-        <p>請將手機轉為橫向以獲得最佳繪圖體驗</p>
-        <button id="exitLandscapeBtn" style="margin-top: 15px; padding: 10px 20px; background: #00aaff; color: white; border: none; border-radius: 8px; cursor: pointer;">退出橫向模式</button>
-    </div>
-
-    <!-- 橫向模式切換按鈕 -->
-    <button class="landscape-toggle-btn" id="landscapeToggleBtn">
-        🔄 橫向模式
-    </button>
+    
 
     <!-- 漢堡選單按鈕 -->
     <button class="hamburger" id="hamburger" title="開啟選單" aria-label="開啟選單">
@@ -885,29 +712,7 @@
 
             // 手機版現在使用與桌面版相同的佈局，無需收合功能
 
-            // 橫向模式控制
-            const landscapeNotice = document.getElementById('landscapeNotice');
-            const landscapeToggleBtn = document.getElementById('landscapeToggleBtn');
-            const exitLandscapeBtn = document.getElementById('exitLandscapeBtn'); // 新增退出按鈕
-            let isForceLandscape = false; // 追蹤強制橫向模式狀態
 
-            function toggleLandscapeMode() {
-                if (isForceLandscape) {
-                    // 退出強制橫向模式
-                    document.body.classList.remove('force-landscape');
-                    landscapeNotice.classList.remove('show');
-                    landscapeToggleBtn.textContent = '🔄 橫向模式';
-                    landscapeToggleBtn.style.transform = 'rotate(0deg)';
-                    isForceLandscape = false;
-                } else {
-                    // 進入強制橫向模式
-                    document.body.classList.add('force-landscape');
-                    landscapeNotice.classList.add('show');
-                    landscapeToggleBtn.textContent = '↕️ 直向模式';
-                    landscapeToggleBtn.style.transform = 'rotate(90deg)';
-                    isForceLandscape = true;
-                }
-            }
 
             // 曼荼羅繪圖功能
             let isDrawing = false;
@@ -1155,11 +960,7 @@
             // 所有設備都使用桌面版佈局
             initializeMandala('mandala-canvas-desktop', 'brush-size-desktop', 'color-palette-grid-desktop', 'shape-tools-desktop', 'eraser-btn-desktop', 'symmetry-count-desktop', 'rotation-count-desktop', 'undo-btn-desktop', 'redo-btn-desktop', 'clear-btn-desktop', 'save-btn-desktop');
 
-            // 橫向模式切換按鈕事件監聽器
-            landscapeToggleBtn.addEventListener('click', toggleLandscapeMode);
 
-            // 退出橫向模式按鈕事件監聽器
-            exitLandscapeBtn.addEventListener('click', toggleLandscapeMode);
         });
     </script>
 </body>
