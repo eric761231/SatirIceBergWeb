@@ -3,26 +3,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>手機旋轉範例</title>
+  <title>螢幕旋轉測試</title>
   <style>
     body {
       margin:0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "微軟正黑體", sans-serif;
+      font-family: sans-serif;
       display:flex;
       align-items:center;
       justify-content:center;
       height:100vh;
       text-align:center;
-      padding:16px;
-      box-sizing:border-box;
+      background:#f7f9fc;
     }
     .card {
-      width:100%;
-      max-width:700px;
-      border-radius:12px;
       padding:24px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
-      background:linear-gradient(180deg, #fff, #f7f9fc);
+      border-radius:12px;
+      background:#fff;
+      box-shadow:0 6px 20px rgba(0,0,0,0.15);
     }
     button {
       margin:6px;
@@ -31,76 +28,63 @@
       border:none;
       font-weight:600;
       cursor:pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      box-shadow:0 2px 6px rgba(0,0,0,0.1);
     }
-    .rotate-warning {
-      margin-top:12px;
-      color:#8a1d1d;
-      font-weight:600;
-    }
+    #msg { margin-top:12px; font-weight:600; }
   </style>
 </head>
 <body>
   <div class="card">
-    <h1 id="title">請將裝置旋轉</h1>
+    <h1>螢幕旋轉測試</h1>
     <p>目前方向：<strong id="dir">未知</strong></p>
     <div>
-      <button id="lockPortraitBtn">轉直向</button>
-      <button id="lockLandscapeBtn">轉橫向</button>
+      <button id="btnPortrait">直向</button>
+      <button id="btnLandscape">橫向</button>
     </div>
-    <div id="msg" class="rotate-warning" style="display:none;"></div>
+    <div id="msg"></div>
   </div>
 
-  <script>
-    const dirEl = document.getElementById('dir');
-    const msgEl = document.getElementById('msg');
-    const titleEl = document.getElementById('title');
-    const lockPortraitBtn = document.getElementById('lockPortraitBtn');
-    const lockLandscapeBtn = document.getElementById('lockLandscapeBtn');
+<script>
+const dirEl = document.getElementById("dir");
+const msgEl = document.getElementById("msg");
 
-    function updateOrientationInfo() {
-      let orientation = 'unknown';
-      if (screen.orientation && screen.orientation.type) {
-        orientation = screen.orientation.type;
-      } else if (window.orientation !== undefined) {
-        const angle = window.orientation;
-        orientation = (Math.abs(angle) === 90) ? 'landscape' : 'portrait';
-      } else {
-        orientation = (window.innerWidth > window.innerHeight) ? 'landscape' : 'portrait';
-      }
-      dirEl.textContent = orientation;
-      titleEl.textContent = orientation.includes('portrait') ? '直向模式' : '橫向模式';
+function updateInfo() {
+  let orientation = screen.orientation?.type || 
+                   ((window.innerWidth > window.innerHeight) ? "landscape" : "portrait");
+  dirEl.textContent = orientation;
+}
+updateInfo();
+
+window.addEventListener("resize", updateInfo);
+screen.orientation?.addEventListener("change", updateInfo);
+
+async function enterFullscreen() {
+  let el = document.documentElement;
+  if (el.requestFullscreen) return el.requestFullscreen();
+  if (el.webkitRequestFullscreen) return el.webkitRequestFullscreen();
+  if (el.msRequestFullscreen) return el.msRequestFullscreen();
+}
+
+async function lockOrientation(type) {
+  msgEl.textContent = "";
+  try {
+    await enterFullscreen(); // 進入全螢幕
+    if (screen.orientation && screen.orientation.lock) {
+      await screen.orientation.lock(type);
+      msgEl.style.color = "green";
+      msgEl.textContent = "已嘗試鎖定：" + type;
+    } else {
+      msgEl.style.color = "red";
+      msgEl.textContent = "不支援 Screen Orientation API";
     }
+  } catch (err) {
+    msgEl.style.color = "red";
+    msgEl.textContent = "失敗：" + err;
+  }
+}
 
-    // 更新方向資訊
-    window.addEventListener('orientationchange', updateOrientationInfo);
-    if (screen.orientation) {
-      screen.orientation.addEventListener('change', updateOrientationInfo);
-    }
-    window.addEventListener('resize', updateOrientationInfo);
-    updateOrientationInfo();
-
-    // 嘗試鎖定方向
-    async function tryLock(dir) {
-      msgEl.style.display = 'none';
-      try {
-        if (screen.orientation && screen.orientation.lock) {
-          await screen.orientation.lock(dir);
-          msgEl.style.display = 'block';
-          msgEl.style.color = 'green';
-          msgEl.textContent = '已嘗試鎖定為 ' + dir;
-        } else {
-          throw new Error('不支援 Screen Orientation API');
-        }
-      } catch (err) {
-        msgEl.style.display = 'block';
-        msgEl.style.color = '#8a1d1d';
-        msgEl.textContent = '無法鎖定：' + (err.message || err);
-      }
-    }
-
-    lockPortraitBtn.addEventListener('click', () => tryLock('portrait-primary'));
-    lockLandscapeBtn.addEventListener('click', () => tryLock('landscape-primary'));
-  </script>
+document.getElementById("btnPortrait").addEventListener("click", () => lockOrientation("portrait-primary"));
+document.getElementById("btnLandscape").addEventListener("click", () => lockOrientation("landscape-primary"));
+</script>
 </body>
 </html>
