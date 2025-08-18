@@ -230,8 +230,6 @@
             transform: translateY(0);
         }
 
-        /* 旋轉功能區域 (為避免混淆，此版本已移除) */
-
         /* 響應式設計 */
         @media (max-width: 768px) {
             .sidebar {
@@ -326,6 +324,7 @@
         <div class="video-section">
             <div class="video-wrapper">
                 <iframe src="https://player.vimeo.com/video/1110943674?context=Vimeo%5CController%5CApi%5CResources%5CVideoController.&h=68ee1b08d5&s=9de4424b8d07e0c179240946f84bfc0cc93c8bf3_1755621813"
+                    id="vimeo-iframe"
                     width="100%"
                     height="100%"
                     frameborder="0"
@@ -362,6 +361,85 @@
 
         hamburger.addEventListener('click', toggleSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
+        
+        // --- 處理全螢幕與螢幕方向邏輯 ---
+        
+        // 檢查瀏覽器是否支援螢幕方向鎖定
+        const isOrientationLockSupported = 'orientation' in screen && 'lock' in screen.orientation;
+        
+        /**
+         * 鎖定螢幕方向為橫向。
+         * @returns {Promise<void>}
+         */
+        async function lockOrientation() {
+            if (isOrientationLockSupported) {
+                try {
+                    // 嘗試鎖定為橫向
+                    await screen.orientation.lock('landscape');
+                    console.log('螢幕已鎖定為橫向。');
+                } catch (err) {
+                    console.warn('螢幕方向鎖定失敗:', err.message);
+                    console.warn('注意：iOS/iPadOS 的 Safari 不支援此功能。');
+                }
+            } else {
+                console.log('您的瀏覽器不支援螢幕方向鎖定。');
+            }
+        }
+        
+        /**
+         * 解鎖螢幕方向。
+         * @returns {void}
+         */
+        function unlockOrientation() {
+            if (isOrientationLockSupported) {
+                screen.orientation.unlock();
+                console.log('螢幕方向已解鎖。');
+            }
+        }
+
+        // 監聽全螢幕狀態變化
+        // 使用 document.addEventListener 監聽，因為全螢幕事件是全局性的
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                console.log('進入全螢幕模式');
+                lockOrientation();
+            } else {
+                console.log('退出全螢幕模式');
+                unlockOrientation();
+            }
+        });
+        
+        // 為不同瀏覽器提供兼容性
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (document.webkitFullscreenElement) {
+                console.log('進入全螢幕模式 (WebKit)');
+                lockOrientation();
+            } else {
+                console.log('退出全螢幕模式 (WebKit)');
+                unlockOrientation();
+            }
+        });
+        
+        document.addEventListener('mozfullscreenchange', () => {
+            if (document.mozFullScreenElement) {
+                console.log('進入全螢幕模式 (Mozilla)');
+                lockOrientation();
+            } else {
+                console.log('退出全螢幕模式 (Mozilla)');
+                unlockOrientation();
+            }
+        });
+        
+        document.addEventListener('MSFullscreenChange', () => {
+            if (document.msFullscreenElement) {
+                console.log('進入全螢幕模式 (MS)');
+                lockOrientation();
+            } else {
+                console.log('退出全螢幕模式 (MS)');
+                unlockOrientation();
+            }
+        });
+
     </script>
 </body>
 </html>
