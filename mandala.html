@@ -650,7 +650,7 @@
             position: relative;
         }
 
-        /* 橫向模式下的工具列優化 */
+        /* 橫向模式下的工具列優化 - 通用響應式設計 */
         .force-landscape .tools-section-desktop {
             position: fixed;
             top: 20px;
@@ -662,13 +662,200 @@
             backdrop-filter: blur(10px);
             transform: rotate(90deg);
             transform-origin: center center;
+            max-width: 80vh;
+            overflow-x: auto;
         }
 
-        .force-landscape .canvas-container-desktop {
+        .force-landscape .canvas-area {
             margin-top: 80px;
             margin-right: 200px;
             transform: rotate(90deg);
             transform-origin: center center;
+            width: calc(100vh - 200px);
+            height: calc(100vw - 200px);
+        }
+
+        /* 大螢幕橫向模式優化 (平板以上) */
+        @media (min-width: 769px) {
+            .force-landscape .tools-section-desktop {
+                top: 30px;
+                right: 30px;
+                padding: 20px;
+                max-width: 85vh;
+            }
+
+            .force-landscape .canvas-area {
+                margin-top: 100px;
+                margin-right: 250px;
+                width: calc(100vh - 250px);
+                height: calc(100vw - 250px);
+            }
+
+            .force-landscape .mandala-title {
+                font-size: 2.2em;
+                margin-bottom: 12px;
+            }
+
+            .force-landscape .mandala-subtitle {
+                font-size: 1.1em;
+            }
+
+            .force-landscape .toolbar-group-desktop {
+                min-width: 180px;
+                margin-bottom: 15px;
+            }
+
+            .force-landscape .color-palette-grid {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 6px;
+            }
+
+            .force-landscape .icon-btn {
+                width: 38px;
+                height: 38px;
+            }
+
+            .force-landscape .color-btn-small {
+                width: 26px;
+                height: 26px;
+            }
+        }
+
+        /* 中等螢幕橫向模式優化 (一般平板) */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .force-landscape .tools-section-desktop {
+                top: 15px;
+                right: 15px;
+                padding: 12px;
+                max-width: 75vh;
+            }
+
+            .force-landscape .canvas-area {
+                margin-top: 70px;
+                margin-right: 180px;
+                width: calc(100vh - 180px);
+                height: calc(100vw - 180px);
+            }
+
+            .force-landscape .mandala-title {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+            }
+
+            .force-landscape .mandala-subtitle {
+                font-size: 1em;
+            }
+
+            .force-landscape .toolbar-group-desktop {
+                min-width: 160px;
+                margin-bottom: 12px;
+            }
+
+            .force-landscape .color-palette-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 5px;
+            }
+
+            .force-landscape .icon-btn {
+                width: 35px;
+                height: 35px;
+            }
+
+            .force-landscape .color-btn-small {
+                width: 24px;
+                height: 24px;
+            }
+        }
+
+        /* 小螢幕手機橫向模式優化 */
+        @media (max-width: 480px) {
+            .force-landscape .tools-section-desktop {
+                top: 10px;
+                right: 10px;
+                padding: 10px;
+                max-width: 70vh;
+            }
+
+            .force-landscape .canvas-area {
+                margin-top: 60px;
+                margin-right: 140px;
+                width: calc(100vh - 140px);
+                height: calc(100vw - 140px);
+            }
+
+            .force-landscape .mandala-title {
+                font-size: 1.5em;
+                margin-bottom: 8px;
+            }
+
+            .force-landscape .mandala-subtitle {
+                font-size: 0.9em;
+            }
+
+            .force-landscape .toolbar-group-desktop {
+                min-width: 140px;
+                margin-bottom: 10px;
+            }
+
+            .force-landscape .toolbar-group-title {
+                font-size: 0.8em;
+            }
+
+            .force-landscape .icon-btn {
+                width: 32px;
+                height: 32px;
+            }
+
+            .force-landscape .color-btn-small {
+                width: 22px;
+                height: 22px;
+            }
+        }
+
+        /* 超寬螢幕橫向模式優化 (寬螢幕平板/小筆電) */
+        @media (min-width: 1024px) {
+            .force-landscape .tools-section-desktop {
+                top: 40px;
+                right: 40px;
+                padding: 25px;
+                max-width: 90vh;
+            }
+
+            .force-landscape .canvas-area {
+                margin-top: 120px;
+                margin-right: 300px;
+                width: calc(100vh - 300px);
+                height: calc(100vw - 300px);
+            }
+
+            .force-landscape .mandala-title {
+                font-size: 2.5em;
+                margin-bottom: 15px;
+            }
+
+            .force-landscape .mandala-subtitle {
+                font-size: 1.2em;
+            }
+
+            .force-landscape .toolbar-group-desktop {
+                min-width: 200px;
+                margin-bottom: 18px;
+            }
+
+            .force-landscape .color-palette-grid {
+                grid-template-columns: repeat(8, 1fr);
+                gap: 8px;
+            }
+
+            .force-landscape .icon-btn {
+                width: 42px;
+                height: 42px;
+            }
+
+            .force-landscape .color-btn-small {
+                width: 30px;
+                height: 30px;
+            }
         }
 
         /* 橫向模式提示 */
@@ -1101,80 +1288,130 @@
             // 橫向模式控制
             const landscapeNotice = document.getElementById('landscapeNotice');
             const landscapeToggleBtn = document.getElementById('landscapeToggleBtn');
-            const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+            let isForceLandscape = false; // 追蹤強制橫向模式狀態
 
             function toggleLandscapeMode() {
-                if (isLandscape) {
+                if (isForceLandscape) {
+                    // 退出強制橫向模式
                     document.body.classList.remove('force-landscape');
                     landscapeNotice.classList.remove('show');
                     landscapeToggleBtn.textContent = '🔄 橫向模式';
                     landscapeToggleBtn.style.transform = 'rotate(0deg)';
+                    isForceLandscape = false;
                 } else {
+                    // 進入強制橫向模式
                     document.body.classList.add('force-landscape');
                     landscapeNotice.classList.add('show');
                     landscapeToggleBtn.textContent = '↕️ 直向模式';
                     landscapeToggleBtn.style.transform = 'rotate(90deg)';
+                    isForceLandscape = true;
                 }
+            }
+
+            // 根據螢幕尺寸自動調整橫向模式佈局
+            function adjustLandscapeLayout() {
+                if (!isForceLandscape) return;
+                
+                const screenWidth = window.screen.width;
+                const screenHeight = window.screen.height;
+                const minDimension = Math.min(screenWidth, screenHeight);
+                const maxDimension = Math.max(screenWidth, screenHeight);
+                
+                // 計算最佳佈局參數
+                let toolMargin, canvasMargin, titleSize, subtitleSize;
+                
+                if (minDimension >= 1024) {
+                    // 超寬螢幕 (寬螢幕平板/小筆電)
+                    toolMargin = 40;
+                    canvasMargin = 300;
+                    titleSize = '2.5em';
+                    subtitleSize = '1.2em';
+                } else if (minDimension >= 769) {
+                    // 大螢幕 (平板以上)
+                    toolMargin = 30;
+                    canvasMargin = 250;
+                    titleSize = '2.2em';
+                    subtitleSize = '1.1em';
+                } else if (minDimension >= 481) {
+                    // 中等螢幕 (一般平板)
+                    toolMargin = 15;
+                    canvasMargin = 180;
+                    titleSize = '1.8em';
+                    subtitleSize = '1em';
+                } else {
+                    // 小螢幕 (手機)
+                    toolMargin = 10;
+                    canvasMargin = 140;
+                    titleSize = '1.5em';
+                    subtitleSize = '0.9em';
+                }
+                
+                // 動態調整CSS變數
+                document.documentElement.style.setProperty('--landscape-tool-margin', toolMargin + 'px');
+                document.documentElement.style.setProperty('--landscape-canvas-margin', canvasMargin + 'px');
+                document.documentElement.style.setProperty('--landscape-title-size', titleSize);
+                document.documentElement.style.setProperty('--landscape-subtitle-size', subtitleSize);
+                
+                console.log('橫向模式佈局已調整:', {
+                    screenWidth,
+                    screenHeight,
+                    minDimension,
+                    maxDimension,
+                    toolMargin,
+                    canvasMargin
+                });
             }
 
             // 初始化橫向模式狀態
-            if (isLandscape && isMobile && isPhoneScreen) {
-                // 只有手機螢幕且為橫向時才初始化為橫向模式
-                document.body.classList.add('force-landscape');
-                landscapeNotice.classList.add('show');
-                landscapeToggleBtn.textContent = '↕️ 直向模式';
-                landscapeToggleBtn.style.transform = 'rotate(90deg)';
+            if (isMobile && isPhoneScreen) {
+                // 手機螢幕自動啟用橫向模式
+                setTimeout(() => {
+                    document.body.classList.add('force-landscape');
+                    landscapeNotice.classList.add('show');
+                    landscapeToggleBtn.textContent = '↕️ 直向模式';
+                    landscapeToggleBtn.style.transform = 'rotate(90deg)';
+                    isForceLandscape = true;
+                    
+                    // 調整佈局
+                    setTimeout(adjustLandscapeLayout, 100);
+                    
+                    console.log('手機螢幕自動啟用橫向模式');
+                }, 1000);
             }
 
-            // 自動檢測手機並強制轉橫向
-            function autoDetectMobileAndRotate() {
-                const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-                
-                if (isMobile && isPortrait && isPhoneScreen) {
-                    // 手機直向且螢幕尺寸符合手機標準時自動轉橫向
-                    setTimeout(() => {
-                        document.body.classList.add('force-landscape');
-                        landscapeNotice.classList.add('show');
-                        landscapeToggleBtn.textContent = '↕️ 直向模式';
-                        landscapeToggleBtn.style.transform = 'rotate(90deg)';
-                        
-                        // 顯示提示訊息
-                        console.log('檢測到手機直向且螢幕尺寸符合手機標準，自動啟用橫向模式');
-                    }, 1000); // 延遲1秒執行，讓頁面完全載入
-                } else {
-                    console.log('設備不符合自動轉向條件：', {
-                        isMobile: isMobile,
-                        isPortrait: isPortrait,
-                        screenWidth: screenWidth,
-                        screenHeight: screenHeight,
-                        isPhoneScreen: isPhoneScreen
-                    });
-                }
-            }
-
-            // 頁面載入完成後自動檢測
-            window.addEventListener('DOMContentLoaded', autoDetectMobileAndRotate);
-            
             // 螢幕方向變化時自動調整
             window.addEventListener('orientationchange', () => {
                 setTimeout(() => {
-                    const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-                    
-                    if (isMobile && isPhoneScreen) {
-                        // 只有手機螢幕才會自動調整方向
+                    if (isMobile && isPhoneScreen && !isForceLandscape) {
+                        // 只有在非強制橫向模式下才自動調整
+                        const isLandscape = window.matchMedia("(orientation: landscape)").matches;
                         if (isLandscape) {
                             document.body.classList.add('force-landscape');
                             landscapeNotice.classList.add('show');
                             landscapeToggleBtn.textContent = '↕️ 直向模式';
                             landscapeToggleBtn.style.transform = 'rotate(90deg)';
+                            isForceLandscape = true;
                         } else {
                             document.body.classList.remove('force-landscape');
                             landscapeNotice.classList.remove('show');
                             landscapeToggleBtn.textContent = '🔄 橫向模式';
                             landscapeToggleBtn.style.transform = 'rotate(0deg)';
+                            isForceLandscape = false;
                         }
                     }
+                    
+                    // 如果處於強制橫向模式，重新調整佈局
+                    if (isForceLandscape) {
+                        adjustLandscapeLayout();
+                    }
                 }, 100);
+            });
+
+            // 視窗大小變化時重新調整佈局
+            window.addEventListener('resize', () => {
+                if (isForceLandscape) {
+                    setTimeout(adjustLandscapeLayout, 100);
+                }
             });
 
             // 曼荼羅繪圖功能
