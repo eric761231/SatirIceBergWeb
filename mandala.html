@@ -13,8 +13,6 @@
             --white: #FFFFFF;
             --bg-dark: #1A1A2E;
             --tool-bg-color: #252D4C;
-            --tool-bg-transparent: rgba(37, 45, 76, 0.8);
-            --tool-border-color: rgba(255, 255, 255, 0.1);
         }
 
         * {
@@ -33,7 +31,335 @@
             flex-direction: column;
         }
 
-        /* -------------------- 通用樣式 -------------------- */
+        /* -------------------- 側邊導航 (通用) -------------------- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-title {
+            color: #00aaff;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* 移除關閉按鈕樣式 */
+
+        .nav-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-item {
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-link {
+            display: inline-block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            min-width: 120px;
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 170, 255, 0.2);
+            color: #00aaff;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(0, 170, 255, 0.3);
+            color: #00aaff;
+            border-left: 3px solid #00aaff;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 漢堡選單按鈕 */
+        .hamburger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 170, 255, 0.8);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            background: rgba(0, 170, 255, 1);
+        }
+
+        .hamburger:hover:not(.open) {
+            transform: scale(1.1);
+        }
+
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: white;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* 漢堡按鈕轉換成 X 形狀的樣式 */
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(4.5px, 4.5px); /* 第一條線向右下旋轉45度 */
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0; /* 隱藏中間的線 */
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(4.5px, -4.5px); /* 第三條線向右上旋轉45度，形成X */
+        }
+
+        /* 主要內容區域 */
+        .main-content {
+            margin-left: 0;
+            padding: 80px 20px 20px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 250px;
+        }
+
+        /* -------------------- 桌面和平板佈局 -------------------- */
+        .app-container-desktop {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header-desktop {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 20px;
+            text-align: center;
+        }
+
+
+
+        .content-container-desktop {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 20px 20px;
+        }
+
+        /* 桌面工具列新排版 */
+        .tools-section-desktop {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--tool-bg-color);
+            border-radius: 20px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 5px;
+            flex-wrap: nowrap;
+        }
+
+        .toolbar-group-desktop {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toolbar-group-desktop:last-child {
+            border-right: none;
+        }
+
+        .toolbar-group-title {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: var(--main-color);
+            white-space: nowrap;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .toolbar-group-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        /* -------------------- 手機佈局 -------------------- */
+        .app-container-mobile {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header-mobile {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: var(--bg-dark);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+
+
+        .mandala-title-mobile-container {
+            text-align: center;
+            flex-grow: 1;
+            padding-right: 40px;
+        }
+
+        .tools-section-mobile {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #20263c;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+            z-index: 5;
+            transition: transform 0.3s ease-in-out;
+            transform: translateY(calc(100% - 60px));
+        }
+
+        .tools-section-mobile.open {
+            transform: translateY(0);
+        }
+
+        .tools-title-mobile {
+            color: #FF9800;
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tools-title-mobile svg {
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .tools-section-mobile.open .tools-title-mobile svg {
+            transform: rotate(180deg);
+        }
+
+        .tools-content-mobile {
+            display: flex;
+            flex-direction: column;
+            padding: 0 20px 20px;
+            gap: 15px;
+        }
+
+        .toolbar-group-mobile {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toolbar-row-mobile {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* -------------------- 通用樣式 (同時適用於兩種佈局) -------------------- */
         .mandala-title {
             color: var(--main-color);
             font-size: 2.5em;
@@ -46,6 +372,32 @@
             font-size: 1.1em;
             opacity: 0.9;
             margin-top: 5px;
+        }
+
+        .canvas-area {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--tool-bg-color);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            flex-grow: 1;
+        }
+
+        #mandala-canvas-desktop, #mandala-canvas-mobile {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
+            cursor: crosshair;
+            touch-action: none;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 700 / 500;
         }
 
         .icon-btn, .color-btn, .color-btn-small {
@@ -160,177 +512,277 @@
             border-radius: 5px;
             font-size: 0.8em;
         }
+        
+        /* 針對行動版工具列排版做調整 */
+        @media (max-width: 768px) {
+            .tools-section-mobile {
+                transform: translateY(0); /* 預設展開 */
+                padding: 15px;
+            }
+            .tools-title-mobile {
+                display: none; /* 隱藏收合按鈕 */
+            }
+            .tools-content-mobile {
+                padding: 0;
+            }
+            .toolbar-group-mobile {
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                gap: 20px;
+                padding-bottom: 15px;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .toolbar-group-mobile:last-child {
+                border-bottom: none;
+            }
+            .toolbar-group-title {
+                margin-bottom: 0;
+                font-size: 0.9em;
+                width: 70px; /* 固定標題寬度 */
+            }
+            .toolbar-row-mobile {
+                justify-content: flex-start;
+                flex-wrap: nowrap;
+            }
 
-        /* -------------------- 側邊導航 (通用) -------------------- */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -250px;
-            width: 250px;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transition: left 0.3s ease;
-            z-index: 1000;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            /* 側邊欄響應式設計 */
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+
+            .app-container-desktop {
+                padding: 20px;
+                margin-top: 20px;
+            }
+
+            .mandala-title {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+            }
+
+            .mandala-subtitle {
+                font-size: 1em;
+            }
         }
 
-        .sidebar.open {
-            left: 0;
+        /* 手機橫向模式優化 */
+        @media screen and (max-width: 768px) and (orientation: landscape) {
+            .main-content {
+                padding: 60px 15px 15px;
+            }
+
+            .app-container-desktop {
+                padding: 15px;
+                margin-top: 15px;
+            }
+
+            .mandala-title {
+                font-size: 1.5em;
+                margin-bottom: 8px;
+            }
+
+            .mandala-subtitle {
+                font-size: 0.9em;
+            }
+
+            /* 橫向模式下的工具列優化 */
+            .tools-section-desktop {
+                flex-direction: row;
+                flex-wrap: nowrap;
+                gap: 10px;
+                justify-content: flex-start;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+
+            .toolbar-group-desktop {
+                min-width: 180px;
+                flex-shrink: 0;
+            }
+
+            /* 畫布容器在橫向模式下的優化 */
+            .canvas-container-desktop {
+                margin-top: 15px;
+                height: calc(100vh - 200px);
+            }
+
+            /* 顏色調色盤在橫向模式下的優化 */
+            .color-palette-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 6px;
+            }
+
+            /* 按鈕在橫向模式下的優化 */
+            .icon-btn {
+                width: 36px;
+                height: 36px;
+            }
+
+            .color-btn-small {
+                width: 28px;
+                height: 28px;
+            }
         }
 
-        /* -------------------- 漢堡選單按鈕 -------------------- */
-        .hamburger {
+        /* 強制橫向模式樣式 */
+        .force-landscape {
+            transform: rotate(90deg);
+            transform-origin: center center;
+            width: 100vh !important;
+            height: 100vw !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            overflow: hidden;
+        }
+
+        .force-landscape .app-container-desktop {
+            transform: rotate(90deg);
+            transform-origin: center center;
+            width: 100vh;
+            height: 100vw;
+            position: relative;
+        }
+
+        /* 橫向模式下的工具列優化 */
+        .force-landscape .tools-section-desktop {
             position: fixed;
             top: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            transform: rotate(90deg);
+            transform-origin: center center;
+        }
+
+        .force-landscape .canvas-container-desktop {
+            margin-top: 80px;
+            margin-right: 200px;
+            transform: rotate(90deg);
+            transform-origin: center center;
+        }
+
+        /* 橫向模式提示 */
+        .landscape-notice {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            z-index: 2000;
+            display: none;
+        }
+
+        .landscape-notice.show {
+            display: block;
+        }
+
+        /* 橫向模式切換按鈕 */
+        .landscape-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
             background: rgba(0, 170, 255, 0.8);
+            color: white;
             border: none;
             border-radius: 8px;
+            padding: 10px 15px;
             cursor: pointer;
             z-index: 1001;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
-        .hamburger.open span:nth-child(1) {
-            transform: rotate(45deg) translate(4.5px, 4.5px);
+        .landscape-toggle-btn:hover {
+            background: rgba(0, 170, 255, 1);
         }
 
-        .hamburger.open span:nth-child(2) {
-            opacity: 0;
+        .force-landscape .landscape-toggle-btn {
+            transform: rotate(90deg);
+            transform-origin: center center;
         }
 
-        .hamburger.open span:nth-child(3) {
-            transform: rotate(-45deg) translate(4.5px, -4.5px);
-        }
-
-        /* -------------------- 主要內容區域 - 桌面版 -------------------- */
-        .app-container-desktop {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        /* -------------------- 手機版排版優化 -------------------- */
+        /* 響應式設計 - 統一使用平板配置 */
         @media (max-width: 768px) {
-            .app-container-mobile {
-                display: flex !important;
-                flex-direction: column;
-                min-height: 100vh;
-            }
-            
-            .header-mobile {
-                padding: 20px;
-                text-align: center;
-            }
-            
-            .mandala-title-mobile-container {
-                padding-right: 0;
-            }
-
             .main-content {
-                display: flex;
-                flex-direction: row; /* 畫布與工具列並排 */
-                flex-grow: 1;
-                padding: 10px;
-                gap: 10px;
-                align-items: stretch;
+                padding: 60px 15px 15px;
             }
 
-            .canvas-area {
-                flex-grow: 1;
+            /* 側邊欄響應式設計 */
+            .sidebar {
                 width: 100%;
-                background: var(--tool-bg-color);
-                border-radius: 20px;
-                padding: 10px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                left: -100%;
             }
 
-            .mobile-tools-container {
-                display: flex;
-                flex-direction: column; /* 工具組垂直排列 */
-                width: 120px;
-                background: var(--tool-bg-transparent);
-                border-radius: 20px;
-                padding: 10px;
-                gap: 10px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-                border: 2px solid var(--tool-border-color);
-                height: auto;
+            .main-content.sidebar-open {
+                margin-left: 0;
             }
 
-            .mobile-tools-container .toolbar-group-mobile {
-                flex-direction: column; /* 內部工具垂直排列 */
-                align-items: center;
-                justify-content: center;
-                padding: 5px 0;
-                gap: 5px;
-                border-bottom: 1px solid var(--tool-border-color);
-            }
-            
-            .mobile-tools-container .toolbar-group-mobile:last-child {
-                border-bottom: none;
-            }
-
-            .toolbar-group-title {
-                margin-bottom: 5px;
-                font-size: 0.8em;
-                text-align: center;
-                white-space: nowrap;
-            }
-            
-            .toolbar-row-mobile {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 5px;
-            }
-
-            .icon-btn {
-                width: 30px;
-                height: 30px;
-            }
-
-            .color-palette-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 5px;
+            /* 保持平板配置，不改變工具列佈局 */
+            .app-container-desktop {
+                padding: 20px;
+                margin-top: 20px;
                 max-width: none;
+                width: 100%;
             }
-            
-            .color-btn-small {
-                width: 25px;
-                height: 25px;
-            }
-            
-            .slider-label {
-                gap: 3px;
-            }
-            
-            input[type="range"] {
-                width: 70px;
-            }
-            
-            select {
-                font-size: 0.7em;
-            }
-            
+
             .mandala-title {
                 font-size: 1.8em;
-                margin-bottom: 5px;
+                margin-bottom: 10px;
             }
-            
+
             .mandala-subtitle {
-                font-size: 0.9em;
+                font-size: 1em;
+            }
+
+            /* 工具列保持水平排列 */
+            .tools-section-desktop {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 15px;
+                justify-content: center;
+            }
+
+            .toolbar-group-desktop {
+                min-width: 200px;
+                margin-bottom: 15px;
+            }
+
+            /* 畫布容器保持原有佈局 */
+            .canvas-container-desktop {
+                margin-top: 20px;
+                width: 100%;
+                max-width: none;
+            }
+
+            /* 顏色調色盤保持網格佈局 */
+            .color-palette-grid {
+                grid-template-columns: repeat(8, 1fr);
+                gap: 8px;
+            }
+
+            /* 按鈕大小適中 */
+            .icon-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .color-btn-small {
+                width: 32px;
+                height: 32px;
             }
         }
     </style>
@@ -357,6 +809,19 @@
     </div>
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
+    <!-- 橫向模式提示 -->
+    <div class="landscape-notice" id="landscapeNotice">
+        <h3>🔄 橫向模式已啟用</h3>
+        <p>請將手機轉為橫向以獲得最佳繪圖體驗</p>
+        <button onclick="toggleLandscapeMode()" style="margin-top: 15px; padding: 10px 20px; background: #00aaff; color: white; border: none; border-radius: 8px; cursor: pointer;">退出橫向模式</button>
+    </div>
+
+    <!-- 橫向模式切換按鈕 -->
+    <button class="landscape-toggle-btn" id="landscapeToggleBtn" onclick="toggleLandscapeMode()">
+        🔄 橫向模式
+    </button>
+
+    <!-- 漢堡選單按鈕 -->
     <button class="hamburger" id="hamburger" title="開啟選單" aria-label="開啟選單">
         <span></span>
         <span></span>
@@ -370,6 +835,7 @@
                 <p class="mandala-subtitle">曼荼羅是心靈的鏡子，反映你的內在世界</p>
             </div>
         </header>
+
         <main class="content-container-desktop">
             <div class="tools-section-desktop" id="tools-desktop">
                 <div class="toolbar-group-desktop">
@@ -379,6 +845,7 @@
                         <input type="range" id="brush-size-desktop" min="1" max="100" value="10">
                     </div>
                 </div>
+
                 <div class="toolbar-group-desktop">
                     <div class="toolbar-group-title">顏色選擇</div>
                     <div class="toolbar-group-content">
@@ -401,6 +868,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="toolbar-group-desktop">
                     <div class="toolbar-group-title">繪圖工具</div>
                     <div class="toolbar-group-content" id="shape-tools-desktop">
@@ -412,6 +880,7 @@
                         </button>
                     </div>
                 </div>
+
                 <div class="toolbar-group-desktop">
                     <div class="toolbar-group-title">操作工具</div>
                     <div class="toolbar-group-content">
@@ -429,28 +898,42 @@
                         </button>
                     </div>
                 </div>
+
                 <div class="toolbar-group-desktop">
-                    <div class="toolbar-group-title">對稱設定</div>
+                    <div class="toolbar-group-title">對稱與方向</div>
                     <div class="toolbar-group-content">
                         <div class="slider-label">
-                            <label for="symmetry-count-desktop">對稱:</label>
+                            <label for="symmetry-count-desktop">對稱數量:</label>
                             <select class="symmetry-select" id="symmetry-count-desktop">
-                                <option value="0" selected>0</option>
-                                <option value="2">2</option>
-                                <option value="4">4</option>
-                                <option value="6">6</option>
-                                <option value="8">8</option>
-                                <option value="12">12</option>
+                                <option value="0" selected>0 (無對稱)</option>
+                                <option value="2">2 (左右對稱)</option>
+                                <option value="4">4 (十字對稱)</option>
+                                <option value="6">6 (六角對稱)</option>
+                                <option value="8">8 (八角對稱)</option>
+                                <option value="12">12 (十二角對稱)</option>
                             </select>
                         </div>
+                    </div>
+                </div>
+
+                <div class="toolbar-group-desktop">
+                    <div class="toolbar-group-title">旋轉功能</div>
+                    <div class="toolbar-group-content">
                         <div class="slider-label">
-                            <label for="rotation-angle-desktop">旋轉:</label>
-                            <input type="range" id="rotation-angle-desktop" min="0" max="360" value="0">
-                            <span id="rotation-value-desktop">0°</span>
+                            <label for="rotation-count-desktop">旋轉數量:</label>
+                            <select class="rotation-select" id="rotation-count-desktop">
+                                <option value="0" selected>0 (無旋轉)</option>
+                                <option value="2">2 (雙旋轉)</option>
+                                <option value="4">4 (四旋轉)</option>
+                                <option value="6">6 (六旋轉)</option>
+                                <option value="8">8 (八旋轉)</option>
+                                <option value="12">12 (十二旋轉)</option>
+                            </select>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="canvas-area">
                 <canvas id="mandala-canvas-desktop"></canvas>
             </div>
@@ -465,42 +948,40 @@
             </div>
         </header>
 
-        <main class="main-content">
-            <div class="canvas-area">
-                <canvas id="mandala-canvas-mobile"></canvas>
+        <div class="canvas-area">
+            <canvas id="mandala-canvas-mobile"></canvas>
+        </div>
+
+        <div class="tools-section-mobile" id="tools-mobile">
+            <div class="tools-title-mobile" id="tools-toggle-mobile">
+                繪畫工具
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
             </div>
-            
-            <div class="mobile-tools-container">
+            <div class="tools-content-mobile" id="tools-content-mobile">
                 <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">顏色選擇</div>
-                    <div class="toolbar-row-mobile color-palette" id="color-palette-mobile">
-                        <div class="color-palette-grid">
-                            <button class="color-btn-small active" style="background-color: #000000;" data-color="#000000" title="黑色"></button>
-                            <button class="color-btn-small" style="background-color: #ffffff;" data-color="#ffffff" title="白色"></button>
-                            <button class="color-btn-small" style="background-color: #f44336;" data-color="#f44336" title="紅色"></button>
-                            <button class="color-btn-small" style="background-color: #ff9800;" data-color="#ff9800" title="橙色"></button>
-                            <button class="color-btn-small" style="background-color: #ffeb3b;" data-color="#ffeb3b" title="黃色"></button>
-                            <button class="color-btn-small" style="background-color: #4caf50;" data-color="#4caf50" title="綠色"></button>
-                            <button class="color-btn-small" style="background-color: #2196f3;" data-color="#2196f3" title="藍色"></button>
-                            <button class="color-btn-small" style="background-color: #9c27b0;" data-color="#9c27b0" title="紫色"></button>
-                            <button class="color-btn-small" style="background-color: #ffc107;" data-color="#ffc107" title="亮黃"></button>
-                            <button class="color-btn-small" style="background-color: #00bcd4;" data-color="#00bcd4" title="青色"></button>
-                            <button class="color-btn-small" style="background-color: #8bc34a;" data-color="#8bc34a" title="淺綠"></button>
-                            <button class="color-btn-small" style="background-color: #e91e63;" data-color="#e91e63" title="桃紅"></button>
-                            <button class="color-btn-small" style="background-color: #673ab7;" data-color="#673ab7" title="深紫"></button>
-                            <button class="color-btn-small" style="background-color: #ff5722;" data-color="#ff5722" title="深橙"></button>
-                            <button class="color-btn-small" style="background-color: #9e9e9e;" data-color="#9e9e9e" title="灰色"></button>
-                        </div>
+                    <div class="toolbar-group-title">畫筆設定</div>
+                    <div class="toolbar-row-mobile">
+                        <label for="brush-size-mobile">大小：</label>
+                        <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
                     </div>
                 </div>
 
                 <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">畫筆大小</div>
-                    <div class="toolbar-row-mobile">
-                        <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
+                    <div class="toolbar-group-title">顏色選擇</div>
+                    <div class="toolbar-row-mobile color-palette" id="color-palette-mobile">
+                        <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
+                        <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
+                        <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
+                        <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
+                        <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
+                        <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
+                        <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
+                        <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
                     </div>
                 </div>
-            
+
                 <div class="toolbar-group-mobile">
                     <div class="toolbar-group-title">繪圖工具</div>
                     <div class="toolbar-row-mobile" id="shape-tools-mobile">
@@ -516,13 +997,13 @@
                 <div class="toolbar-group-mobile">
                     <div class="toolbar-group-title">操作工具</div>
                     <div class="toolbar-row-mobile">
-                        <button class="icon-btn" id="undo-btn-mobile" title="復原">
+                        <button class="icon-btn" id="undo-btn-mobile">
                             <svg viewBox="0 0 24 24"><path d="M10 3a10 10 0 0 1 7.2 17l-1.4-1.4A8 8 0 0 0 12 5V8L6 3.5 12 0v3z" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
                         </button>
-                        <button class="icon-btn" id="redo-btn-mobile" title="重做">
+                        <button class="icon-btn" id="redo-btn-mobile">
                             <svg viewBox="0 0 24 24"><path d="M14 3a10 10 0 0 0 -7.2 17l1.4 -1.4a8 8 0 0 1 5.8 -13.6v3l6 -4.5l-6 -4.5v3z" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
                         </button>
-                        <button class="icon-btn" id="clear-btn-mobile" title="清除畫布">
+                        <button class="icon-btn" id="clear-btn-mobile">
                             <svg viewBox="0 0 24 24"><path d="M4 7h16" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
                         </button>
                         <button class="icon-btn" id="save-btn-mobile" title="儲存">
@@ -532,7 +1013,7 @@
                 </div>
 
                 <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">對稱設定</div>
+                    <div class="toolbar-group-title">對稱與方向</div>
                     <div class="toolbar-row-mobile">
                         <label for="symmetry-count-mobile">對稱:</label>
                         <select class="symmetry-select" id="symmetry-count-mobile">
@@ -545,11 +1026,407 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="toolbar-group-mobile">
+                    <div class="toolbar-group-title">旋轉功能</div>
+                    <div class="toolbar-row-mobile">
+                        <label for="rotation-count-mobile">旋轉:</label>
+                        <select class="rotation-select" id="rotation-count-mobile">
+                            <option value="0" selected>0</option>
+                            <option value="2">2</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-        </main>
+        </div>
     </div>
+
     <script>
-        // JavaScript code remains the same, no changes needed for the layout logic.
+        document.addEventListener('DOMContentLoaded', function() {
+            // 側邊欄控制
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.getElementById('hamburger');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+            // 設備檢測變數（全域變數，避免重複宣告）
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const screenWidth = window.screen.width;
+            const screenHeight = window.screen.height;
+            const isPhoneScreen = Math.min(screenWidth, screenHeight) <= 768;
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('open');
+                hamburger.classList.toggle('open');
+                sidebarOverlay.classList.toggle('active');
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('open');
+                hamburger.classList.remove('open');
+                sidebarOverlay.classList.remove('active');
+            }
+
+            // 確保漢堡按鈕始終可見
+            function ensureHamburgerVisible() {
+                if (hamburger.style.display === 'none') {
+                    hamburger.style.display = 'flex';
+                }
+            }
+
+            hamburger.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleSidebar();
+                ensureHamburgerVisible();
+            });
+            
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            
+            // 確保漢堡按鈕在頁面載入後可見
+            window.addEventListener('load', ensureHamburgerVisible);
+
+            // 手機底部工具列收合功能（在此版本中已取消，預設展開）
+            const toolsMobile = document.getElementById('tools-mobile');
+            const toolsToggleMobile = document.getElementById('tools-toggle-mobile');
+            if (toolsToggleMobile) {
+                toolsToggleMobile.addEventListener('click', () => {
+                    toolsMobile.classList.toggle('open');
+                });
+            }
+
+            // 橫向模式控制
+            const landscapeNotice = document.getElementById('landscapeNotice');
+            const landscapeToggleBtn = document.getElementById('landscapeToggleBtn');
+            const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+
+            function toggleLandscapeMode() {
+                if (isLandscape) {
+                    document.body.classList.remove('force-landscape');
+                    landscapeNotice.classList.remove('show');
+                    landscapeToggleBtn.textContent = '🔄 橫向模式';
+                    landscapeToggleBtn.style.transform = 'rotate(0deg)';
+                } else {
+                    document.body.classList.add('force-landscape');
+                    landscapeNotice.classList.add('show');
+                    landscapeToggleBtn.textContent = '↕️ 直向模式';
+                    landscapeToggleBtn.style.transform = 'rotate(90deg)';
+                }
+            }
+
+            // 初始化橫向模式狀態
+            if (isLandscape && isMobile && isPhoneScreen) {
+                // 只有手機螢幕且為橫向時才初始化為橫向模式
+                document.body.classList.add('force-landscape');
+                landscapeNotice.classList.add('show');
+                landscapeToggleBtn.textContent = '↕️ 直向模式';
+                landscapeToggleBtn.style.transform = 'rotate(90deg)';
+            }
+
+            // 自動檢測手機並強制轉橫向
+            function autoDetectMobileAndRotate() {
+                const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+                
+                if (isMobile && isPortrait && isPhoneScreen) {
+                    // 手機直向且螢幕尺寸符合手機標準時自動轉橫向
+                    setTimeout(() => {
+                        document.body.classList.add('force-landscape');
+                        landscapeNotice.classList.add('show');
+                        landscapeToggleBtn.textContent = '↕️ 直向模式';
+                        landscapeToggleBtn.style.transform = 'rotate(90deg)';
+                        
+                        // 顯示提示訊息
+                        console.log('檢測到手機直向且螢幕尺寸符合手機標準，自動啟用橫向模式');
+                    }, 1000); // 延遲1秒執行，讓頁面完全載入
+                } else {
+                    console.log('設備不符合自動轉向條件：', {
+                        isMobile: isMobile,
+                        isPortrait: isPortrait,
+                        screenWidth: screenWidth,
+                        screenHeight: screenHeight,
+                        isPhoneScreen: isPhoneScreen
+                    });
+                }
+            }
+
+            // 頁面載入完成後自動檢測
+            window.addEventListener('DOMContentLoaded', autoDetectMobileAndRotate);
+            
+            // 螢幕方向變化時自動調整
+            window.addEventListener('orientationchange', () => {
+                setTimeout(() => {
+                    const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+                    
+                    if (isMobile && isPhoneScreen) {
+                        // 只有手機螢幕才會自動調整方向
+                        if (isLandscape) {
+                            document.body.classList.add('force-landscape');
+                            landscapeNotice.classList.add('show');
+                            landscapeToggleBtn.textContent = '↕️ 直向模式';
+                            landscapeToggleBtn.style.transform = 'rotate(90deg)';
+                        } else {
+                            document.body.classList.remove('force-landscape');
+                            landscapeNotice.classList.remove('show');
+                            landscapeToggleBtn.textContent = '🔄 橫向模式';
+                            landscapeToggleBtn.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                }, 100);
+            });
+
+            // 曼荼羅繪圖功能
+            let isDrawing = false;
+            let brushSize = 10;
+            let brushColor = '#000000';
+            let lastSelectedColor = '#000000';
+            let symmetryCount = 0;
+            let rotationCount = 0; // 旋轉功能的數量
+            let lastX = 0;
+            let lastY = 0;
+            let history = [];
+            let historyIndex = -1;
+
+            function initializeMandala(canvasId, brushSizeId, colorPaletteGridId, shapeToolsId, eraserBtnId, symmetrySelectId, rotationCountId, undoBtnId, redoBtnId, clearBtnId, saveBtnId) {
+                const canvas = document.getElementById(canvasId);
+                if (!canvas) return;
+
+                const ctx = canvas.getContext('2d');
+                const brushSizeInput = document.getElementById(brushSizeId);
+                const colorPaletteGrid = document.getElementById(colorPaletteGridId);
+                const shapeTools = document.getElementById(shapeToolsId);
+                const eraserBtn = document.getElementById(eraserBtnId);
+                const symmetrySelect = document.getElementById(symmetrySelectId);
+                const rotationCountSelect = document.getElementById(rotationCountId);
+                const undoBtn = document.getElementById(undoBtnId);
+                const redoBtn = document.getElementById(redoBtnId);
+                const clearBtn = document.getElementById(clearBtnId);
+                const saveBtn = document.getElementById(saveBtnId);
+
+                function resizeCanvas() {
+                    const parent = canvas.parentElement;
+                    const parentWidth = parent.offsetWidth;
+                    const parentHeight = parent.offsetHeight;
+
+                    let newWidth, newHeight;
+                    const aspectRatio = 700 / 500;
+
+                    if (parentWidth / parentHeight > aspectRatio) {
+                        newHeight = parentHeight - 60;
+                        newWidth = newHeight * aspectRatio;
+                    } else {
+                        newWidth = parentWidth - 60;
+                        newHeight = newWidth / aspectRatio;
+                    }
+
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                    redrawFromHistory();
+                }
+
+                function clearCanvas(save = true) {
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    if (save) {
+                        saveState();
+                    }
+                }
+
+                function getEventCoordinates(e) {
+                    const rect = canvas.getBoundingClientRect();
+                    const clientX = e.clientX || e.touches[0].clientX;
+                    const clientY = e.clientY || e.touches[0].clientY;
+                    return {
+                        x: (clientX - rect.left) * (canvas.width / rect.width),
+                        y: (clientY - rect.top) * (canvas.height / rect.height)
+                    };
+                }
+
+                function handleCanvasMouseDown(e) {
+                    e.preventDefault();
+                    const coords = getEventCoordinates(e);
+                    isDrawing = true;
+                    [lastX, lastY] = [coords.x, coords.y];
+                }
+
+                function handleCanvasMouseMove(e) {
+                    if (!isDrawing) return;
+                    e.preventDefault();
+                    const coords = getEventCoordinates(e);
+                    drawSymmetricalLines(lastX, lastY, coords.x, coords.y);
+                    [lastX, lastY] = [coords.x, coords.y];
+                }
+
+                function handleCanvasMouseUp() {
+                    if (isDrawing) {
+                        isDrawing = false;
+                        ctx.beginPath();
+                        saveState();
+                    }
+                }
+
+                function drawSymmetricalLines(x1, y1, x2, y2) {
+                    const centerX = canvas.width / 2;
+                    const centerY = canvas.height / 2;
+                    const segments = symmetryCount === 0 ? 1 : symmetryCount;
+
+                    for (let i = 0; i < segments; i++) {
+                        const angle = (Math.PI * 2 / segments) * i;
+                        ctx.save();
+                        ctx.translate(centerX, centerY);
+                        ctx.rotate(angle);
+
+                        // 計算畫筆方向向量
+                        const dx = x2 - x1;
+                        const dy = y2 - y1;
+                        
+                        // 繪製對稱線條（鏡像對稱）
+                        ctx.beginPath();
+                        ctx.moveTo(x1 - centerX, y1 - centerY);
+                        ctx.lineTo(x1 - centerX + dx, y1 - centerY + dy);
+                        ctx.strokeStyle = brushColor;
+                        ctx.lineWidth = brushSize;
+                        ctx.lineCap = 'round';
+                        ctx.lineJoin = 'round';
+                        ctx.stroke();
+
+                        // 如果啟用對稱，則在對稱軸的另一側也畫一條鏡像線
+                        if (symmetryCount > 0) {
+                            ctx.scale(1, -1);
+                            ctx.beginPath();
+                            ctx.moveTo(x1 - centerX, y1 - centerY);
+                            ctx.lineTo(x1 - centerX + dx, y1 - centerY + dy);
+                            ctx.stroke();
+                        }
+                        
+                        ctx.restore();
+                    }
+
+                    // 繪製旋轉功能線條（複製對稱功能，創建鏡像對稱的線條）
+                    if (rotationCount > 0) {
+                        const rotationSegments = rotationCount;
+                        
+                        for (let i = 0; i < rotationSegments; i++) {
+                            const angle = (Math.PI * 2 / rotationSegments) * i;
+                            ctx.save();
+                            ctx.translate(centerX, centerY);
+                            ctx.rotate(angle);
+
+                            // 計算畫筆方向向量
+                            const dx = x2 - x1;
+                            const dy = y2 - y1;
+                            
+                            // 繪製旋轉線條（畫筆方向畫同一邊）
+                            ctx.beginPath();
+                            ctx.moveTo(x1 - centerX, y1 - centerY);
+                            ctx.lineTo(x1 - centerX + dx, y1 - centerY + dy);
+                            ctx.strokeStyle = brushColor;
+                            ctx.lineWidth = brushSize;
+                            ctx.lineCap = 'round';
+                            ctx.lineJoin = 'round';
+                            ctx.stroke();
+                            
+                            ctx.restore();
+                        }
+                    }
+                }
+
+                function saveState() {
+                    if (historyIndex < history.length - 1) {
+                        history.splice(historyIndex + 1);
+                    }
+                    history.push(canvas.toDataURL());
+                    historyIndex++;
+                }
+
+                function redrawFromHistory() {
+                    clearCanvas(false);
+                    if (history[historyIndex]) {
+                        const img = new Image();
+                        img.src = history[historyIndex];
+                        img.onload = () => {
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        };
+                    }
+                }
+
+                // 事件處理
+                if (brushSizeInput) brushSizeInput.addEventListener('input', (e) => { brushSize = parseInt(e.target.value, 10); });
+
+                function handleColorSelection(e) {
+                    const button = e.target.closest('.color-btn-small');
+                    if (!button) return;
+                    brushColor = button.dataset.color;
+                    lastSelectedColor = brushColor;
+
+                    if (colorPaletteGrid) {
+                        colorPaletteGrid.querySelectorAll('.color-btn-small').forEach(btn => btn.classList.remove('active'));
+                    }
+                    button.classList.add('active');
+
+                    if (shapeTools.querySelector('[data-shape="freehand"]')) shapeTools.querySelector('[data-shape="freehand"]').classList.add('active');
+                    if (eraserBtn) eraserBtn.classList.remove('active');
+                }
+                if (colorPaletteGrid) colorPaletteGrid.addEventListener('click', handleColorSelection);
+                
+                if (shapeTools) shapeTools.addEventListener('click', (e) => {
+                    const button = e.target.closest('.icon-btn');
+                    if (!button) return;
+                    shapeTools.querySelectorAll('.icon-btn').forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    if (button.classList.contains('eraser')) {
+                        brushColor = '#ffffff';
+                    } else {
+                        brushColor = lastSelectedColor;
+                    }
+                });
+                
+                if (symmetrySelect) symmetrySelect.addEventListener('change', (e) => { symmetryCount = parseInt(e.target.value, 10); });
+                if (rotationCountSelect) rotationCountSelect.addEventListener('change', (e) => { rotationCount = parseInt(e.target.value, 10); });
+
+                if (undoBtn) undoBtn.addEventListener('click', () => {
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        redrawFromHistory();
+                    }
+                });
+                if (redoBtn) redoBtn.addEventListener('click', () => {
+                    if (historyIndex < history.length - 1) {
+                        historyIndex++;
+                        redrawFromHistory();
+                    }
+                });
+                if (clearBtn) clearBtn.addEventListener('click', () => { clearCanvas(true); });
+                if (saveBtn) saveBtn.addEventListener('click', () => {
+                    const link = document.createElement('a');
+                    link.download = 'mandala.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+
+                canvas.addEventListener('mousedown', handleCanvasMouseDown);
+                canvas.addEventListener('mousemove', handleCanvasMouseMove);
+                canvas.addEventListener('mouseup', handleCanvasMouseUp);
+                canvas.addEventListener('mouseleave', handleCanvasMouseUp);
+                canvas.addEventListener('touchstart', handleCanvasMouseDown, { passive: false });
+                canvas.addEventListener('touchmove', handleCanvasMouseMove, { passive: false });
+                canvas.addEventListener('touchend', handleCanvasMouseUp);
+
+                window.addEventListener('resize', resizeCanvas);
+
+                resizeCanvas();
+                clearCanvas(true);
+            }
+
+            // 根據設備選擇要初始化的畫布和工具列
+            if (isMobile) {
+                initializeMandala('mandala-canvas-mobile', 'brush-size-mobile', 'color-palette-mobile', 'shape-tools-mobile', 'eraser-btn-mobile', 'symmetry-count-mobile', 'rotation-count-mobile', 'undo-btn-mobile', 'redo-btn-mobile', 'clear-btn-mobile', 'save-btn-mobile');
+            } else {
+                initializeMandala('mandala-canvas-desktop', 'brush-size-desktop', 'color-palette-grid-desktop', 'shape-tools-desktop', 'eraser-btn-desktop', 'symmetry-count-desktop', 'rotation-count-desktop', 'undo-btn-desktop', 'redo-btn-desktop', 'clear-btn-desktop', 'save-btn-desktop');
+            }
+        });
     </script>
 </body>
 </html>
