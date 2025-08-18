@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>手機旋轉範例</title>
   <style>
-    /* 基本版面 */
     body {
       margin:0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "微軟正黑體", sans-serif;
@@ -17,7 +16,6 @@
       padding:16px;
       box-sizing:border-box;
     }
-
     .card {
       width:100%;
       max-width:700px;
@@ -26,27 +24,8 @@
       box-shadow: 0 6px 24px rgba(0,0,0,0.12);
       background:linear-gradient(180deg, #fff, #f7f9fc);
     }
-
-    /* 依方向切版：直向與橫向不同排版 */
-    @media (orientation: portrait) {
-      .card h1 { font-size:22px; }
-      .layout { display:block; }
-    }
-    @media (orientation: landscape) {
-      .card h1 { font-size:26px; }
-      .layout { display:flex; gap:16px; align-items:center; }
-      .panel { flex:1; }
-    }
-
-    /* 若想在不支援鎖定的情況下「模擬」旋轉內容（選用） */
-    .rotate-warning {
-      margin-top:12px;
-      color:#8a1d1d;
-      font-weight:600;
-    }
-
     button {
-      margin-top:12px;
+      margin:6px;
       padding:10px 14px;
       border-radius:8px;
       border:none;
@@ -54,103 +33,74 @@
       cursor:pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
+    .rotate-warning {
+      margin-top:12px;
+      color:#8a1d1d;
+      font-weight:600;
+    }
   </style>
 </head>
 <body>
   <div class="card">
-    <div class="layout">
-      <div class="panel">
-        <h1 id="title">請將裝置旋轉</h1>
-        <p id="desc">偵測到目前方向：<strong id="dir">未知</strong></p>
-        <div>
-          <button id="tryLockBtn">嘗試鎖定為直向（需使用者操作）</button>
-        </div>
-        <div id="msg" class="rotate-warning" style="display:none;"></div>
-      </div>
-      <div class="panel">
-        <div style="background:#eef2ff;padding:12px;border-radius:8px;">
-          <p>此區塊示範不同方向時的版面配置。當瀏覽器/系統支援時，可使用 Screen Orientation API 嘗試鎖定方向。</p>
-        </div>
-      </div>
+    <h1 id="title">請將裝置旋轉</h1>
+    <p>目前方向：<strong id="dir">未知</strong></p>
+    <div>
+      <button id="lockPortraitBtn">轉直向</button>
+      <button id="lockLandscapeBtn">轉橫向</button>
     </div>
+    <div id="msg" class="rotate-warning" style="display:none;"></div>
   </div>
 
   <script>
     const dirEl = document.getElementById('dir');
     const msgEl = document.getElementById('msg');
     const titleEl = document.getElementById('title');
-    const tryLockBtn = document.getElementById('tryLockBtn');
+    const lockPortraitBtn = document.getElementById('lockPortraitBtn');
+    const lockLandscapeBtn = document.getElementById('lockLandscapeBtn');
 
-    // 初始顯示方向
     function updateOrientationInfo() {
       let orientation = 'unknown';
-      // 優先使用 Screen Orientation API（較現代）
       if (screen.orientation && screen.orientation.type) {
-        orientation = screen.orientation.type; // e.g. "portrait-primary", "landscape-primary"
+        orientation = screen.orientation.type;
       } else if (window.orientation !== undefined) {
-        // 傳統 window.orientation（角度數值）
         const angle = window.orientation;
         orientation = (Math.abs(angle) === 90) ? 'landscape' : 'portrait';
       } else {
-        // 從視窗尺寸簡單推斷
         orientation = (window.innerWidth > window.innerHeight) ? 'landscape' : 'portrait';
       }
       dirEl.textContent = orientation;
       titleEl.textContent = orientation.includes('portrait') ? '直向模式' : '橫向模式';
     }
 
-    // 監聽方向變化
-    if ('onorientationchange' in window) {
-      window.addEventListener('orientationchange', () => {
-        updateOrientationInfo();
-        // 你可在此處加入動畫/重新排版等邏輯
-      });
-    }
-    // Screen Orientation API 的事件（更穩定）
-    if (screen.orientation && screen.orientation.addEventListener) {
+    // 更新方向資訊
+    window.addEventListener('orientationchange', updateOrientationInfo);
+    if (screen.orientation) {
       screen.orientation.addEventListener('change', updateOrientationInfo);
     }
-
+    window.addEventListener('resize', updateOrientationInfo);
     updateOrientationInfo();
 
-    // 嘗試鎖定方向：注意需在使用者互動（按鈕、touch）後呼叫，大部分瀏覽器要求如此
-    tryLockBtn.addEventListener('click', async () => {
+    // 嘗試鎖定方向
+    async function tryLock(dir) {
       msgEl.style.display = 'none';
       try {
         if (screen.orientation && screen.orientation.lock) {
-          // 範例嘗試鎖定為直向（portrait-primary）
-          await screen.orientation.lock('portrait-primary');
+          await screen.orientation.lock(dir);
           msgEl.style.display = 'block';
           msgEl.style.color = 'green';
-          msgEl.textContent = '已嘗試鎖定為直向（若瀏覽器支援，將會鎖定）';
+          msgEl.textContent = '已嘗試鎖定為 ' + dir;
         } else {
-          throw new Error('此裝置/瀏覽器不支援 Screen Orientation API');
+          throw new Error('不支援 Screen Orientation API');
         }
       } catch (err) {
         msgEl.style.display = 'block';
         msgEl.style.color = '#8a1d1d';
-        msgEl.textContent = '無法鎖定方向：' + (err && err.message ? err.message : err);
-        // fallback: 提示使用者手動旋轉裝置
-      }
-    });
-
-    // 若需要在不支援 lock 的情況下「視覺上提示」使用者旋轉
-    function showRotateOverlayIfNeeded() {
-      const orientation = (window.innerWidth > window.innerHeight) ? 'landscape' : 'portrait';
-      // 假設你的 app 最佳化為 portrait，若目前是 landscape 就顯示提示
-      if (orientation === 'landscape') {
-        msgEl.style.display = 'block';
-        msgEl.style.color = '#8a1d1d';
-        msgEl.textContent = '建議直向瀏覽，請將手機豎直（系統未允許鎖定時）';
-      } else {
-        msgEl.style.display = 'none';
+        msgEl.textContent = '無法鎖定：' + (err.message || err);
       }
     }
-    window.addEventListener('resize', () => {
-      updateOrientationInfo();
-      showRotateOverlayIfNeeded();
-    });
-    showRotateOverlayIfNeeded();
+
+    lockPortraitBtn.addEventListener('click', () => tryLock('portrait-primary'));
+    lockLandscapeBtn.addEventListener('click', () => tryLock('landscape-primary'));
   </script>
 </body>
 </html>
