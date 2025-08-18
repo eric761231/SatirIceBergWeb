@@ -678,6 +678,12 @@
             if (orientationTestBtn) {
                 orientationTestBtn.addEventListener('click', toggleOrientationTest);
             }
+
+            // 綁定調試按鈕事件
+            const debugBtn = document.getElementById('debug-btn');
+            if (debugBtn) {
+                debugBtn.addEventListener('click', manualOrientationDetection);
+            }
         });
 
         // 支援螢幕方向 API
