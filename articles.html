@@ -9,6 +9,7 @@
         .sidebar {
             position: fixed;
             top: 0;
+             /* 問題點: 這裡已經設定了預設的隱藏位置，當 .open 類別移除時，瀏覽器會自動回到這個狀態。 */
             left: -250px;
             width: 250px;
             height: 100vh;
@@ -23,13 +24,9 @@
         }
 
         .sidebar.open {
+            /* 解決方法：只在有 .open 類別時，才定義顯示的位置。 */
+            /* 這樣當 .open 類別被移除時，會平滑地過渡回 .sidebar 中定義的 -250px 狀態。 */
             left: 0;
-        }
-
-        /* 確保側邊導航在關閉時完全隱藏 */
-        .sidebar:not(.open) {
-            left: -250px;
-            transform: translateX(0);
         }
 
         /* 調試：確保側邊導航不會超出邊界 */
