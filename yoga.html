@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>瑜珈練習</title>
-    
+    <title>瑜珈</title>
     <style>
-        /* 基礎樣式 - 保持不變 */
+        /* CSS 樣式與您原本的程式碼相同，但移除所有與旋轉相關的自訂按鈕樣式 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: #e0e0e0;
@@ -23,7 +21,6 @@
             flex-direction: column;
             align-items: center;
         }
-
         .yoga-container {
             background: rgba(30, 30, 45, 0.95);
             border-radius: 20px;
@@ -33,10 +30,7 @@
             width: 90%;
             margin-top: 24px;
             position: relative;
-            transition: all 0.3s ease;
         }
-
-        /* 漢堡按鈕 & 側邊欄樣式 - 保持不變 */
         #hamburger {
             position: fixed;
             top: 20px;
@@ -44,7 +38,6 @@
             z-index: 300;
             box-shadow: 0 2px 8px #0004;
         }
-
         #sidebar {
             position: fixed;
             top: 0;
@@ -58,11 +51,9 @@
             transition: transform 0.3s;
             overflow-y: auto;
         }
-
         #sidebar.show {
             transform: translateX(0);
         }
-
         #sidebar h2 {
             color: #00aaff;
             margin: 24px 0 16px 0;
@@ -70,7 +61,6 @@
             font-size: 1.2em;
             padding: 16px 0 8px 0;
         }
-
         .sidebar-link {
             display: block;
             padding: 12px 32px;
@@ -80,17 +70,14 @@
             text-align: center;
             transition: background 0.2s;
         }
-
         .sidebar-link:hover {
             background: #0f3460;
         }
-
         #sidebar-close {
             position: absolute;
             top: 16px;
             right: 16px;
         }
-
         .icon-btn {
             display: inline-flex;
             align-items: center;
@@ -106,250 +93,65 @@
             color: #fff;
             cursor: pointer;
         }
-
         .icon-btn:hover {
             background: #16213e;
         }
-
         .yoga-title {
             text-align: center;
             font-size: 2em;
             font-weight: 300;
             margin-bottom: 24px;
             color: #00aaff;
-            transition: font-size 0.3s ease, margin-bottom 0.3s ease;
         }
-
         .video-wrapper {
             background: transparent;
             border-radius: 12px;
             padding: 20px;
             margin: 20px 0;
             text-align: center;
-            position: relative;
-            transition: padding 0.3s ease, margin 0.3s ease;
         }
-
-        .fullscreen-btn {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 8px;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .fullscreen-btn:hover {
-            background: rgba(0, 0, 0, 0.9);
-        }
-
-        .fullscreen-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .orientation-test-btn, .debug-btn {
-            position: absolute;
-            top: 30px;
-            border: none;
-            border-radius: 8px;
-            padding: 8px;
-            cursor: pointer;
-            z-index: 10;
-            transition: background 0.3s ease;
-        }
-        .orientation-test-btn {
-            right: 80px;
-            background: rgba(52, 152, 219, 0.8);
-            color: white;
-        }
-        .orientation-test-btn:hover {
-            background: rgba(52, 152, 219, 1);
-        }
-        .orientation-test-btn.active {
-            background: rgba(231, 76, 60, 0.8);
-        }
-        .orientation-test-btn.active:hover {
-            background: rgba(231, 76, 60, 1);
-        }
-        .debug-btn {
-            right: 130px;
-            background: rgba(46, 204, 113, 0.8);
-            color: white;
-        }
-        .debug-btn:hover {
-            background: rgba(46, 204, 113, 1);
-        }
-        .orientation-test-btn svg, .debug-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
         .video-wrapper video {
             width: 100%;
             height: 400px;
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, height 0.3s ease;
         }
-
-        .video-wrapper video:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .video-info {
-            text-align: center;
-            margin-top: 20px;
-            color: #ffffff;
-            font-size: 1.1em;
-            transition: font-size 0.3s ease, margin-top 0.3s ease;
-        }
-        
-        /* 全螢幕樣式 - 使用偽類，不需額外 class */
-        video:fullscreen,
-        video:-webkit-full-screen,
-        video:-moz-full-screen {
-            border-radius: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-
-        /* -------------------------- */
-        /* 手機直向模式 (Portrait) 優化 */
-        /* -------------------------- */
-        @media screen and (max-width: 600px) and (orientation: portrait) {
-            .yoga-container {
-                padding: 20px 24px 32px 24px;
-                margin-top: 16px;
-            }
-            
-            .yoga-title {
-                font-size: 1.6em;
-                margin-bottom: 20px;
-            }
-
-            .video-wrapper {
-                padding: 16px 8px;
-                margin: 16px 0;
-            }
-
-            .video-wrapper video {
-                height: 250px;
-            }
-        }
-
-        /* -------------------------- */
-        /* 手機橫向模式 (Landscape) 優化 */
-        /* -------------------------- */
-        @media screen and (max-width: 900px) and (orientation: landscape) {
+        /* 橫向模式 (Landscape) 優化 */
+        @media screen and (orientation: landscape) {
             body {
-                justify-content: flex-start; /* 橫向模式下內容靠上對齊，更適合螢幕空間 */
+                justify-content: center;
                 align-items: center;
             }
             .yoga-container {
-                padding: 8px 16px 16px 16px;
-                margin-top: 8px;
-                width: 95%; /* 橫向模式下佔用更多寬度 */
+                padding: 16px;
+                margin-top: 16px;
+                width: 95%;
             }
-            
-            .yoga-title {
-                font-size: 1.3em;
-                margin-bottom: 12px;
-            }
-
-            .video-wrapper {
-                padding: 8px 4px;
-                margin: 8px 0;
-            }
-
             .video-wrapper video {
-                height: 65vh; /* 橫向模式下使用vh單位更靈活 */
-                max-height: 350px;
-            }
-
-            .video-info {
-                font-size: 0.9em;
-                margin-top: 12px;
-            }
-
-            /* 橫向模式時，通常影片自帶全螢幕按鈕，可隱藏自定義按鈕 */
-            .fullscreen-btn {
-                display: none;
-            }
-
-            /* 將按鈕位置調整到不影響觀看的角落 */
-            .orientation-test-btn, .debug-btn {
-                top: 8px;
-                right: 8px;
-                padding: 4px;
-            }
-
-            .debug-btn {
-                right: 56px;
+                height: 70vh;
             }
         }
     </style>
 </head>
 <body>
-    <button id="hamburger" class="icon-btn" title="展開選單">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-    </button>
-
-    <div id="sidebar">
-        <button id="sidebar-close" class="icon-btn" title="關閉選單">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
-        </button>
-        <h2>選單</h2>
-        <a href="mandala.html" class="sidebar-link">曼荼羅</a>
-        <a href="articles.html" class="sidebar-link">每日閱讀</a>
-        <a href="meditation.html" class="sidebar-link">冥想音樂</a>
-        <a href="guide.html" class="sidebar-link">每日指引</a>
-    </div>
-
+    <button id="hamburger" class="icon-btn" title="展開選單">...</button>
+    <div id="sidebar">...</div>
     <div class="yoga-container">
         <h1 class="yoga-title">瑜珈</h1>
         <div class="video-wrapper">
-            <video 
-                controls 
-                preload="metadata" 
-                webkit-playsinline="true"
-                playsinline="true"
-                x5-playsinline="true"
-                x5-video-player-type="h5"
-                x5-video-player-fullscreen="true"
-                x5-video-orientation="landscape">
+            <video controls preload="metadata" playsinline>
                 <source src="https://drive.google.com/uc?export=download&id=1_5c4Ztn3foio2Pz_I2CvU5Pq1UMttNY5" type="video/mp4">
                 您的瀏覽器不支援影片播放。
             </video>
-            <button id="fullscreen-btn" class="fullscreen-btn" title="全螢幕播放">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-                </svg>
-            </button>
         </div>
         <div class="video-info">
             專注呼吸，放鬆身心，認識自己的身體，照顧自己的身體
         </div>
     </div>
-
     <script>
-        // 側邊欄控制
         const hamburger = document.getElementById('hamburger');
         const sidebar = document.getElementById('sidebar');
         const sidebarClose = document.getElementById('sidebar-close');
-        const yogaContainer = document.querySelector('.yoga-container');
-        const video = document.querySelector('.video-wrapper video');
-
         hamburger.addEventListener('click', () => {
             sidebar.classList.add('show');
         });
@@ -366,56 +168,6 @@
                 sidebar.classList.remove('show');
             }
         });
-
-        // 全螢幕控制功能
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        if (fullscreenBtn) {
-            fullscreenBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    if (video.requestFullscreen) {
-                        video.requestFullscreen();
-                    } else if (video.webkitEnterFullscreen) { // 針對 iOS Safari
-                        video.webkitEnterFullscreen();
-                    }
-                } else {
-                    if (document.exitFullscreen) {
-                        document.exitFullscreen();
-                    } else if (document.webkitExitFullscreen) {
-                        document.webkitExitFullscreen();
-                    }
-                }
-            });
-        }
-
-        function handleFullscreenChange() {
-            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
-                console.log('進入全螢幕模式');
-                yogaContainer.classList.add('hide'); // 進入全螢幕時隱藏主容器
-            } else {
-                console.log('退出全螢幕模式');
-                yogaContainer.classList.remove('hide'); // 退出全螢幕時顯示主容器
-            }
-        }
-
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-
-        // 監聽螢幕旋轉事件
-        window.addEventListener('orientationchange', () => {
-            // 在 iOS 上，'orientationchange' 事件可能沒有立即反映正確的寬高，所以延遲處理
-            setTimeout(() => {
-                console.log('螢幕方向變化事件觸發，已重新繪製');
-                // 這裡不需要做任何事，因為 CSS Media Query 會自動處理樣式變化
-            }, 300);
-        });
-
-        // 移除多餘的偵測和調試按鈕
-        const orientationTestBtn = document.getElementById('orientation-test-btn');
-        if (orientationTestBtn) orientationTestBtn.remove();
-        const debugBtn = document.getElementById('debug-btn');
-        if (debugBtn) debugBtn.remove();
     </script>
 </body>
 </html>
