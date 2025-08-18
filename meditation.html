@@ -300,6 +300,9 @@
 
         .hamburger:hover {
             background: rgba(0, 170, 255, 1);
+        }
+
+        .hamburger:hover:not(.open) {
             transform: scale(1.1);
         }
 
@@ -311,16 +314,17 @@
             transition: all 0.3s ease;
         }
 
+        /* 漢堡按鈕轉換成 X 形狀的樣式 */
         .hamburger.open span:nth-child(1) {
-            transform: rotate(45deg) translate(5px, 5px);
+            transform: rotate(45deg) translate(4.5px, 4.5px) !important; /* 修正這裡，加上位移 */
         }
 
         .hamburger.open span:nth-child(2) {
-            opacity: 0;
+            opacity: 0 !important; /* 隱藏中間的線 */
         }
 
         .hamburger.open span:nth-child(3) {
-            transform: rotate(-45deg) translate(7px, -6px);
+            transform: rotate(-45deg) translate(4.5px, -4.5px) !important; /* 修正這裡，加上位移 */
         }
 
         /* 主要內容區域 */

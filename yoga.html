@@ -1,780 +1,367 @@
 <!doctype html>
 <html lang="zh-TW">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>瑜珈</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Microsoft JhengHei', Arial, sans-serif;
-      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-      color: #ffffff;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* 側邊導航 */
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -250px;
-      width: 250px;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.9);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: left 0.3s ease;
-      z-index: 1000;
-      padding: 20px;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-    }
-
-    .sidebar.open {
-      left: 0;
-    }
-
-    .sidebar-header {
-      text-align: center;
-      margin-bottom: 30px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .sidebar-title {
-      color: #00aaff;
-      font-size: 1.5em;
-      font-weight: bold;
-      text-align: center;
-      width: 100%;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-
-
-    .nav-menu {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .nav-item {
-      margin-bottom: 15px;
-      width: 100%;
-      text-align: center;
-      display: flex;
-      justify-content: center;
-    }
-
-    .nav-link {
-      display: inline-block;
-      color: #ffffff;
-      text-decoration: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      font-size: 1.1em;
-      min-width: 120px;
-      box-sizing: border-box;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      text-align: center;
-    }
-
-    .nav-link:hover {
-      background: rgba(0, 170, 255, 0.2);
-      color: #00aaff;
-      transform: translateX(5px);
-    }
-
-    .nav-link.active {
-      background: rgba(0, 170, 255, 0.3);
-      color: #00aaff;
-      border-left: 3px solid #00aaff;
-    }
-
-    /* 漢堡選單按鈕 */
-    .hamburger {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      width: 40px;
-      height: 40px;
-      background: rgba(0, 170, 255, 0.8);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 1001;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transition: all 0.3s ease;
-    }
-
-    .hamburger:hover {
-      background: rgba(0, 170, 255, 1);
-      transform: scale(1.1);
-    }
-
-    .hamburger span {
-      width: 20px;
-      height: 2px;
-      background: white;
-      margin: 2px 0;
-      transition: all 0.3s ease;
-    }
-
-    .hamburger.open span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-
-    .hamburger.open span:nth-child(2) {
-      opacity: 0;
-    }
-
-    .hamburger.open span:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -6px);
-    }
-
-    /* 主要內容區域 */
-    .main-content {
-      margin-left: 0;
-      padding: 80px 20px 20px;
-      transition: margin-left 0.3s ease;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-    }
-
-    .main-content.sidebar-open {
-      margin-left: 250px;
-    }
-
-    /* 標題樣式 */
-    .yoga-title {
-      color: #00aaff;
-      font-size: 2.5em;
-      font-weight: bold;
-      text-align: center;
-      margin-bottom: 30px;
-      text-shadow: 0 2px 10px rgba(0, 170, 255, 0.3);
-    }
-
-    /* 影片區域 */
-    .video-section {
-      width: 100%;
-      max-width: 800px;
-      margin-bottom: 40px;
-      text-align: center;
-    }
-
-    .video-wrapper {
-      position: relative;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      background: #000;
-    }
-
-    .video-wrapper video {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 15px;
-    }
-
-    /* 影片控制按鈕 */
-    .video-controls {
-      margin: 20px 0;
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .control-btn {
-      background: rgba(0, 170, 255, 0.8);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 20px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 1em;
-      transition: all 0.3s ease;
-      min-width: 100px;
-    }
-
-    .control-btn:hover {
-      background: rgba(0, 170, 255, 1);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4);
-    }
-
-    .control-btn:active {
-      transform: translateY(0);
-    }
-
-    /* 旋轉功能區域 */
-    .rotation-section {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 30px;
-      margin: 20px 0;
-      text-align: center;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      max-width: 600px;
-      width: 100%;
-    }
-
-    .rotation-title {
-      color: #00aaff;
-      font-size: 1.8em;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-
-    .rotation-info {
-      background: rgba(0, 170, 255, 0.1);
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
-      border-left: 4px solid #00aaff;
-    }
-
-    .rotation-info h3 {
-      color: #00aaff;
-      margin-bottom: 15px;
-      font-size: 1.2em;
-    }
-
-    .rotation-info p {
-      margin: 8px 0;
-      font-size: 1em;
-      color: #e0e0e0;
-    }
-
-    .current-orientation {
-      font-size: 1.3em;
-      margin: 20px 0;
-      color: #ffffff;
-    }
-
-    .current-orientation strong {
-      color: #00aaff;
-      font-size: 1.2em;
-    }
-
-    /* 旋轉按鈕 */
-    .rotation-btn {
-      background: linear-gradient(135deg, #00aaff, #0088cc);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 15px 30px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1.2em;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0, 170, 255, 0.3);
-      min-width: 200px;
-    }
-
-    .rotation-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 170, 255, 0.5);
-    }
-
-    .rotation-btn:active {
-      transform: translateY(-1px);
-    }
-
-    .rotation-btn.landscape {
-      background: linear-gradient(135deg, #ff6b6b, #ee5a52);
-    }
-
-    /* 狀態指示器 */
-    .status-indicator {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 10px;
-    }
-
-    .status-success { background: #28a745; }
-    .status-warning { background: #ffc107; }
-    .status-error { background: #dc3545; }
-
-    /* 響應式設計 */
-    @media (max-width: 768px) {
-      .sidebar {
-        width: 100%;
-        left: -100%;
-      }
-
-      .main-content.sidebar-open {
-        margin-left: 0;
-      }
-
-      .yoga-title {
-        font-size: 2em;
-        margin-bottom: 20px;
-      }
-
-      .rotation-section {
-        padding: 20px;
-        margin: 15px 0;
-      }
-
-      .rotation-title {
-        font-size: 1.5em;
-      }
-
-      .video-controls {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .control-btn {
-        width: 100%;
-        max-width: 300px;
-      }
-
-      .rotation-btn {
-        width: 100%;
-        max-width: 300px;
-        font-size: 1.1em;
-        padding: 12px 20px;
-      }
-    }
-
-    /* 手機橫向模式優化 */
-    @media screen and (max-width: 768px) and (orientation: landscape) {
-      .main-content {
-        padding: 60px 15px 15px;
-      }
-
-      .yoga-title {
-        font-size: 1.8em;
-        margin-bottom: 15px;
-      }
-
-      .video-section {
-        margin-bottom: 25px;
-      }
-
-      .video-wrapper video {
-        max-height: 50vh;
-      }
-
-      .rotation-section {
-        padding: 15px;
-        margin: 10px 0;
-      }
-
-      .rotation-title {
-        font-size: 1.3em;
-        margin-bottom: 15px;
-      }
-
-      .rotation-info {
-        padding: 15px;
-        margin: 15px 0;
-      }
-
-      .rotation-btn {
-        padding: 10px 20px;
-        font-size: 1em;
-      }
-    }
-
-    /* 額外的橫向模式檢測 */
-    @media screen and (max-height: 500px) and (orientation: landscape) {
-      .main-content {
-        padding: 50px 10px 10px;
-      }
-
-      .yoga-title {
-        font-size: 1.5em;
-        margin-bottom: 10px;
-      }
-
-      .video-wrapper video {
-        max-height: 40vh;
-      }
-
-      .rotation-section {
-        padding: 10px;
-        margin: 8px 0;
-      }
-
-      .rotation-title {
-        font-size: 1.2em;
-        margin-bottom: 10px;
-      }
-    }
-
-    /* 側邊欄背景遮罩 */
-    .sidebar-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .sidebar-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-    /* 視覺隱藏 (螢幕閱讀器專用) */
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      border: 0;
-    }
-  </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>瑜珈</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 側邊導航 */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-title {
+            color: #00aaff;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nav-item {
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-link {
+            display: inline-block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+            min-width: 120px;
+            box-sizing: border-box;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            text-align: center;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 170, 255, 0.2);
+            color: #00aaff;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(0, 170, 255, 0.3);
+            color: #00aaff;
+            border-left: 3px solid #00aaff;
+        }
+
+        /* 漢堡選單按鈕 */
+        .hamburger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 170, 255, 0.8);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger:hover {
+            background: rgba(0, 170, 255, 1);
+        }
+
+        .hamburger:hover:not(.open) {
+            transform: scale(1.1);
+        }
+
+        .hamburger span {
+            width: 20px;
+            height: 2px;
+            background: white;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* 漢堡按鈕轉換成 X 形狀的樣式 */
+        .hamburger.open span:nth-child(1) {
+            transform: rotate(45deg) translate(4.5px, 4.5px);
+        }
+
+        .hamburger.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(4.5px, -4.5px);
+        }
+
+        /* 主要內容區域 */
+        .main-content {
+            margin-left: 0;
+            padding: 80px 20px 20px;
+            transition: margin-left 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .main-content.sidebar-open {
+            margin-left: 250px;
+        }
+
+        /* 標題樣式 */
+        .yoga-title {
+            color: #00aaff;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 10px rgba(0, 170, 255, 0.3);
+        }
+
+        /* 影片區域 */
+        .video-section {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .video-wrapper {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            background: #000;
+        }
+
+        .video-wrapper iframe {
+            width: 100%;
+            height: 450px; /* 確保 iframe 有固定高度 */
+            display: block;
+        }
+
+        /* 影片控制按鈕 */
+        .video-controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: rgba(0, 170, 255, 0.8);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 170, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 170, 255, 0.4);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 旋轉功能區域 (為避免混淆，此版本已移除) */
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+
+            .yoga-title {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+
+            .video-wrapper iframe {
+                height: 250px; /* 手機版調整 iframe 高度 */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .video-wrapper iframe {
+                height: 200px; /* 更小的螢幕調整高度 */
+            }
+        }
+
+        /* 側邊欄背景遮罩 */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 視覺隱藏 (螢幕閱讀器專用) */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+    </style>
 </head>
 <body>
-  <!-- 側邊導航 -->
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-title">選單</div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-title">選單</div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="meditation.html" class="nav-link">冥想音樂</a>
+            </li>
+            <li class="nav-item">
+                <a href="articles.html" class="nav-link">每日閱讀</a>
+            </li>
+            <li class="nav-item">
+                <a href="mandala.html" class="nav-link">曼荼羅</a>
+            </li>
+            <li class="nav-item">
+                <a href="guide.html" class="nav-link">每日指引</a>
+            </li>
+        </ul>
     </div>
-    <ul class="nav-menu">
-      <li class="nav-item">
-        <a href="meditation.html" class="nav-link">冥想音樂</a>
-      </li>
-      <li class="nav-item">
-        <a href="articles.html" class="nav-link">每日閱讀</a>
-      </li>
-      <li class="nav-item">
-        <a href="mandala.html" class="nav-link">曼荼羅</a>
-      </li>
-      <li class="nav-item">
-        <a href="guide.html" class="nav-link">每日指引</a>
-      </li>
-    </ul>
-  </div>
 
-  <!-- 側邊欄背景遮罩 -->
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- 漢堡選單按鈕 -->
-  <button class="hamburger" id="hamburger">
-    <span></span>
-    <span></span>
-    <span></span>
-  </button>
+    <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
 
-  <!-- 主要內容 -->
-  <div class="main-content" id="mainContent">
-    <h1 class="yoga-title">瑜珈</h1>
-    
-    <!-- 影片播放區域 -->
-    <div class="video-section">
-      <div class="video-wrapper">
-        <video 
-          id="yoga-video"
-          controls 
-          preload="metadata"
-          webkit-playsinline="true"
-          playsinline="true"
-          x5-playsinline="true"
-          x5-video-player-type="h5"
-          x5-video-player-fullscreen="true"
-          x5-video-orientation="landscape">
-          <source src="https://drive.google.com/uc?export=download&id=1_5c4Ztn3foio2Pz_I2CvU5Pq1UMttNY5" type="video/mp4">
-          您的瀏覽器不支援影片播放。
-        </video>
-      </div>
-      
-      <div class="video-controls">
-        <button class="control-btn" id="play-btn">播放</button>
-        <button class="control-btn" id="fullscreen-btn">全螢幕</button>
-        <button class="control-btn" id="mute-btn">靜音</button>
-      </div>
+    <div class="main-content" id="mainContent">
+        <h1 class="yoga-title">瑜珈</h1>
+
+        <div class="video-section">
+            <div class="video-wrapper">
+                <iframe src="https://player.vimeo.com/video/1110943674?context=Vimeo%5CController%5CApi%5CResources%5CVideoController.&h=68ee1b08d5&s=9de4424b8d07e0c179240946f84bfc0cc93c8bf3_1755621813"
+                    width="100%"
+                    height="100%"
+                    frameborder="0"
+                    allow="autoplay; fullscreen"
+                    allowfullscreen
+                ></iframe>
+            </div>
+            <div class="video-controls">
+                <p style="color: #00aaff; font-size: 1.2em; text-align: center;">請使用影片播放器上的控制項</p>
+            </div>
+        </div>
     </div>
-    
-    <!-- 旋轉功能區域 -->
-    <div class="rotation-section">
-      <h2 class="rotation-title">螢幕旋轉功能</h2>
-      
-      <div class="current-orientation">
-        目前方向：<strong id="currentOrientation">檢測中...</strong>
-      </div>
-      
-      <div class="rotation-info">
-        <h3>裝置信息</h3>
-        <p><span id="deviceInfo">檢測中...</span></p>
-        <p><span id="screenSize">螢幕尺寸: 檢測中...</span></p>
-        <p><span id="orientationSupport">方向檢測支援: 檢測中...</span></p>
-      </div>
-      
-      <button class="rotation-btn" id="rotationBtn">切換橫向模式</button>
-    </div>
-  </div>
 
-<script>
-// 側邊欄控制
-const sidebar = document.getElementById('sidebar');
-const hamburger = document.getElementById('hamburger');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
-const mainContent = document.getElementById('mainContent');
+    <script>
+        // 側邊欄控制
+        const sidebar = document.getElementById('sidebar');
+        const hamburger = document.getElementById('hamburger');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const mainContent = document.getElementById('mainContent');
 
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            hamburger.classList.toggle('open');
+            sidebarOverlay.classList.toggle('active');
+            mainContent.classList.toggle('sidebar-open');
+        }
 
-function toggleSidebar() {
-  sidebar.classList.toggle('open');
-  hamburger.classList.toggle('open');
-  sidebarOverlay.classList.toggle('active');
-  mainContent.classList.toggle('sidebar-open');
-}
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            hamburger.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            mainContent.classList.remove('sidebar-open');
+        }
 
-function closeSidebar() {
-  sidebar.classList.remove('open');
-  hamburger.classList.remove('open');
-  sidebarOverlay.classList.remove('active');
-  mainContent.classList.remove('sidebar-open');
-}
-
-hamburger.addEventListener('click', toggleSidebar);
-sidebarOverlay.addEventListener('click', closeSidebar);
-
-
-// 影片控制
-const video = document.getElementById('yoga-video');
-const playBtn = document.getElementById('play-btn');
-const fullscreenBtn = document.getElementById('fullscreen-btn');
-const muteBtn = document.getElementById('mute-btn');
-
-function togglePlay() {
-  if (video.paused) {
-    video.play();
-    playBtn.textContent = '暫停';
-  } else {
-    video.pause();
-    playBtn.textContent = '播放';
-  }
-}
-
-function toggleMute() {
-  video.muted = !video.muted;
-  muteBtn.textContent = video.muted ? '取消靜音' : '靜音';
-}
-
-async function toggleFullscreen() {
-  try {
-    if (!document.fullscreenElement) {
-      if (video.requestFullscreen) {
-        await video.requestFullscreen();
-      } else if (video.webkitRequestFullscreen) {
-        await video.webkitRequestFullscreen();
-      } else if (video.msRequestFullscreen) {
-        await video.msRequestFullscreen();
-      } else if (video.mozRequestFullScreen) {
-        await video.mozRequestFullScreen();
-      }
-      fullscreenBtn.textContent = '退出全螢幕';
-    } else {
-      if (document.exitFullscreen) {
-        await document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        await document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        await document.msExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        await document.mozCancelFullScreen();
-      }
-      fullscreenBtn.textContent = '全螢幕';
-    }
-  } catch (err) {
-    console.error('全螢幕切換失敗:', err);
-  }
-}
-
-// 旋轉功能
-const currentOrientationEl = document.getElementById('currentOrientation');
-const deviceInfoEl = document.getElementById('deviceInfo');
-const screenSizeEl = document.getElementById('screenSize');
-const orientationSupportEl = document.getElementById('orientationSupport');
-const rotationBtn = document.getElementById('rotationBtn');
-
-let isLandscapeMode = false;
-
-function isIOS() {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-}
-
-function isAndroid() {
-  return /Android/.test(navigator.userAgent);
-}
-
-function isMobile() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-}
-
-function updateOrientationInfo() {
-  let orientation = "未知";
-  let supportInfo = "";
-  
-  if (screen.orientation && screen.orientation.type) {
-    orientation = screen.orientation.type;
-    supportInfo = `<span class="status-indicator status-success"></span>Screen Orientation API 支援`;
-  } else if ('orientation' in window) {
-    orientation = window.orientation === 0 ? "portrait" : "landscape";
-    supportInfo = `<span class="status-indicator status-success"></span>orientationchange 事件支援`;
-  } else {
-    orientation = (window.innerWidth > window.innerHeight) ? "landscape" : "portrait";
-    supportInfo = `<span class="status-indicator status-warning"></span>使用視窗尺寸判斷`;
-  }
-  
-  currentOrientationEl.textContent = orientation;
-  
-  const deviceType = isIOS() ? "iOS" : isAndroid() ? "Android" : isMobile() ? "移動裝置" : "桌面";
-  deviceInfoEl.innerHTML = `<span class="status-indicator status-success"></span>${deviceType}: ${navigator.userAgent.split('(')[1]?.split(')')[0] || '未知'}`;
-  
-  screenSizeEl.innerHTML = `<span class="status-indicator status-success"></span>視窗: ${window.innerWidth} × ${window.innerHeight} | 螢幕: ${screen.width} × ${screen.height}`;
-  orientationSupportEl.innerHTML = supportInfo;
-}
-
-function toggleLandscapeMode() {
-  isLandscapeMode = !isLandscapeMode;
-  
-  if (isLandscapeMode) {
-    rotationBtn.textContent = '恢復直向模式';
-    rotationBtn.classList.add('landscape');
-    
-    // 強制應用橫向樣式
-    document.body.style.overflow = 'hidden';
-    mainContent.style.transform = 'rotate(90deg)';
-    mainContent.style.width = '100vh';
-    mainContent.style.height = '100vw';
-    mainContent.style.position = 'fixed';
-    mainContent.style.top = '0';
-    mainContent.style.left = '0';
-  } else {
-    rotationBtn.textContent = '切換橫向模式';
-    rotationBtn.classList.remove('landscape');
-    
-    // 恢復正常樣式
-    document.body.style.overflow = '';
-    mainContent.style.transform = '';
-    mainContent.style.width = '';
-    mainContent.style.height = '';
-    mainContent.style.position = '';
-    mainContent.style.top = '';
-    mainContent.style.left = '';
-  }
-}
-
-// 事件監聽
-playBtn.addEventListener('click', togglePlay);
-muteBtn.addEventListener('click', toggleMute);
-fullscreenBtn.addEventListener('click', toggleFullscreen);
-rotationBtn.addEventListener('click', toggleLandscapeMode);
-
-video.addEventListener('play', () => {
-  playBtn.textContent = '暫停';
-});
-
-video.addEventListener('pause', () => {
-  playBtn.textContent = '播放';
-});
-
-video.addEventListener('ended', () => {
-  playBtn.textContent = '播放';
-});
-
-document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) {
-    fullscreenBtn.textContent = '全螢幕';
-  }
-});
-
-document.addEventListener('webkitfullscreenchange', () => {
-  if (!document.webkitFullscreenElement) {
-    fullscreenBtn.textContent = '全螢幕';
-  }
-});
-
-// 方向檢測事件
-window.addEventListener("resize", updateOrientationInfo);
-window.addEventListener("orientationchange", () => {
-  setTimeout(updateOrientationInfo, 100);
-});
-
-if (screen.orientation) {
-  screen.orientation.addEventListener("change", updateOrientationInfo);
-}
-
-// 初始化
-updateOrientationInfo();
-
-// 頁面載入完成
-document.addEventListener('DOMContentLoaded', () => {
-  updateOrientationInfo();
-  
-  if (isIOS()) {
-    console.log('檢測到 iOS 裝置');
-  }
-  
-  video.addEventListener('loadeddata', () => {
-    console.log('影片載入成功');
-  });
-  
-  video.addEventListener('error', () => {
-    console.log('影片載入失敗');
-  });
-});
-
-// 定期檢查狀態變化
-setInterval(() => {
-  const currentWidth = window.innerWidth;
-  const currentHeight = window.innerHeight;
-  
-  if (Math.abs(currentWidth - window.lastWidth) > 20 || 
-      Math.abs(currentHeight - window.lastHeight) > 20) {
-    updateOrientationInfo();
-    window.lastWidth = currentWidth;
-    window.lastHeight = currentHeight;
-  }
-}, 500);
-
-// 頁面可見性變化檢測
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) {
-    setTimeout(updateOrientationInfo, 200);
-  }
-});
-</script>
+        hamburger.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+    </script>
 </body>
 </html>
-
