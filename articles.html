@@ -9,7 +9,7 @@
         .sidebar {
             position: fixed;
             top: 0;
-            left: -300px;
+            left: -250px;
             width: 250px;
             height: 100vh;
             background: rgba(0, 0, 0, 0.9);
@@ -28,7 +28,7 @@
 
         /* 確保側邊導航在關閉時完全隱藏 */
         .sidebar:not(.open) {
-            left: -300px;
+            left: -250px;
             transform: translateX(0);
         }
 
@@ -345,6 +345,34 @@
 
             .articles-slider {
                 margin-top: 20px;
+                height: 400px;
+            }
+
+            .article-content {
+                padding: 20px 15px;
+                min-width: 280px;
+                max-width: 100%;
+            }
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                left: -100%;
+            }
+
+            .main-content.sidebar-open {
+                margin-left: 0;
+            }
+
+            .articles-container {
+                padding: 15px;
+                margin-top: 15px;
+            }
+
+            .articles-slider {
+                margin-top: 15px;
                 height: 400px;
             }
 
