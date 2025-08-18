@@ -1,173 +1,156 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>瑜珈</title>
-    <style>
-        /* CSS 樣式與您原本的程式碼相同，但移除所有與旋轉相關的自訂按鈕樣式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .yoga-container {
-            background: rgba(30, 30, 45, 0.95);
-            border-radius: 20px;
-            padding: 28px 40px 40px 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            max-width: 800px;
-            width: 90%;
-            margin-top: 24px;
-            position: relative;
-        }
-        #hamburger {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 300;
-            box-shadow: 0 2px 8px #0004;
-        }
-        #sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 240px;
-            height: 100vh;
-            background: #16213e;
-            box-shadow: 2px 0 16px #0006;
-            z-index: 200;
-            transform: translateX(-100%);
-            transition: transform 0.3s;
-            overflow-y: auto;
-        }
-        #sidebar.show {
-            transform: translateX(0);
-        }
-        #sidebar h2 {
-            color: #00aaff;
-            margin: 24px 0 16px 0;
-            text-align: center;
-            font-size: 1.2em;
-            padding: 16px 0 8px 0;
-        }
-        .sidebar-link {
-            display: block;
-            padding: 12px 32px;
-            color: #fff;
-            font-size: 1.1em;
-            text-decoration: none;
-            text-align: center;
-            transition: background 0.2s;
-        }
-        .sidebar-link:hover {
-            background: #0f3460;
-        }
-        #sidebar-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-        }
-        .icon-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            background: transparent;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-            border: 1px solid rgba(255,255,255,0.12);
-            transition: background 0.2s, box-shadow 0.2s;
-            padding: 0;
-            color: #fff;
-            cursor: pointer;
-        }
-        .icon-btn:hover {
-            background: #16213e;
-        }
-        .yoga-title {
-            text-align: center;
-            font-size: 2em;
-            font-weight: 300;
-            margin-bottom: 24px;
-            color: #00aaff;
-        }
-        .video-wrapper {
-            background: transparent;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
-            text-align: center;
-        }
-        .video-wrapper video {
-            width: 100%;
-            height: 400px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        /* 橫向模式 (Landscape) 優化 */
-        @media screen and (orientation: landscape) {
-            body {
-                justify-content: center;
-                align-items: center;
-            }
-            .yoga-container {
-                padding: 16px;
-                margin-top: 16px;
-                width: 95%;
-            }
-            .video-wrapper video {
-                height: 70vh;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>手機旋轉範例</title>
+  <style>
+    /* 基本版面 */
+    body {
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", "微軟正黑體", sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      text-align:center;
+      padding:16px;
+      box-sizing:border-box;
+    }
+
+    .card {
+      width:100%;
+      max-width:700px;
+      border-radius:12px;
+      padding:24px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+      background:linear-gradient(180deg, #fff, #f7f9fc);
+    }
+
+    /* 依方向切版：直向與橫向不同排版 */
+    @media (orientation: portrait) {
+      .card h1 { font-size:22px; }
+      .layout { display:block; }
+    }
+    @media (orientation: landscape) {
+      .card h1 { font-size:26px; }
+      .layout { display:flex; gap:16px; align-items:center; }
+      .panel { flex:1; }
+    }
+
+    /* 若想在不支援鎖定的情況下「模擬」旋轉內容（選用） */
+    .rotate-warning {
+      margin-top:12px;
+      color:#8a1d1d;
+      font-weight:600;
+    }
+
+    button {
+      margin-top:12px;
+      padding:10px 14px;
+      border-radius:8px;
+      border:none;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+  </style>
 </head>
 <body>
-    <button id="hamburger" class="icon-btn" title="展開選單">...</button>
-    <div id="sidebar">...</div>
-    <div class="yoga-container">
-        <h1 class="yoga-title">瑜珈</h1>
-        <div class="video-wrapper">
-            <video controls preload="metadata" playsinline>
-                <source src="https://drive.google.com/uc?export=download&id=1_5c4Ztn3foio2Pz_I2CvU5Pq1UMttNY5" type="video/mp4">
-                您的瀏覽器不支援影片播放。
-            </video>
+  <div class="card">
+    <div class="layout">
+      <div class="panel">
+        <h1 id="title">請將裝置旋轉</h1>
+        <p id="desc">偵測到目前方向：<strong id="dir">未知</strong></p>
+        <div>
+          <button id="tryLockBtn">嘗試鎖定為直向（需使用者操作）</button>
         </div>
-        <div class="video-info">
-            專注呼吸，放鬆身心，認識自己的身體，照顧自己的身體
+        <div id="msg" class="rotate-warning" style="display:none;"></div>
+      </div>
+      <div class="panel">
+        <div style="background:#eef2ff;padding:12px;border-radius:8px;">
+          <p>此區塊示範不同方向時的版面配置。當瀏覽器/系統支援時，可使用 Screen Orientation API 嘗試鎖定方向。</p>
         </div>
+      </div>
     </div>
-    <script>
-        const hamburger = document.getElementById('hamburger');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarClose = document.getElementById('sidebar-close');
-        hamburger.addEventListener('click', () => {
-            sidebar.classList.add('show');
-        });
-        sidebarClose.addEventListener('click', () => {
-            sidebar.classList.remove('show');
-        });
-        document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-                sidebar.classList.remove('show');
-            }
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                sidebar.classList.remove('show');
-            }
-        });
-    </script>
+  </div>
+
+  <script>
+    const dirEl = document.getElementById('dir');
+    const msgEl = document.getElementById('msg');
+    const titleEl = document.getElementById('title');
+    const tryLockBtn = document.getElementById('tryLockBtn');
+
+    // 初始顯示方向
+    function updateOrientationInfo() {
+      let orientation = 'unknown';
+      // 優先使用 Screen Orientation API（較現代）
+      if (screen.orientation && screen.orientation.type) {
+        orientation = screen.orientation.type; // e.g. "portrait-primary", "landscape-primary"
+      } else if (window.orientation !== undefined) {
+        // 傳統 window.orientation（角度數值）
+        const angle = window.orientation;
+        orientation = (Math.abs(angle) === 90) ? 'landscape' : 'portrait';
+      } else {
+        // 從視窗尺寸簡單推斷
+        orientation = (window.innerWidth > window.innerHeight) ? 'landscape' : 'portrait';
+      }
+      dirEl.textContent = orientation;
+      titleEl.textContent = orientation.includes('portrait') ? '直向模式' : '橫向模式';
+    }
+
+    // 監聽方向變化
+    if ('onorientationchange' in window) {
+      window.addEventListener('orientationchange', () => {
+        updateOrientationInfo();
+        // 你可在此處加入動畫/重新排版等邏輯
+      });
+    }
+    // Screen Orientation API 的事件（更穩定）
+    if (screen.orientation && screen.orientation.addEventListener) {
+      screen.orientation.addEventListener('change', updateOrientationInfo);
+    }
+
+    updateOrientationInfo();
+
+    // 嘗試鎖定方向：注意需在使用者互動（按鈕、touch）後呼叫，大部分瀏覽器要求如此
+    tryLockBtn.addEventListener('click', async () => {
+      msgEl.style.display = 'none';
+      try {
+        if (screen.orientation && screen.orientation.lock) {
+          // 範例嘗試鎖定為直向（portrait-primary）
+          await screen.orientation.lock('portrait-primary');
+          msgEl.style.display = 'block';
+          msgEl.style.color = 'green';
+          msgEl.textContent = '已嘗試鎖定為直向（若瀏覽器支援，將會鎖定）';
+        } else {
+          throw new Error('此裝置/瀏覽器不支援 Screen Orientation API');
+        }
+      } catch (err) {
+        msgEl.style.display = 'block';
+        msgEl.style.color = '#8a1d1d';
+        msgEl.textContent = '無法鎖定方向：' + (err && err.message ? err.message : err);
+        // fallback: 提示使用者手動旋轉裝置
+      }
+    });
+
+    // 若需要在不支援 lock 的情況下「視覺上提示」使用者旋轉
+    function showRotateOverlayIfNeeded() {
+      const orientation = (window.innerWidth > window.innerHeight) ? 'landscape' : 'portrait';
+      // 假設你的 app 最佳化為 portrait，若目前是 landscape 就顯示提示
+      if (orientation === 'landscape') {
+        msgEl.style.display = 'block';
+        msgEl.style.color = '#8a1d1d';
+        msgEl.textContent = '建議直向瀏覽，請將手機豎直（系統未允許鎖定時）';
+      } else {
+        msgEl.style.display = 'none';
+      }
+    }
+    window.addEventListener('resize', () => {
+      updateOrientationInfo();
+      showRotateOverlayIfNeeded();
+    });
+    showRotateOverlayIfNeeded();
+  </script>
 </body>
 </html>
