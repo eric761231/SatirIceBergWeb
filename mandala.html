@@ -215,8 +215,6 @@
             text-align: center;
         }
 
-
-
         .content-container-desktop {
             flex-grow: 1;
             display: flex;
@@ -271,88 +269,7 @@
             flex-wrap: wrap;
         }
 
-        /* -------------------- 手機佈局 -------------------- */
-        .app-container-mobile {
-            display: none;
-            flex-direction: column;
-            min-height: 100vh;
-        }
 
-        .header-mobile {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .mandala-title-mobile-container {
-            text-align: center;
-            flex-grow: 1;
-            padding-right: 40px;
-        }
-
-        .tools-section-mobile {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: #20263c;
-            border-top: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px 20px 0 0;
-            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
-            z-index: 5;
-            transition: transform 0.3s ease-in-out;
-            transform: translateY(calc(100% - 60px));
-        }
-
-        .tools-section-mobile.open {
-            transform: translateY(0);
-        }
-
-        .tools-title-mobile {
-            color: #FF9800;
-            font-size: 1.2em;
-            font-weight: bold;
-            padding: 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .tools-title-mobile svg {
-            width: 20px;
-            height: 20px;
-            margin-left: 10px;
-            transition: transform 0.3s ease;
-        }
-
-        .tools-section-mobile.open .tools-title-mobile svg {
-            transform: rotate(180deg);
-        }
-
-        .tools-content-mobile {
-            display: flex;
-            flex-direction: column;
-            padding: 0 20px 20px;
-            gap: 15px;
-        }
-
-        .toolbar-group-mobile {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .toolbar-row-mobile {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
 
         /* -------------------- 通用樣式 (同時適用於兩種佈局) -------------------- */
         .mandala-title {
@@ -508,40 +425,8 @@
             font-size: 0.8em;
         }
         
-        /* 針對行動版工具列排版做調整 */
+        /* 側邊欄響應式設計 */
         @media (max-width: 768px) {
-            .tools-section-mobile {
-                transform: translateY(0); /* 預設展開 */
-                padding: 15px;
-            }
-            .tools-title-mobile {
-                display: none; /* 隱藏收合按鈕 */
-            }
-            .tools-content-mobile {
-                padding: 0;
-            }
-            .toolbar-group-mobile {
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                gap: 20px;
-                padding-bottom: 15px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            .toolbar-group-mobile:last-child {
-                border-bottom: none;
-            }
-            .toolbar-group-title {
-                margin-bottom: 0;
-                font-size: 0.9em;
-                width: 70px; /* 固定標題寬度 */
-            }
-            .toolbar-row-mobile {
-                justify-content: flex-start;
-                flex-wrap: nowrap;
-            }
-
-            /* 側邊欄響應式設計 */
             .sidebar {
                 width: 100%;
                 left: -100%;
@@ -549,11 +434,6 @@
 
             .main-content.sidebar-open {
                 margin-left: 0;
-            }
-
-            .app-container-desktop {
-                padding: 20px;
-                margin-top: 20px;
             }
 
             .mandala-title {
@@ -566,285 +446,7 @@
             }
         }
 
-        /* 手機橫向模式優化 */
-        @media screen and (max-width: 768px) and (orientation: landscape) {
-            .main-content {
-                padding: 60px 15px 15px;
-            }
 
-            .app-container-desktop {
-                padding: 15px;
-                margin-top: 15px;
-            }
-
-            .mandala-title {
-                font-size: 1.5em;
-                margin-bottom: 8px;
-            }
-
-            .mandala-subtitle {
-                font-size: 0.9em;
-            }
-
-            /* 手機橫向模式下的強制橫向樣式 */
-            .force-landscape {
-                transform: rotate(90deg);
-                transform-origin: center center;
-                width: 100vh !important;
-                height: 100vw !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                overflow: hidden;
-            }
-
-            .force-landscape .app-container-desktop {
-                transform: rotate(90deg);
-                transform-origin: center center;
-                width: 100vh;
-                height: 100vw;
-                position: relative;
-            }
-
-            /* 手機橫向模式下的工具列優化 - 重新設計佈局 */
-            .force-landscape .tools-section-desktop {
-                position: fixed;
-                top: 10px;
-                right: 10px;
-                z-index: 1000;
-                background: rgba(0, 0, 0, 0.9);
-                border-radius: 10px;
-                padding: 8px;
-                backdrop-filter: blur(10px);
-                transform: rotate(90deg);
-                transform-origin: center center;
-                max-width: 50vh;
-                max-height: 70vh;
-                overflow-y: auto;
-                display: flex;
-                flex-direction: column;
-                gap: 5px;
-                border: 2px solid rgba(0, 170, 255, 0.3);
-            }
-
-            .force-landscape .canvas-area {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%) rotate(90deg);
-                transform-origin: center center;
-                width: calc(100vh - 100px);
-                height: calc(100vw - 100px);
-                z-index: 100;
-                background: var(--tool-bg-color);
-                border-radius: 15px;
-                padding: 20px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-                border: 2px solid rgba(255, 255, 255, 0.1);
-            }
-
-            /* 手機橫向模式下的標題和副標題優化 */
-            .force-landscape .mandala-title {
-                font-size: 1.2em;
-                margin-bottom: 5px;
-                text-align: center;
-            }
-
-            .force-landscape .mandala-subtitle {
-                font-size: 0.8em;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-
-            /* 手機橫向模式下的工具組優化 - 更緊湊的佈局 */
-            .force-landscape .toolbar-group-desktop {
-                min-width: auto;
-                margin-bottom: 5px;
-                padding: 3px;
-                border: none;
-                background: rgba(255, 255, 255, 0.05);
-                border-radius: 5px;
-            }
-
-            .force-landscape .toolbar-group-title {
-                font-size: 0.7em;
-                margin-bottom: 3px;
-                color: var(--main-color);
-            }
-
-            .force-landscape .toolbar-group-content {
-                gap: 3px;
-            }
-
-            /* 手機橫向模式下的顏色調色盤優化 */
-            .force-landscape .color-palette-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 3px;
-                max-width: 80px;
-            }
-
-            /* 手機橫向模式下的按鈕優化 */
-            .force-landscape .icon-btn {
-                width: 28px;
-                height: 28px;
-            }
-
-            .force-landscape .color-btn-small {
-                width: 18px;
-                height: 18px;
-            }
-
-            /* 手機橫向模式下的滑桿和選擇器優化 */
-            .force-landscape input[type="range"] {
-                width: 60px;
-                height: 4px;
-            }
-
-            .force-landscape select {
-                font-size: 0.7em;
-                padding: 1px 3px;
-            }
-
-            .force-landscape .slider-label label {
-                font-size: 0.7em;
-                margin-bottom: 1px;
-            }
-
-            /* 手機小螢幕橫向模式特殊優化 */
-            .force-landscape .tools-section-desktop.small-screen {
-                top: 5px;
-                right: 5px;
-                padding: 5px;
-                max-width: 45vh;
-                max-height: 65vh;
-            }
-
-            .force-landscape .canvas-area.small-screen {
-                width: calc(100vh - 80px);
-                height: calc(100vw - 80px);
-                padding: 15px;
-            }
-
-            .force-landscape .mandala-title.small-screen {
-                font-size: 1em;
-                margin-bottom: 3px;
-            }
-
-            .force-landscape .mandala-subtitle.small-screen {
-                font-size: 0.7em;
-                margin-bottom: 8px;
-            }
-
-            .force-landscape .toolbar-group-desktop.small-screen {
-                margin-bottom: 3px;
-                padding: 2px;
-            }
-
-            .force-landscape .toolbar-group-title.small-screen {
-                font-size: 0.6em;
-                margin-bottom: 2px;
-            }
-
-            .force-landscape .color-palette-grid.small-screen {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 2px;
-                max-width: 60px;
-            }
-
-            .force-landscape .icon-btn.small-screen {
-                width: 24px;
-                height: 24px;
-            }
-
-            .force-landscape .color-btn-small.small-screen {
-                width: 16px;
-                height: 16px;
-            }
-
-            .force-landscape input[type="range"].small-screen {
-                width: 50px;
-                height: 3px;
-            }
-
-            .force-landscape select.small-screen {
-                font-size: 0.6em;
-                padding: 1px 2px;
-            }
-
-            /* 手機大螢幕橫向模式特殊優化 */
-            .force-landscape .tools-section-desktop.large-screen {
-                top: 15px;
-                right: 15px;
-                padding: 12px;
-                max-width: 60vh;
-                max-height: 80vh;
-            }
-
-            .force-landscape .canvas-area.large-screen {
-                width: calc(100vh - 150px);
-                height: calc(100vw - 150px);
-                padding: 25px;
-            }
-
-            .force-landscape .mandala-title.large-screen {
-                font-size: 1.4em;
-                margin-bottom: 6px;
-            }
-
-            .force-landscape .mandala-subtitle.large-screen {
-                font-size: 0.9em;
-                margin-bottom: 12px;
-            }
-
-            .force-landscape .toolbar-group-desktop.large-screen {
-                margin-bottom: 6px;
-                padding: 4px;
-            }
-
-            .force-landscape .toolbar-group-title.large-screen {
-                font-size: 0.8em;
-                margin-bottom: 4px;
-            }
-
-            .force-landscape .color-palette-grid.large-screen {
-                grid-template-columns: repeat(5, 1fr);
-                gap: 4px;
-                max-width: 100px;
-            }
-
-            .force-landscape .icon-btn.large-screen {
-                width: 32px;
-                height: 32px;
-            }
-
-            .force-landscape .color-btn-small.large-screen {
-                width: 20px;
-                height: 20px;
-            }
-
-            .force-landscape input[type="range"].large-screen {
-                width: 70px;
-                height: 5px;
-            }
-
-            .force-landscape select.large-screen {
-                font-size: 0.8em;
-                padding: 2px 4px;
-            }
-
-            /* 隱藏手機版的工具列，只顯示桌面版工具列 */
-            .tools-section-mobile {
-                display: none !important;
-            }
-
-            .app-container-mobile {
-                display: none !important;
-            }
-
-            .app-container-desktop {
-                display: flex !important;
-            }
-        }
 
         /* 強制橫向模式樣式 */
         .force-landscape {
@@ -866,7 +468,7 @@
             position: relative;
         }
 
-        /* 橫向模式下的工具列優化 - 重新設計佈局 */
+        /* 橫向模式下的工具列優化 */
         .force-landscape .tools-section-desktop {
             position: fixed;
             top: 10px;
@@ -876,8 +478,6 @@
             border-radius: 10px;
             padding: 8px;
             backdrop-filter: blur(10px);
-            transform: rotate(90deg);
-            transform-origin: center center;
             max-width: 50vh;
             max-height: 70vh;
             overflow-y: auto;
@@ -891,8 +491,7 @@
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) rotate(90deg);
-            transform-origin: center center;
+            transform: translate(-50%, -50%);
             width: calc(100vh - 100px);
             height: calc(100vw - 100px);
             z-index: 100;
@@ -916,7 +515,7 @@
             margin-bottom: 10px;
         }
 
-        /* 橫向模式下的工具組優化 - 更緊湊的佈局 */
+        /* 橫向模式下的工具組優化 */
         .force-landscape .toolbar-group-desktop {
             min-width: auto;
             margin-bottom: 5px;
@@ -968,189 +567,6 @@
         .force-landscape .slider-label label {
             font-size: 0.7em;
             margin-bottom: 1px;
-        }
-
-        /* 小螢幕橫向模式特殊優化 (手機) */
-        .force-landscape .tools-section-desktop.small-screen {
-            top: 5px;
-            right: 5px;
-            padding: 5px;
-            max-width: 45vh;
-            max-height: 65vh;
-        }
-
-        .force-landscape .canvas-area.small-screen {
-            width: calc(100vh - 80px);
-            height: calc(100vw - 80px);
-            padding: 15px;
-        }
-
-        .force-landscape .mandala-title.small-screen {
-            font-size: 1em;
-            margin-bottom: 3px;
-        }
-
-        .force-landscape .mandala-subtitle.small-screen {
-            font-size: 0.7em;
-            margin-bottom: 8px;
-        }
-
-        .force-landscape .toolbar-group-desktop.small-screen {
-            margin-bottom: 3px;
-            padding: 2px;
-        }
-
-        .force-landscape .toolbar-group-title.small-screen {
-            font-size: 0.6em;
-            margin-bottom: 2px;
-        }
-
-        .force-landscape .color-palette-grid.small-screen {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-            max-width: 60px;
-        }
-
-        .force-landscape .icon-btn.small-screen {
-            width: 24px;
-            height: 24px;
-        }
-
-        .force-landscape .color-btn-small.small-screen {
-            width: 16px;
-            height: 16px;
-        }
-
-        .force-landscape input[type="range"].small-screen {
-            width: 50px;
-            height: 3px;
-        }
-
-        .force-landscape select.small-screen {
-            font-size: 0.6em;
-            padding: 1px 2px;
-        }
-
-        /* 中等螢幕橫向模式特殊優化 (平板) */
-        .force-landscape .tools-section-desktop.medium-screen {
-            top: 12px;
-            right: 12px;
-            padding: 10px;
-            max-width: 55vh;
-            max-height: 75vh;
-        }
-
-        .force-landscape .canvas-area.medium-screen {
-            width: calc(100vh - 120px);
-            height: calc(100vw - 120px);
-            padding: 22px;
-        }
-
-        .force-landscape .mandala-title.medium-screen {
-            font-size: 1.3em;
-            margin-bottom: 6px;
-        }
-
-        .force-landscape .mandala-subtitle.medium-screen {
-            font-size: 0.85em;
-            margin-bottom: 11px;
-        }
-
-        .force-landscape .toolbar-group-desktop.medium-screen {
-            margin-bottom: 6px;
-            padding: 4px;
-        }
-
-        .force-landscape .toolbar-group-title.medium-screen {
-            font-size: 0.75em;
-            margin-bottom: 4px;
-        }
-
-        .force-landscape .color-palette-grid.medium-screen {
-            grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
-            max-width: 85px;
-        }
-
-        .force-landscape .icon-btn.medium-screen {
-            width: 30px;
-            height: 30px;
-        }
-
-        .force-landscape .color-btn-small.medium-screen {
-            width: 19px;
-            height: 19px;
-        }
-
-        .force-landscape input[type="range"].medium-screen {
-            width: 65px;
-            height: 4px;
-        }
-
-        .force-landscape select.medium-screen {
-            font-size: 0.75em;
-            padding: 2px 4px;
-        }
-
-        /* 大螢幕橫向模式特殊優化 (大平板/桌面) */
-        .force-landscape .tools-section-desktop.large-screen {
-            top: 15px;
-            right: 15px;
-            padding: 12px;
-            max-width: 60vh;
-            max-height: 80vh;
-        }
-
-        .force-landscape .canvas-area.large-screen {
-            width: calc(100vh - 150px);
-            height: calc(100vw - 150px);
-            padding: 25px;
-        }
-
-        .force-landscape .mandala-title.large-screen {
-            font-size: 1.4em;
-            margin-bottom: 6px;
-        }
-
-        .force-landscape .mandala-subtitle.large-screen {
-            font-size: 0.9em;
-            margin-bottom: 12px;
-        }
-
-        .force-landscape .toolbar-group-desktop.large-screen {
-            margin-bottom: 6px;
-            padding: 4px;
-        }
-
-        .force-landscape .toolbar-group-title.large-screen {
-            font-size: 0.8em;
-            margin-bottom: 4px;
-        }
-
-        .force-landscape .color-palette-grid.large-screen {
-            grid-template-columns: repeat(5, 1fr);
-            gap: 4px;
-            max-width: 100px;
-        }
-
-        .force-landscape .icon-btn.large-screen {
-            width: 32px;
-            height: 32px;
-        }
-
-        .force-landscape .color-btn-small.large-screen {
-            width: 20px;
-            height: 20px;
-        }
-
-        .force-landscape input[type="range"].large-screen {
-            width: 70px;
-            height: 5px;
-        }
-
-        .force-landscape select.large-screen {
-            font-size: 0.8em;
-            padding: 2px 4px;
         }
 
         /* 橫向模式提示 */
@@ -1295,11 +711,11 @@
     <div class="landscape-notice" id="landscapeNotice">
         <h3>🔄 橫向模式已啟用</h3>
         <p>請將手機轉為橫向以獲得最佳繪圖體驗</p>
-        <button onclick="toggleLandscapeMode()" style="margin-top: 15px; padding: 10px 20px; background: #00aaff; color: white; border: none; border-radius: 8px; cursor: pointer;">退出橫向模式</button>
+        <button id="exitLandscapeBtn" style="margin-top: 15px; padding: 10px 20px; background: #00aaff; color: white; border: none; border-radius: 8px; cursor: pointer;">退出橫向模式</button>
     </div>
 
     <!-- 橫向模式切換按鈕 -->
-    <button class="landscape-toggle-btn" id="landscapeToggleBtn" onclick="toggleLandscapeMode()">
+    <button class="landscape-toggle-btn" id="landscapeToggleBtn">
         🔄 橫向模式
     </button>
 
@@ -1422,110 +838,7 @@
         </main>
     </div>
 
-    <div class="app-container-mobile" id="mobile-app">
-        <header class="header-mobile">
-            <div class="mandala-title-mobile-container">
-                <h1 class="mandala-title">曼荼羅</h1>
-                <p class="mandala-subtitle">曼荼羅是心靈的鏡子，反映你的內在世界</p>
-            </div>
-        </header>
 
-        <div class="canvas-area">
-            <canvas id="mandala-canvas-mobile"></canvas>
-        </div>
-
-        <div class="tools-section-mobile" id="tools-mobile">
-            <div class="tools-title-mobile" id="tools-toggle-mobile">
-                繪畫工具
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </div>
-            <div class="tools-content-mobile" id="tools-content-mobile">
-                <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">畫筆設定</div>
-                    <div class="toolbar-row-mobile">
-                        <label for="brush-size-mobile">大小：</label>
-                        <input type="range" id="brush-size-mobile" min="1" max="100" value="10">
-                    </div>
-                </div>
-
-                <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">顏色選擇</div>
-                    <div class="toolbar-row-mobile color-palette" id="color-palette-mobile">
-                        <button class="color-btn color-red" data-color="#e74c3c" title="紅色"></button>
-                        <button class="color-btn color-orange" data-color="#ff9800" title="橙色"></button>
-                        <button class="color-btn color-yellow" data-color="#f1c40f" title="黃色"></button>
-                        <button class="color-btn color-green" data-color="#2ecc71" title="綠色"></button>
-                        <button class="color-btn color-blue" data-color="#3498db" title="藍色"></button>
-                        <button class="color-btn color-purple" data-color="#9b59b6" title="紫色"></button>
-                        <button class="color-btn color-white" data-color="#ffffff" title="白色"></button>
-                        <button class="color-btn color-black active" data-color="#000000" title="黑色"></button>
-                    </div>
-                </div>
-
-                <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">繪圖工具</div>
-                    <div class="toolbar-row-mobile" id="shape-tools-mobile">
-                        <button class="icon-btn active" data-shape="freehand" title="自由筆">
-                            <svg viewBox="0 0 24 24"><path d="M3 21v-2a4 4 0 0 1 4-4h2"/><path d="M16 3a2.828 2.828 0 0 1 4 4L7 20l-4 1 1-4L17 3z"/></svg>
-                        </button>
-                        <button class="icon-btn eraser" id="eraser-btn-mobile" title="橡皮擦">
-                            <svg viewBox="0 0 24 24"><rect x="3" y="17" width="18" height="4" rx="2"/><path d="M5 17L19 3"/></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">操作工具</div>
-                    <div class="toolbar-row-mobile">
-                        <button class="icon-btn" id="undo-btn-mobile">
-                            <svg viewBox="0 0 24 24"><path d="M10 3a10 10 0 0 1 7.2 17l-1.4-1.4A8 8 0 0 0 12 5V8L6 3.5 12 0v3z" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
-                        </button>
-                        <button class="icon-btn" id="redo-btn-mobile">
-                            <svg viewBox="0 0 24 24"><path d="M14 3a10 10 0 0 0 -7.2 17l1.4 -1.4a8 8 0 0 1 5.8 -13.6v3l6 -4.5l-6 -4.5v3z" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
-                        </button>
-                        <button class="icon-btn" id="clear-btn-mobile">
-                            <svg viewBox="0 0 24 24"><path d="M4 7h16" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
-                        </button>
-                        <button class="icon-btn" id="save-btn-mobile" title="儲存">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">對稱與方向</div>
-                    <div class="toolbar-row-mobile">
-                        <label for="symmetry-count-mobile">對稱:</label>
-                        <select class="symmetry-select" id="symmetry-count-mobile">
-                            <option value="0" selected>0</option>
-                            <option value="2">2</option>
-                            <option value="4">4</option>
-                            <option value="6">6</option>
-                            <option value="8">8</option>
-                            <option value="12">12</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="toolbar-group-mobile">
-                    <div class="toolbar-group-title">旋轉功能</div>
-                    <div class="toolbar-row-mobile">
-                        <label for="rotation-count-mobile">旋轉:</label>
-                        <select class="rotation-select" id="rotation-count-mobile">
-                            <option value="0" selected>0</option>
-                            <option value="2">2</option>
-                            <option value="4">4</option>
-                            <option value="6">6</option>
-                            <option value="8">8</option>
-                            <option value="12">12</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1538,7 +851,6 @@
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const screenWidth = window.screen.width;
             const screenHeight = window.screen.height;
-            const isPhoneScreen = Math.min(screenWidth, screenHeight) <= 768;
 
             function toggleSidebar() {
                 sidebar.classList.toggle('open');
@@ -1571,18 +883,12 @@
             // 確保漢堡按鈕在頁面載入後可見
             window.addEventListener('load', ensureHamburgerVisible);
 
-            // 手機底部工具列收合功能（在此版本中已取消，預設展開）
-            const toolsMobile = document.getElementById('tools-mobile');
-            const toolsToggleMobile = document.getElementById('tools-toggle-mobile');
-            if (toolsToggleMobile) {
-                toolsToggleMobile.addEventListener('click', () => {
-                    toolsMobile.classList.toggle('open');
-                });
-            }
+            // 手機版現在使用與桌面版相同的佈局，無需收合功能
 
             // 橫向模式控制
             const landscapeNotice = document.getElementById('landscapeNotice');
             const landscapeToggleBtn = document.getElementById('landscapeToggleBtn');
+            const exitLandscapeBtn = document.getElementById('exitLandscapeBtn'); // 新增退出按鈕
             let isForceLandscape = false; // 追蹤強制橫向模式狀態
 
             function toggleLandscapeMode() {
@@ -1602,97 +908,6 @@
                     isForceLandscape = true;
                 }
             }
-
-            // 根據螢幕尺寸自動調整橫向模式佈局
-            function adjustLandscapeLayout() {
-                if (!isForceLandscape) return;
-                
-                const screenWidth = window.screen.width;
-                const screenHeight = window.screen.height;
-                const minDimension = Math.min(screenWidth, screenHeight);
-                
-                // 移除所有尺寸相關的CSS類別
-                document.body.classList.remove('small-screen', 'medium-screen', 'large-screen');
-                
-                // 根據螢幕尺寸添加對應的CSS類別
-                if (minDimension <= 480) {
-                    // 小螢幕 (手機)
-                    document.body.classList.add('small-screen');
-                    console.log('橫向模式: 小螢幕佈局已啟用 (手機)');
-                } else if (minDimension >= 481 && minDimension <= 768) {
-                    // 中等螢幕 (平板)
-                    document.body.classList.add('medium-screen');
-                    console.log('橫向模式: 中等螢幕佈局已啟用 (平板)');
-                } else if (minDimension >= 769) {
-                    // 大螢幕 (大平板/桌面)
-                    document.body.classList.add('large-screen');
-                    console.log('橫向模式: 大螢幕佈局已啟用 (大平板/桌面)');
-                } else {
-                    // 預設佈局
-                    console.log('橫向模式: 預設佈局已啟用');
-                }
-                
-                console.log('橫向模式佈局已調整:', {
-                    screenWidth,
-                    screenHeight,
-                    minDimension,
-                    layout: document.body.classList.contains('small-screen') ? 'small' : 
-                           document.body.classList.contains('medium-screen') ? 'medium' :
-                           document.body.classList.contains('large-screen') ? 'large' : 'default'
-                });
-            }
-
-            // 初始化橫向模式狀態
-            if (isMobile && isPhoneScreen) {
-                // 手機螢幕自動啟用橫向模式
-                setTimeout(() => {
-                    document.body.classList.add('force-landscape');
-                    landscapeNotice.classList.add('show');
-                    landscapeToggleBtn.textContent = '↕️ 直向模式';
-                    landscapeToggleBtn.style.transform = 'rotate(90deg)';
-                    isForceLandscape = true;
-                    
-                    // 調整佈局
-                    setTimeout(adjustLandscapeLayout, 100);
-                    
-                    console.log('手機螢幕自動啟用橫向模式');
-                }, 1000);
-            }
-
-            // 螢幕方向變化時自動調整
-            window.addEventListener('orientationchange', () => {
-                setTimeout(() => {
-                    if (isMobile && isPhoneScreen && !isForceLandscape) {
-                        // 只有在非強制橫向模式下才自動調整
-                        const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-                        if (isLandscape) {
-                            document.body.classList.add('force-landscape');
-                            landscapeNotice.classList.add('show');
-                            landscapeToggleBtn.textContent = '↕️ 直向模式';
-                            landscapeToggleBtn.style.transform = 'rotate(90deg)';
-                            isForceLandscape = true;
-                        } else {
-                            document.body.classList.remove('force-landscape');
-                            landscapeNotice.classList.remove('show');
-                            landscapeToggleBtn.textContent = '🔄 橫向模式';
-                            landscapeToggleBtn.style.transform = 'rotate(0deg)';
-                            isForceLandscape = false;
-                        }
-                    }
-                    
-                    // 如果處於強制橫向模式，重新調整佈局
-                    if (isForceLandscape) {
-                        adjustLandscapeLayout();
-                    }
-                }, 100);
-            });
-
-            // 視窗大小變化時重新調整佈局
-            window.addEventListener('resize', () => {
-                if (isForceLandscape) {
-                    setTimeout(adjustLandscapeLayout, 100);
-                }
-            });
 
             // 曼荼羅繪圖功能
             let isDrawing = false;
@@ -1937,12 +1152,14 @@
                 clearCanvas(true);
             }
 
-            // 根據設備選擇要初始化的畫布和工具列
-            if (isMobile) {
-                initializeMandala('mandala-canvas-mobile', 'brush-size-mobile', 'color-palette-mobile', 'shape-tools-mobile', 'eraser-btn-mobile', 'symmetry-count-mobile', 'rotation-count-mobile', 'undo-btn-mobile', 'redo-btn-mobile', 'clear-btn-mobile', 'save-btn-mobile');
-            } else {
-                initializeMandala('mandala-canvas-desktop', 'brush-size-desktop', 'color-palette-grid-desktop', 'shape-tools-desktop', 'eraser-btn-desktop', 'symmetry-count-desktop', 'rotation-count-desktop', 'undo-btn-desktop', 'redo-btn-desktop', 'clear-btn-desktop', 'save-btn-desktop');
-            }
+            // 所有設備都使用桌面版佈局
+            initializeMandala('mandala-canvas-desktop', 'brush-size-desktop', 'color-palette-grid-desktop', 'shape-tools-desktop', 'eraser-btn-desktop', 'symmetry-count-desktop', 'rotation-count-desktop', 'undo-btn-desktop', 'redo-btn-desktop', 'clear-btn-desktop', 'save-btn-desktop');
+
+            // 橫向模式切換按鈕事件監聽器
+            landscapeToggleBtn.addEventListener('click', toggleLandscapeMode);
+
+            // 退出橫向模式按鈕事件監聽器
+            exitLandscapeBtn.addEventListener('click', toggleLandscapeMode);
         });
     </script>
 </body>

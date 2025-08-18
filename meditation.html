@@ -429,7 +429,7 @@
                 <a href="yoga.html" class="nav-link">瑜珈</a>
             </li>
             <li class="nav-item">
-                <a href="mandala.html" class="nav-link">曼荼羅</a>
+                <a href="#" class="nav-link" id="mandala-link">曼荼羅</a>
             </li>
             <li class="nav-item">
                 <a href="guide.html" class="nav-link">每日指引</a>
@@ -507,6 +507,34 @@
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // 設備偵測和曼荼羅連結處理
+        function detectDeviceAndSetMandalaLink() {
+            const mandalaLink = document.getElementById('mandala-link');
+            if (mandalaLink) {
+                // 檢測設備類型
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                const screenWidth = window.screen.width;
+                
+                // 判斷設備類型
+                let isMobileDevice = false;
+                if (isMobile || screenWidth < 768) {
+                    isMobileDevice = true;
+                }
+                
+                // 設置對應的連結
+                if (isMobileDevice) {
+                    mandalaLink.href = 'mobile-mandala.html';
+                    mandalaLink.title = '曼荼羅 (手機版)';
+                } else {
+                    mandalaLink.href = 'mandala.html';
+                    mandalaLink.title = '曼荼羅 (桌面版)';
+                }
+            }
+        }
+
+        // 設置曼荼羅連結
+        detectDeviceAndSetMandalaLink();
+        
         // 側邊欄控制
         const sidebar = document.getElementById('sidebar');
         const hamburger = document.getElementById('hamburger');
