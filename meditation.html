@@ -568,7 +568,13 @@
 
         hamburger.addEventListener('click', toggleSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
-        sidebarCloseBtn.addEventListener('click', closeSidebar);
+        
+        // 只有在找到關閉按鈕時才添加事件監聽器
+        if (sidebarCloseBtn) {
+            sidebarCloseBtn.addEventListener('click', closeSidebar);
+        } else {
+            console.log('⚠️ 未找到側邊欄關閉按鈕，跳過事件綁定');
+        }
 
         console.log('冥想音樂頁面事件監聽器已綁定');
 
