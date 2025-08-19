@@ -578,56 +578,77 @@
 
         console.log('冥想音樂頁面事件監聽器已綁定');
 
+        // 戰士信條相關變數
         var toggle = document.querySelector('.creed-toggle');
         var content = document.querySelector('.creed-content');
         var triangle = document.querySelector('.triangle');
         var loaded = false;
-        // 使用更可靠的選擇器來找到冥想4的音頻元素
-        var warriorAudio = document.querySelector('.music-item:nth-child(4) audio');
-        if (!warriorAudio) {
-            // 備用選擇器：通過標題文字來找到
+        var warriorAudio = null;
+        
+        // 查找戰士音頻元素
+        function findWarriorAudio() {
+            // 方法1：通過標題文字查找
             var musicItems = document.querySelectorAll('.music-item');
             for (var i = 0; i < musicItems.length; i++) {
                 var title = musicItems[i].querySelector('.music-title');
                 if (title && title.textContent.includes('Warrior')) {
                     warriorAudio = musicItems[i].querySelector('audio');
-                    console.log('通過標題找到戰士音頻元素:', warriorAudio);
-                    break;
+                    console.log('✅ 通過標題找到戰士音頻元素:', warriorAudio);
+                    return warriorAudio;
                 }
             }
+            
+            // 方法2：通過索引查找（第4個項目）
+            var fourthAudio = document.querySelector('.music-item:nth-child(4) audio');
+            if (fourthAudio) {
+                warriorAudio = fourthAudio;
+                console.log('✅ 通過索引找到戰士音頻元素:', warriorAudio);
+                return warriorAudio;
+            }
+            
+            console.error('❌ 未找到戰士音頻元素');
+            return null;
         }
-        console.log('最終找到的戰士音頻元素:', warriorAudio);
+        
+        // 優化的動畫顯示函數
         function showCreedAnimated(pairs) {
             console.log('🎭 開始動畫顯示信條內容，共', pairs.length, '對');
             content.innerHTML = '';
-            let idx = 0;
             
-            function showNext() {
-                if (idx >= pairs.length) {
-                    console.log('✅ 所有信條內容動畫顯示完成');
-                    return;
-                }
-                
+            pairs.forEach((pair, index) => {
                 var group = document.createElement('div');
                 group.className = 'creed-pair';
-                group.style.opacity = 0;
-                group.style.transform = 'translateY(10px)';
-                group.innerHTML = `<div style="font-weight: bold; color: #00aaff; margin-bottom: 5px;">${pairs[idx][0]}</div><div style="color: #e0e0e0; font-style: italic;">${pairs[idx][1]}</div>`;
+                group.style.opacity = '0';
+                group.style.transform = 'translateY(20px)';
+                group.style.transition = 'all 0.6s ease-out';
+                group.style.marginBottom = '15px';
+                group.style.padding = '12px';
+                group.style.background = 'rgba(0, 170, 255, 0.1)';
+                group.style.borderRadius = '8px';
+                group.style.border = '1px solid rgba(0, 170, 255, 0.2)';
+                
+                group.innerHTML = `
+                    <div style="font-weight: bold; color: #00aaff; margin-bottom: 8px; font-size: 1.1em;">
+                        ${pair[0]}
+                    </div>
+                    <div style="color: #e0e0e0; font-style: italic; line-height: 1.4;">
+                        ${pair[1]}
+                    </div>
+                `;
+                
                 content.appendChild(group);
                 
+                // 延遲顯示，創造波浪效果
                 setTimeout(() => {
-                    group.style.transition = 'all 0.6s ease-out';
-                    group.style.opacity = 1;
+                    group.style.opacity = '1';
                     group.style.transform = 'translateY(0)';
-                    idx++;
-                    setTimeout(showNext, 200);
-                }, 10);
-            }
+                }, index * 150);
+            });
             
-            showNext();
+            console.log('✅ 動畫顯示信條內容完成');
         }
         
-        // 手機版：簡化動畫效果
+        // 簡化的手機版顯示函數
         function showCreedSimple(pairs) {
             console.log('📱 手機版：開始簡化顯示信條內容，共', pairs.length, '對');
             content.innerHTML = '';
@@ -635,283 +656,214 @@
             pairs.forEach((pair, index) => {
                 var group = document.createElement('div');
                 group.className = 'creed-pair';
-                group.style.opacity = 0;
-                group.style.marginBottom = '15px';
+                group.style.opacity = '0';
+                group.style.marginBottom = '12px';
                 group.style.padding = '10px';
                 group.style.background = 'rgba(0, 170, 255, 0.1)';
-                group.style.borderRadius = '8px';
-                group.innerHTML = `<div style="font-weight: bold; color: #00aaff; margin-bottom: 8px;">${pair[0]}</div><div style="color: #e0e0e0; font-style: italic;">${pair[1]}</div>`;
+                group.style.borderRadius = '6px';
+                group.style.border = '1px solid rgba(0, 170, 255, 0.15)';
+                group.style.transition = 'opacity 0.4s ease-in';
+                
+                group.innerHTML = `
+                    <div style="font-weight: bold; color: #00aaff; margin-bottom: 6px; font-size: 1em;">
+                        ${pair[0]}
+                    </div>
+                    <div style="color: #e0e0e0; font-style: italic; line-height: 1.3; font-size: 0.95em;">
+                        ${pair[1]}
+                    </div>
+                `;
+                
                 content.appendChild(group);
                 
-                // 手機版：使用較短的延遲和簡單的淡入效果
+                // 手機版：較短的延遲
                 setTimeout(() => {
-                    group.style.transition = 'opacity 0.3s ease-in';
-                    group.style.opacity = 1;
-                }, index * 100);
+                    group.style.opacity = '1';
+                }, index * 80);
             });
             
             console.log('📱 手機版：所有信條內容已準備顯示');
         }
+        
+        // 優化的自動展開函數
         function autoExpandCreed() {
             console.log('🔴 自動展開信條函數被調用');
+            
+            if (!toggle || !content || !triangle) {
+                console.error('❌ 戰士信條元素未找到');
+                return;
+            }
+            
             var expanded = toggle.getAttribute('aria-expanded') === 'true';
             console.log('當前展開狀態:', expanded);
             
-            // 檢測是否為手機設備
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (!expanded) {
-                toggle.setAttribute('aria-expanded', 'true');
-                content.classList.remove('hide');
-                triangle.textContent = '▼';
-                console.log('✅ 信條已自動展開');
-                
-                if (!loaded) {
-                    var base = "./warrior'sCreed/warror'sCreed.txt";
-                    console.log('📁 正在載入戰士信條文件:', base);
-                    
-                    fetch(base)
-                        .then(function(response) { 
-                            if (!response.ok) {
-                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                            }
-                            console.log('✅ 戰士信條文件載入成功');
-                            return response.text(); 
-                        })
-                        .then(function(text) {
-                            console.log('📄 戰士信條文本內容載入完成，長度:', text.length);
-                            var lines = text.split(/\r?\n/).filter(Boolean);
-                            var pairs = [];
-                            for (var i = 0; i < lines.length - 1; i += 2) {
-                                pairs.push([lines[i], lines[i + 1]]);
-                            }
-                            console.log('📊 解析出', pairs.length, '對信條內容');
-                            
-                            // 手機版：使用較簡單的動畫效果
-                            if (isMobile) {
-                                console.log('📱 手機版：使用簡化動畫效果');
-                                showCreedSimple(pairs);
-                            } else {
-                                showCreedAnimated(pairs);
-                            }
-                            
-                            content.setAttribute('data-lines', lines.join(','));
-                            loaded = true;
-                            console.log('✅ 戰士信條內容已成功載入並顯示');
-                        })
-                        .catch(function(error) {
-                            console.error('❌ 載入戰士信條文件失敗:', error);
-                            content.textContent = '無法載入信條內容。請檢查文件路徑或網絡連接。';
-                        });
-                } else {
-                    console.log('📖 使用已載入的信條內容');
-                    var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
-                    var pairs = [];
-                    for (var i = 0; i < lines.length - 1; i += 2) {
-                        pairs.push([lines[i], lines[i + 1]]);
-                    }
-                    
-                    if (isMobile) {
-                        showCreedSimple(pairs);
-                    } else {
-                        showCreedAnimated(pairs);
-                    }
-                }
-            } else {
+            if (expanded) {
                 console.log('⚠️ 信條已經展開，無需重複展開');
+                return;
+            }
+            
+            // 展開信條
+            toggle.setAttribute('aria-expanded', 'true');
+            content.classList.remove('hide');
+            triangle.textContent = '▼';
+            console.log('✅ 信條已自動展開');
+            
+            // 載入內容
+            loadCreedContent();
+        }
+        
+        // 載入信條內容函數
+        function loadCreedContent() {
+            if (loaded) {
+                console.log('📖 使用已載入的信條內容');
+                displayCreedContent();
+                return;
+            }
+            
+            var base = "./warrior'sCreed/warror'sCreed.txt";
+            console.log('📁 正在載入戰士信條文件:', base);
+            
+            fetch(base)
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    console.log('✅ 戰士信條文件載入成功');
+                    return response.text();
+                })
+                .then(function(text) {
+                    console.log('📄 戰士信條文本內容載入完成，長度:', text.length);
+                    
+                    if (!text.trim()) {
+                        throw new Error('文件內容為空');
+                    }
+                    
+                    var lines = text.split(/\r?\n/).filter(line => line.trim());
+                    var pairs = [];
+                    
+                    // 解析配對內容
+                    for (var i = 0; i < lines.length - 1; i += 2) {
+                        if (lines[i] && lines[i + 1]) {
+                            pairs.push([lines[i].trim(), lines[i + 1].trim()]);
+                        }
+                    }
+                    
+                    console.log('📊 解析出', pairs.length, '對信條內容');
+                    
+                    if (pairs.length === 0) {
+                        throw new Error('無法解析信條內容格式');
+                    }
+                    
+                    // 儲存內容
+                    content.setAttribute('data-lines', lines.join(','));
+                    content.setAttribute('data-pairs', JSON.stringify(pairs));
+                    loaded = true;
+                    
+                    // 顯示內容
+                    displayCreedContent();
+                    
+                    console.log('✅ 戰士信條內容已成功載入並顯示');
+                })
+                .catch(function(error) {
+                    console.error('❌ 載入戰士信條文件失敗:', error);
+                    content.innerHTML = `
+                        <div style="color: #ff6b6b; text-align: center; padding: 20px;">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">⚠️ 載入失敗</div>
+                            <div style="font-size: 0.9em; color: #ccc;">
+                                無法載入信條內容。<br>
+                                請檢查文件路徑或網絡連接。
+                            </div>
+                        </div>
+                    `;
+                });
+        }
+        
+        // 顯示信條內容函數
+        function displayCreedContent() {
+            if (!loaded) {
+                console.log('⚠️ 信條內容尚未載入');
+                return;
+            }
+            
+            try {
+                var pairs = JSON.parse(content.getAttribute('data-pairs'));
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                if (isMobile) {
+                    console.log('📱 手機版：使用簡化動畫效果');
+                    showCreedSimple(pairs);
+                } else {
+                    console.log('🖥️ 桌面版：使用完整動畫效果');
+                    showCreedAnimated(pairs);
+                }
+            } catch (error) {
+                console.error('❌ 顯示信條內容失敗:', error);
+                // 嘗試使用舊格式
+                var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
+                var pairs = [];
+                for (var i = 0; i < lines.length - 1; i += 2) {
+                    pairs.push([lines[i], lines[i + 1]]);
+                }
+                
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                if (isMobile) {
+                    showCreedSimple(pairs);
+                } else {
+                    showCreedAnimated(pairs);
+                }
             }
         }
-        toggle.addEventListener('click', function() {
-            var expanded = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', !expanded);
-            if (expanded) {
-                content.classList.add('hide');
-            } else {
-                content.classList.remove('hide');
-            }
-            triangle.textContent = expanded ? '▶' : '▼';
-            if (!expanded) {
-                if (!loaded) {
-                    var base = "./warrior'sCreed/warror'sCreed.txt";
-                    console.log('🖱️ 手動點擊載入戰士信條文件:', base);
-                    
-                    fetch(base)
-                        .then(function(response) { 
-                            if (!response.ok) {
-                                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                            }
-                            console.log('✅ 手動載入戰士信條文件成功');
-                            return response.text(); 
-                        })
-                        .then(function(text) {
-                            console.log('📄 手動載入戰士信條文本完成，長度:', text.length);
-                            var lines = text.split(/\r?\n/).filter(Boolean);
-                            var pairs = [];
-                            for (var i = 0; i < lines.length - 1; i += 2) {
-                                pairs.push([lines[i], lines[i + 1]]);
-                            }
-                            console.log('📊 手動解析出', pairs.length, '對信條內容');
-                            
-                            // 檢測設備類型並選擇合適的顯示方式
-                            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                            if (isMobile) {
-                                showCreedSimple(pairs);
-                            } else {
-                                showCreedAnimated(pairs);
-                            }
-                            
-                            content.setAttribute('data-lines', lines.join(','));
-                            loaded = true;
-                            console.log('✅ 手動載入戰士信條內容完成');
-                        })
-                        .catch(function(error) {
-                            console.error('❌ 手動載入戰士信條文件失敗:', error);
-                            content.textContent = '無法載入信條內容。請檢查文件路徑或網絡連接。';
-                        });
+        
+        // 手動切換信條顯示
+        if (toggle) {
+            toggle.addEventListener('click', function() {
+                var expanded = toggle.getAttribute('aria-expanded') === 'true';
+                toggle.setAttribute('aria-expanded', !expanded);
+                
+                if (expanded) {
+                    // 收起
+                    content.classList.add('hide');
+                    triangle.textContent = '▶';
                 } else {
-                    console.log('📖 手動展開：使用已載入的信條內容');
-                    var lines = content.getAttribute('data-lines').split(',').filter(Boolean);
-                    var pairs = [];
-                    for (var i = 0; i < lines.length - 1; i += 2) {
-                        pairs.push([lines[i], lines[i + 1]]);
-                    }
-                    
-                    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                    if (isMobile) {
-                        showCreedSimple(pairs);
-                    } else {
-                        showCreedAnimated(pairs);
-                    }
+                    // 展開
+                    content.classList.remove('hide');
+                    triangle.textContent = '▼';
+                    loadCreedContent();
                 }
+            });
+        }
+        
+        // 音頻事件處理
+        function setupWarriorAudio() {
+            warriorAudio = findWarriorAudio();
+            
+            if (!warriorAudio) {
+                console.error('❌ 未找到戰士音頻元素');
+                return;
             }
-        });
-        if (warriorAudio) {
-            console.log('成功綁定戰士音頻播放事件');
+            
+            console.log('✅ 成功找到戰士音頻元素');
             console.log('音頻元素詳情:', {
                 src: warriorAudio.src,
                 currentSrc: warriorAudio.currentSrc,
                 readyState: warriorAudio.readyState
             });
             
-            // 檢測是否為手機設備
+            // 檢測設備類型
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             console.log('設備類型:', isMobile ? '手機' : '桌面');
             
-            // 綁定多個事件來確保能捕獲到播放
+            // 主要播放事件
             warriorAudio.addEventListener('play', function() {
                 console.log('🎵 戰士音頻開始播放，準備展開信條');
-                // 手機版使用較短的延遲
-                const delay = isMobile ? 100 : 200;
+                const delay = isMobile ? 150 : 300;
                 setTimeout(autoExpandCreed, delay);
             });
             
-            // 手機版特殊處理：添加更多事件監聽器
-            if (isMobile) {
-                console.log('📱 手機版：添加觸摸事件支持');
-                
-                // 為音頻控制項添加觸摸事件
-                const audioControls = warriorAudio.parentElement;
-                if (audioControls) {
-                    audioControls.addEventListener('touchstart', function() {
-                        console.log('📱 檢測到觸摸事件');
-                    });
-                }
-                
-                // 手機版額外的事件監聽器
-                warriorAudio.addEventListener('canplaythrough', function() {
-                    console.log('📱 手機版：音頻可以完整播放');
-                });
-                
-                warriorAudio.addEventListener('loadeddata', function() {
-                    console.log('📱 手機版：音頻數據已載入');
-                });
-                
-                // 手機版：監聽音頻狀態變化
-                let playAttempted = false;
-                warriorAudio.addEventListener('loadstart', function() {
-                    playAttempted = false;
-                });
-                
-                warriorAudio.addEventListener('canplay', function() {
-                    if (!playAttempted) {
-                        playAttempted = true;
-                        console.log('📱 手機版：音頻準備就緒，可以播放');
-                    }
-                });
-                
-                // 手機版：添加更多音頻事件監聽器以提高兼容性
-                warriorAudio.addEventListener('loadedmetadata', function() {
-                    console.log('📱 手機版：音頻元數據已載入');
-                });
-                
-                warriorAudio.addEventListener('progress', function() {
-                    console.log('📱 手機版：音頻載入進度更新');
-                });
-                
-                // 手機版：特殊處理 iOS Safari 的音頻事件
-                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                    console.log('📱 iOS 設備：添加特殊處理');
-                    
-                    // iOS Safari 可能需要用戶交互才能播放音頻
-                    warriorAudio.addEventListener('touchstart', function() {
-                        console.log('📱 iOS：檢測到音頻觸摸事件');
-                    });
-                    
-                    // iOS Safari 的音頻事件可能有延遲
-                    warriorAudio.addEventListener('play', function() {
-                        console.log('📱 iOS：音頻播放事件觸發');
-                        // iOS 使用更短的延遲
-                        setTimeout(autoExpandCreed, 50);
-                    });
-                }
-                
-                // 手機版：添加音頻控制項的點擊事件監聽
-                const audioElement = warriorAudio;
-                if (audioElement) {
-                    // 監聽音頻控制項的點擊
-                    audioElement.addEventListener('click', function() {
-                        console.log('📱 手機版：音頻控制項被點擊');
-                    });
-                    
-                    // 監聽音頻控制項的觸摸
-                    audioElement.addEventListener('touchend', function() {
-                        console.log('📱 手機版：音頻控制項觸摸結束');
-                    });
-                }
-                
-                // 手機版：添加備用自動展開機制
-                let autoExpandTimer = null;
-                let lastPlayTime = 0;
-                
-                // 監聽音頻的 currentTime 變化，檢測是否真的在播放
-                setInterval(function() {
-                    if (warriorAudio.currentTime > lastPlayTime && warriorAudio.currentTime > 0) {
-                        lastPlayTime = warriorAudio.currentTime;
-                        if (!autoExpandTimer) {
-                            console.log('📱 手機版：檢測到音頻實際播放，準備自動展開信條');
-                            autoExpandTimer = setTimeout(function() {
-                                autoExpandCreed();
-                                autoExpandTimer = null;
-                            }, 100);
-                        }
-                    }
-                }, 100);
-            }
-            
-            // 添加更多事件監聽器以確保穩定性
+            // 音頻狀態監控
             warriorAudio.addEventListener('playing', function() {
                 console.log('▶️ 戰士音頻正在播放中');
             });
             
-            warriorAudio.addEventListener('loadstart', function() {
-                console.log('📥 戰士音頻開始載入');
-            });
-            
-            warriorAudio.addEventListener('canplay', function() {
-                console.log('✅ 戰士音頻可以播放');
-            });
-            
-            // 添加更多事件監聽器以確保穩定性
             warriorAudio.addEventListener('pause', function() {
                 console.log('⏸️ 戰士音頻暫停');
             });
@@ -924,13 +876,49 @@
                 console.error('❌ 戰士音頻載入錯誤:', e.message || '未知錯誤');
             });
             
-            console.log('✅ 所有戰士音頻事件監聽器已成功綁定');
+            // 手機版特殊處理
+            if (isMobile) {
+                console.log('📱 手機版：添加特殊處理');
+                
+                // iOS 特殊處理
+                if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                    console.log('📱 iOS 設備：添加特殊處理');
+                    
+                    // iOS Safari 可能需要用戶交互
+                    warriorAudio.addEventListener('canplay', function() {
+                        console.log('📱 iOS：音頻準備就緒');
+                    });
+                    
+                    // 監聽觸摸事件
+                    warriorAudio.addEventListener('touchstart', function() {
+                        console.log('📱 iOS：檢測到觸摸事件');
+                    });
+                }
+                
+                // 備用自動展開機制
+                let autoExpandTimer = null;
+                let lastPlayTime = 0;
+                
+                // 監聽音頻播放進度
+                setInterval(function() {
+                    if (warriorAudio.currentTime > lastPlayTime && warriorAudio.currentTime > 0) {
+                        lastPlayTime = warriorAudio.currentTime;
+                        if (!autoExpandTimer && !content.classList.contains('hide')) {
+                            console.log('📱 手機版：檢測到音頻實際播放，準備自動展開信條');
+                            autoExpandTimer = setTimeout(function() {
+                                autoExpandCreed();
+                                autoExpandTimer = null;
+                            }, 200);
+                        }
+                    }
+                }, 200);
+            }
             
-        } else {
-            console.error('❌ 未找到戰士音頻元素');
-            console.log('所有音樂項目:', document.querySelectorAll('.music-item'));
-            console.log('所有音頻元素:', document.querySelectorAll('audio'));
+            console.log('✅ 戰士音頻事件監聽器設置完成');
         }
+        
+        // 初始化戰士音頻
+        setupWarriorAudio();
     });
     </script>
 </body>
