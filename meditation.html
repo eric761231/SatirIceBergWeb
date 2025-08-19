@@ -805,19 +805,7 @@
                 setTimeout(autoExpandCreed, delay);
             });
             
-            warriorAudio.addEventListener('playing', function() {
-                console.log('▶️ 戰士音頻正在播放中');
-            });
-            
-            warriorAudio.addEventListener('loadstart', function() {
-                console.log('📥 戰士音頻開始載入');
-            });
-            
-            warriorAudio.addEventListener('canplay', function() {
-                console.log('✅ 戰士音頻可以播放');
-            });
-            
-            // 手機版特殊處理：添加觸摸事件支持
+            // 手機版特殊處理：添加更多事件監聽器
             if (isMobile) {
                 console.log('📱 手機版：添加觸摸事件支持');
                 
@@ -890,7 +878,38 @@
                         console.log('📱 手機版：音頻控制項觸摸結束');
                     });
                 }
+                
+                // 手機版：添加備用自動展開機制
+                let autoExpandTimer = null;
+                let lastPlayTime = 0;
+                
+                // 監聽音頻的 currentTime 變化，檢測是否真的在播放
+                setInterval(function() {
+                    if (warriorAudio.currentTime > lastPlayTime && warriorAudio.currentTime > 0) {
+                        lastPlayTime = warriorAudio.currentTime;
+                        if (!autoExpandTimer) {
+                            console.log('📱 手機版：檢測到音頻實際播放，準備自動展開信條');
+                            autoExpandTimer = setTimeout(function() {
+                                autoExpandCreed();
+                                autoExpandTimer = null;
+                            }, 100);
+                        }
+                    }
+                }, 100);
             }
+            
+            // 添加更多事件監聽器以確保穩定性
+            warriorAudio.addEventListener('playing', function() {
+                console.log('▶️ 戰士音頻正在播放中');
+            });
+            
+            warriorAudio.addEventListener('loadstart', function() {
+                console.log('📥 戰士音頻開始載入');
+            });
+            
+            warriorAudio.addEventListener('canplay', function() {
+                console.log('✅ 戰士音頻可以播放');
+            });
             
             // 添加更多事件監聽器以確保穩定性
             warriorAudio.addEventListener('pause', function() {
