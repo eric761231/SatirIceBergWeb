@@ -149,7 +149,7 @@
         /* 主要內容區域 */
         .main-content {
             margin-left: 0;
-            padding: 80px 20px 20px;
+            padding: 60px 20px 20px; /* 從 80px 減少到 60px，與漢堡按鈕對齊 */
             transition: margin-left 0.3s ease;
             min-height: 100vh;
             display: flex;
@@ -213,10 +213,10 @@
             border-radius: 20px;
             padding: 28px 40px 40px 40px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            max-width: 800px;
-            width: 90%;
+            max-width: 1000px; /* 從 800px 增加到 1000px */
+            width: 95%; /* 從 90% 增加到 95% */
             position: relative;
-            min-height: 600px;
+            min-height: 700px; /* 從 600px 增加到 700px */
         }
 
         h1 {
@@ -252,7 +252,7 @@
         /* 月份側欄展開動畫 */
         #month-list {
             position: absolute;
-            top: 80px;
+            top: 60px; /* 從 80px 調整到 60px，與主要內容對齊 */
             left: 0;
             z-index: 10;
             background: #16213e;
@@ -338,17 +338,19 @@
             .articles-container {
                 padding: 20px;
                 margin-top: 20px;
+                max-width: 95%; /* 手機版保持寬度 */
             }
 
             .articles-slider {
                 margin-top: 20px;
-                height: 400px;
+                height: 500px; /* 手機版適當高度 */
             }
 
             .article-content {
                 padding: 20px 15px;
-                min-width: 280px;
+                min-width: 300px; /* 手機版最小寬度 */
                 max-width: 100%;
+                max-height: 500px; /* 手機版適當高度 */
             }
         }
 
@@ -366,39 +368,43 @@
             .articles-container {
                 padding: 15px;
                 margin-top: 15px;
+                max-width: 95%; /* 平板版保持寬度 */
             }
 
             .articles-slider {
                 margin-top: 15px;
-                height: 400px;
+                height: 550px; /* 平板版適當高度 */
             }
 
             .article-content {
                 padding: 20px 15px;
-                min-width: 280px;
+                min-width: 350px; /* 平板版最小寬度 */
                 max-width: 100%;
+                max-height: 550px; /* 平板版適當高度 */
             }
         }
 
         /* 手機橫向模式優化 */
         @media screen and (max-width: 768px) and (orientation: landscape) {
             .main-content {
-                padding: 60px 15px 15px;
+                padding: 50px 15px 15px; /* 從 60px 調整到 50px，手機版適當調整 */
             }
 
             .articles-container {
                 padding: 15px;
                 margin-top: 15px;
+                max-width: 95%; /* 橫向模式保持寬度 */
             }
 
             .articles-slider {
                 margin-top: 15px;
-                height: 350px;
+                height: 450px; /* 橫向模式適當高度 */
             }
 
             .article-content {
                 padding: 15px;
-                min-width: 250px;
+                min-width: 300px; /* 橫向模式最小寬度 */
+                max-height: 450px; /* 橫向模式適當高度 */
             }
         }
 
@@ -426,16 +432,16 @@
         .articles-slider {
             position: relative;
             margin-top: 36px; /* 文章內容區域往下移動 */
-            height: 500px;
+            height: 600px; /* 從 500px 增加到 600px */
         }
 
         .article-content {
             background: rgba(30, 30, 45, 0.9);
             border-radius: 12px;
-            padding: 24px 16px;
-            min-width: 320px;
-            max-width: 600px;
-            max-height: 500px;
+            padding: 24px 20px; /* 左右內距從 16px 增加到 20px */
+            min-width: 400px; /* 從 320px 增加到 400px */
+            max-width: 800px; /* 從 600px 增加到 800px */
+            max-height: 600px; /* 從 500px 增加到 600px */
             overflow-y: auto;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
             /* 隱藏捲動條 Chrome/Safari/Edge */
