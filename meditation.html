@@ -414,6 +414,137 @@
                 gap: 15px;
             }
         }
+
+        /* 手機版特殊優化 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin-top: 10px;
+                margin-bottom: 10px;
+                border-radius: 16px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+            
+            .music-item {
+                margin-bottom: 16px;
+                padding: 16px;
+                border-radius: 10px;
+            }
+            
+            .music-title {
+                font-size: 1em;
+                margin-bottom: 8px;
+            }
+            
+            /* 音頻控制項手機優化 */
+            audio {
+                width: 100%;
+                height: 40px;
+                margin-top: 8px;
+            }
+            
+            /* 觸摸優化 */
+            .creed-toggle {
+                padding: 12px 16px;
+                min-height: 44px; /* 符合觸摸標準 */
+                border-radius: 8px;
+                background: rgba(0, 170, 255, 0.1);
+                border: 1px solid rgba(0, 170, 255, 0.2);
+                transition: all 0.2s ease;
+            }
+            
+            .creed-toggle:active {
+                background: rgba(0, 170, 255, 0.2);
+                transform: scale(0.98);
+            }
+            
+            .creed-content {
+                padding: 16px;
+                margin-top: 8px;
+                border-radius: 10px;
+            }
+            
+            .creed-pair {
+                margin-bottom: 12px;
+                padding: 8px 0;
+                /* 移除背景和邊框，保持與電腦版一致 */
+            }
+            
+            /* 漢堡選單手機優化 */
+            .hamburger {
+                top: 15px;
+                left: 15px;
+                width: 44px;
+                height: 44px;
+                border-radius: 10px;
+            }
+            
+            .sidebar {
+                width: 280px;
+                left: -280px;
+            }
+            
+            .nav-link {
+                padding: 14px 20px;
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nav-link:active {
+                background: rgba(0, 170, 255, 0.3);
+                transform: scale(0.95);
+            }
+        }
+        
+        /* 手機橫向模式特殊處理 */
+        @media screen and (max-width: 768px) and (orientation: landscape) {
+            .main-content {
+                padding: 60px 15px 15px;
+            }
+            
+            .container {
+                padding: 15px;
+                margin-top: 10px;
+            }
+            
+            h1 {
+                font-size: 1.6em;
+                margin-bottom: 12px;
+            }
+            
+            .music-list {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 12px;
+            }
+            
+            .music-item {
+                margin-bottom: 12px;
+                padding: 12px;
+            }
+        }
+        
+        /* 觸摸設備優化 */
+        @media (hover: none) and (pointer: coarse) {
+            .music-item {
+                cursor: pointer;
+            }
+            
+            .music-item:active {
+                background: rgba(45, 45, 60, 0.9);
+                transform: scale(0.98);
+            }
+            
+            .creed-toggle:active {
+                background: rgba(0, 170, 255, 0.2);
+            }
+        }
     </style>
 </head>
 <body>
@@ -514,7 +645,7 @@
         // -----------------------------
         // 這段負責控制左側漢堡選單與側邊欄的展開/收合，與 articles.html 風格一致
         function detectDeviceAndSetMandalaLink() {
-    // 根據設備自動切換曼荼羅連結（手機/桌面）
+            // 根據設備自動切換曼荼羅連結（手機/桌面）
             const mandalaLink = document.getElementById('mandala-link');
             if (mandalaLink) {
                 // 檢測設備類型（手機/桌面）
@@ -543,38 +674,35 @@
         const sidebarCloseBtn = document.getElementById('sidebar-close');
         // 展開/收合側邊欄
         function toggleSidebar() {
-    // 展開/收合側邊欄
             sidebar.classList.toggle('open');
             hamburger.classList.toggle('open');
             sidebarOverlay.classList.toggle('active');
             mainContent.classList.toggle('sidebar-open');
         }
+        // 關閉側邊欄
         function closeSidebar() {
-    // 關閉側邊欄
             sidebar.classList.remove('open');
             hamburger.classList.remove('open');
             sidebarOverlay.classList.remove('active');
             mainContent.classList.remove('sidebar-open');
         }
+
         hamburger.addEventListener('click', toggleSidebar);
         sidebarOverlay.addEventListener('click', closeSidebar);
         if (sidebarCloseBtn) {
             sidebarCloseBtn.addEventListener('click', closeSidebar);
         }
-        var toggle = document.querySelector('.creed-toggle');
-    // 信條展開相關 DOM 元素
-    // 查找戰士音頻元素（優先用標題，失敗則用第4個 music-item）
+         var toggle = document.querySelector('.creed-toggle');
         var content = document.querySelector('.creed-content');
         var triangle = document.querySelector('.triangle');
         var loaded = false;
+        
         var warriorAudio = document.querySelector('.music-item:nth-child(4) audio');
         if (!warriorAudio) {
             warriorAudio = document.querySelector('.music-item:last-child audio');
         }
 
         function showCreedAnimated(pairs) {
-    // 桌面版動畫顯示信條內容
-    // 手機版簡化動畫顯示信條內容
             content.innerHTML = '';
             let idx = 0;
             function showNext() {
@@ -598,7 +726,7 @@
         // 顯示信條內容（根據設備選擇動畫）
         // 手動切換信條展開/收合
         // 音頻事件處理：偵測戰士音樂播放自動展開信條
-        function autoExpandCreed() {
+       function autoExpandCreed() {
             var expanded = toggle.getAttribute('aria-expanded') === 'true';
             if (!expanded) {
                 toggle.setAttribute('aria-expanded', 'true');
