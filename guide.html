@@ -379,7 +379,7 @@
     </div>
 
     <script>
-        // 每日指引語錄庫
+       // 每日指引語錄庫
         let dailyQuotes = [];
 
         // 載入指引內容
@@ -471,7 +471,8 @@
         // 每日指引系統
         class DailyGuideSystem {
             constructor() {
-                this.storageKey = 'dailyGuideHistory';
+                this.storageKey = 'dailyGuideHistory'; // 儲存已讀語句的索引
+                this.lastReadDateKey = 'lastReadDate'; // 儲存最後一次讀取的日期
                 this.quoteText = document.getElementById('quote-text');
                 this.quoteDate = document.getElementById('quote-date');
                 
@@ -480,29 +481,22 @@
 
             init() {
                 this.loadHistory();
-                this.showTodayQuote();
+                this.showDailyQuote();
             }
 
             // 載入歷史記錄
             loadHistory() {
-                const stored = localStorage.getItem(this.storageKey);
-                this.history = stored ? JSON.parse(stored) : [];
+                const history = localStorage.getItem(this.storageKey);
+                const lastReadDate = localStorage.getItem(this.lastReadDateKey);
                 
-                // 清理超過14天的記錄
-                const fourteenDaysAgo = new Date();
-                fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
-                
-                this.history = this.history.filter(record => {
-                    const recordDate = new Date(record.date);
-                    return recordDate > fourteenDaysAgo;
-                });
-                
-                this.saveHistory();
+                this.history = history ? JSON.parse(history) : [];
+                this.lastReadDate = lastReadDate || null;
             }
 
             // 儲存歷史記錄
             saveHistory() {
                 localStorage.setItem(this.storageKey, JSON.stringify(this.history));
+                localStorage.setItem(this.lastReadDateKey, this.getTodayString());
             }
 
             // 獲取今天的日期字串
@@ -513,117 +507,62 @@
 
             // 檢查今天是否已經顯示過指引
             hasShownToday() {
-                const today = this.getTodayString();
-                return this.history.some(record => record.date === today);
+                return this.lastReadDate === this.getTodayString();
             }
 
-            // 獲取今天要顯示的指引
-            getTodayQuote() {
-                const today = this.getTodayString();
-                
-                // 如果今天已經顯示過，返回今天的指引
-                const todayRecord = this.history.find(record => record.date === today);
-                if (todayRecord) {
-                    return {
-                        text: dailyQuotes[todayRecord.quoteIndex],
-                        index: todayRecord.quoteIndex
-                    };
-                }
-
-                // 獲取可用的指引索引（排除最近14天顯示過的）
-                const usedIndices = this.history.map(record => record.quoteIndex);
-                const availableIndices = dailyQuotes
-                    .map((_, index) => index)
-                    .filter(index => !usedIndices.includes(index));
-
-                // 如果沒有可用的指引，重置歷史記錄
-                if (availableIndices.length === 0) {
-                    this.history = [];
-                    availableIndices.push(...dailyQuotes.map((_, index) => index));
-                }
-
-                // 使用日期作為種子來確保同一天顯示相同的指引
-                const todaySeed = this.getDateSeed(today);
-                const randomIndex = this.seededRandom(0, availableIndices.length - 1, todaySeed);
-                const quoteIndex = availableIndices[randomIndex];
-
-                // 記錄今天的指引
-                this.history.push({
-                    date: today,
-                    quoteIndex: quoteIndex
-                });
-
-                this.saveHistory();
-                return {
-                    text: dailyQuotes[quoteIndex],
-                    index: quoteIndex
-                };
-            }
-
-            // 獲取日期種子（確保同一天顯示相同的指引）
-            getDateSeed(dateString) {
-                const date = new Date(dateString);
-                return date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate();
-            }
-
-            // 基於種子的隨機數生成器
-            seededRandom(min, max, seed) {
-                const x = Math.sin(seed) * 10000;
-                const random = x - Math.floor(x);
-                return Math.floor(random * (max - min + 1)) + min;
-            }
-
-            // 顯示今天的指引
-            showTodayQuote() {
-                const quote = this.getTodayQuote();
+            // 顯示指引
+            showDailyQuote() {
                 const today = this.getTodayString();
                 const dateObj = new Date(today);
-                
-                this.quoteText.textContent = quote.text;
-                this.quoteDate.textContent = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
-                
-                // 更新按鈕狀態
+
                 if (this.hasShownToday()) {
-                    // this.refreshBtn.textContent = '今日指引已顯示'; // Removed as per edit hint
-                    // this.refreshBtn.disabled = true; // Removed as per edit hint
+                    // 如果今天已經顯示過，就從歷史記錄中取出今天的指引
+                    const todayQuoteIndex = this.history[this.history.length - 1];
+                    this.quoteText.textContent = dailyQuotes[todayQuoteIndex];
                 } else {
-                    // this.refreshBtn.textContent = '顯示今日指引'; // Removed as per edit hint
-                    // this.refreshBtn.disabled = false; // Removed as per edit hint
+                    // 否則，選擇一個新的指引
+                    const quoteIndex = this.getNewQuoteIndex();
+                    this.quoteText.textContent = dailyQuotes[quoteIndex];
+                    
+                    // 記錄這次的指引
+                    this.history.push(quoteIndex);
+                    this.saveHistory();
                 }
-            }
 
-            // 更新統計信息
-            updateStats() {
-                // this.shownCount.textContent = this.history.length; // Removed as per edit hint
-                // this.remainingCount.textContent = dailyQuotes.length - this.history.length; // Removed as per edit hint
+                this.quoteDate.textContent = `${dateObj.getMonth() + 1}/${dateObj.getDate()}`;
             }
+            
+            // 獲取一個新的未讀指引索引
+            getNewQuoteIndex() {
+                const allIndices = dailyQuotes.map((_, index) => index);
+                const availableIndices = allIndices.filter(index => !this.history.includes(index));
 
-            // 設置刷新按鈕
-            setupRefreshButton() {
-                // this.refreshBtn.addEventListener('click', () => { // Removed as per edit hint
-                //     if (!this.hasShownToday()) { // Removed as per edit hint
-                //         this.showTodayQuote(); // Removed as per edit hint
-                //         this.updateStats(); // Removed as per edit hint
-                //     } // Removed as per edit hint
-                // }); // Removed as per edit hint
+                if (availableIndices.length === 0) {
+                    // 如果所有語句都已讀過，重置歷史記錄
+                    this.history = [];
+                    this.saveHistory();
+                    console.log('所有指引已輪過，歷史記錄已重置。');
+                    return Math.floor(Math.random() * dailyQuotes.length);
+                }
+
+                // 從可用的索引中隨機選一個
+                const randomIndex = Math.floor(Math.random() * availableIndices.length);
+                return availableIndices[randomIndex];
             }
         }
 
-        // 設備偵測和曼荼羅連結處理
+        // 設備偵測和曼荼羅連結處理 (保持不變)
         function detectDeviceAndSetMandalaLink() {
             const mandalaLink = document.getElementById('mandala-link');
             if (mandalaLink) {
-                // 檢測設備類型
                 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
                 const screenWidth = window.screen.width;
                 
-                // 判斷設備類型
                 let isMobileDevice = false;
                 if (isMobile || screenWidth < 768) {
                     isMobileDevice = true;
                 }
                 
-                // 設置對應的連結
                 if (isMobileDevice) {
                     mandalaLink.href = 'mobile-mandala.html';
                     mandalaLink.title = '曼荼羅 (手機版)';
@@ -634,26 +573,16 @@
             }
         }
 
-        // 頁面載入完成後載入指引內容
+        // 頁面載入完成後載入指引內容 (保持不變)
         document.addEventListener('DOMContentLoaded', () => {
-            // 設置曼荼羅連結
             detectDeviceAndSetMandalaLink();
             
-            // 側邊欄控制
             const sidebar = document.getElementById('sidebar');
             const hamburger = document.getElementById('hamburger');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
             const mainContent = document.getElementById('mainContent');
 
-            // 調試信息
-            console.log('DOM 載入完成');
-            console.log('sidebar:', sidebar);
-            console.log('hamburger:', hamburger);
-            console.log('sidebarOverlay:', sidebarOverlay);
-            console.log('mainContent:', mainContent);
-
             function toggleSidebar() {
-                console.log('toggleSidebar 被調用');
                 sidebar.classList.toggle('open');
                 hamburger.classList.toggle('open');
                 sidebarOverlay.classList.toggle('active');
@@ -661,7 +590,6 @@
             }
 
             function closeSidebar() {
-                console.log('closeSidebar 被調用');
                 sidebar.classList.remove('open');
                 hamburger.classList.remove('open');
                 sidebarOverlay.classList.remove('active');
@@ -670,22 +598,15 @@
 
             if (hamburger) {
                 hamburger.addEventListener('click', toggleSidebar);
-                console.log('漢堡按鈕事件監聽器已綁定');
-            } else {
-                console.error('找不到漢堡按鈕元素');
             }
             
             if (sidebarOverlay) {
                 sidebarOverlay.addEventListener('click', closeSidebar);
-                console.log('遮罩層事件監聽器已綁定');
-            } else {
-                console.error('找不到遮罩層元素');
             }
-
-            console.log('事件監聽器綁定完成');
 
             loadGuideContent();
         });
+
     </script>
 </body>
 </html>
