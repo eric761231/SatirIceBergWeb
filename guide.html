@@ -280,6 +280,62 @@
             visibility: visible;
         }
 
+        .card {
+            width: 320px;
+            height: 180px;
+            perspective: 1000px;
+            margin: 24px auto 0 auto;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background: rgba(30,30,45,0.98);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        #flipBtn {
+            display: block;
+            margin: 20px auto 0 auto;
+            padding: 10px 24px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            background: #00aaff;
+            color: #fff;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        #flipBtn:hover {
+            background: #0099cc;
+        }
+
         @media (max-width: 600px) {
             .guide-container {
                 padding: 20px 24px 32px 24px;
@@ -370,11 +426,18 @@
     <div class="main-content" id="mainContent">
         <div class="guide-container">
             <h1 class="guide-title">每日指引</h1>
-            
-            <div class="daily-quote">
-                <div class="quote-date" id="quote-date"></div>
-                <div class="quote-text" id="quote-text">載入中...</div>
+            <div class="card" id="guideCard">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="quote-text" style="display:flex;align-items:center;justify-content:center;height:100%;font-size:1.5em;">請點擊抽卡！</div>
+                    </div>
+                    <div class="card-back">
+                        <div class="quote-date" id="quote-date"></div>
+                        <div class="quote-text" id="quote-text">載入中...</div>
+                    </div>
+                </div>
             </div>
+            <button id="flipBtn">抽卡！</button>
         </div>
     </div>
 
@@ -607,6 +670,57 @@
             loadGuideContent();
         });
 
+        let isFlipped = false;
+        let rotating = false;
+        const card = document.getElementById('guideCard');
+        const cardInner = card.querySelector('.card-inner');
+        const flipBtn = document.getElementById('flipBtn');
+        const quoteText = document.getElementById('quote-text');
+        const quoteDate = document.getElementById('quote-date');
+
+        flipBtn.addEventListener('click', () => {
+          if (rotating) return;
+          rotating = true;
+          let startAngle = isFlipped ? 180 : 0;
+          let endAngle = isFlipped ? 0 : 180;
+          let angle = startAngle;
+          let speed = 32;
+          let slowdown = 0.92;
+          function animate() {
+            if (angle < endAngle) {
+              angle += speed;
+              if (angle > endAngle) angle = endAngle;
+              speed *= slowdown;
+              cardInner.style.transform = `rotateY(${angle}deg)`;
+              if (angle < endAngle) {
+                requestAnimationFrame(animate);
+              } else {
+                cardInner.style.transform = `rotateY(${endAngle}deg)`;
+                isFlipped = !isFlipped;
+                rotating = false;
+                // 翻到背面時才顯示內容
+                if (isFlipped && dailyQuotes.length > 0) {
+                  const idx = Math.floor(Math.random() * dailyQuotes.length);
+                  quoteText.textContent = dailyQuotes[idx];
+                  quoteDate.textContent = `第${idx+1}則指引`;
+                }
+              }
+            } else if (angle > endAngle) {
+              angle -= speed;
+              if (angle < endAngle) angle = endAngle;
+              speed *= slowdown;
+              cardInner.style.transform = `rotateY(${angle}deg)`;
+              if (angle > endAngle) {
+                requestAnimationFrame(animate);
+              } else {
+                cardInner.style.transform = `rotateY(${endAngle}deg)`;
+                isFlipped = !isFlipped;
+                rotating = false;
+              }
+            }
+          }
+          animate();
+        });
     </script>
 </body>
 </html>

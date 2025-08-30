@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>抽卡測試</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      transition: left 0.3s ease;
+      z-index: 1000;
+      padding: 20px;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    }
+    .sidebar.open { left: 0; }
+    .sidebar-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    .sidebar-title { color: #00aaff; font-size: 1.5em; font-weight: bold; text-align: center; width: 100%; word-wrap: break-word; overflow-wrap: break-word; }
+    .nav-menu { list-style: none; margin: 0; padding: 0; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; }
+    .nav-item { margin-bottom: 15px; width: 100%; text-align: center; display: flex; justify-content: center; }
+    .nav-link { display: inline-block; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; transition: all 0.3s ease; font-size: 1.1em; min-width: 120px; box-sizing: border-box; word-wrap: break-word; overflow-wrap: break-word; text-align: center; }
+    .nav-link:hover { background: rgba(0, 170, 255, 0.2); color: #00aaff; transform: translateX(5px); }
+    .nav-link.active { background: rgba(0, 170, 255, 0.3); color: #00aaff; border-left: 3px solid #00aaff; }
+    .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .sidebar-overlay.active { opacity: 1; visibility: visible; }
+    .hamburger { position: fixed; top: 20px; left: 20px; width: 40px; height: 40px; background: rgba(0, 170, 255, 0.8); border: none; border-radius: 8px; cursor: pointer; z-index: 1001; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: all 0.3s ease; }
+    .hamburger:hover { background: rgba(0, 170, 255, 1); }
+    .hamburger:hover:not(.open) { transform: scale(1.1); }
+    .hamburger span { width: 20px; height: 2px; background: white; margin: 2px 0; transition: all 0.3s ease; }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(4.5px, 4.5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(4.5px, -4.5px); }
+    .main-content { margin-left: 0; padding: 80px 20px 20px; transition: margin-left 0.3s ease; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
+    .main-content.sidebar-open { margin-left: 250px; }
+    .card { width: 320px; height: 180px; perspective: 1000px; margin: 24px auto 0 auto; }
+    .card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.8s; }
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back { width: 100%; height: 100%; position: absolute; backface-visibility: hidden; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.2); background: rgba(30,30,45,0.98); display: flex; align-items: center; justify-content: center; }
+    .card-back { transform: rotateY(180deg); flex-direction: column; padding: 16px; }
+    .result-text { font-size: 1.5em; color: gold; text-align: center; font-weight: bold; margin-top: 12px; opacity: 0; transition: opacity 1s; }
+    .result-text.show { opacity: 1; }
+    #flipBtn { display: block; margin: 20px auto 0 auto; padding: 10px 24px; font-size: 18px; cursor: pointer; border-radius: 8px; background: #00aaff; color: #fff; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+    #flipBtn:hover { background: #0099cc; }
+  </style>
+</head>
+<body>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">選單</div>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="guide.html" class="nav-link">每日指引</a></li>
+      <li class="nav-item"><a href="meditation.html" class="nav-link">冥想音樂</a></li>
+      <li class="nav-item"><a href="articles.html" class="nav-link">每日閱讀</a></li>
+      <li class="nav-item"><a href="yoga.html" class="nav-link">瑜珈</a></li>
+    </ul>
+  </div>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <button class="hamburger" id="hamburger" title="開啟選單">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="main-content" id="mainContent">
+    <h1 class="guide-title">抽卡測試</h1>
+    <div class="card" id="testCard">
+      <div class="card-inner">
+        <div class="card-front">
+          <img src="card_png/back.png" alt="卡牌背面">
+        </div>
+        <div class="card-back">
+          <img src="card_png/front.png" alt="卡牌正面">
+          <div class="result-text" id="resultText">範例文字</div>
+        </div>
+      </div>
+    </div>
+    <button id="flipBtn">抽卡！</button>
+  </div>
+  <script>
+    // 側邊欄控制
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburger');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const mainContent = document.getElementById('mainContent');
+    function toggleSidebar() {
+      sidebar.classList.toggle('open');
+      hamburger.classList.toggle('open');
+      sidebarOverlay.classList.toggle('active');
+      mainContent.classList.toggle('sidebar-open');
+    }
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      hamburger.classList.remove('open');
+      sidebarOverlay.classList.remove('active');
+      mainContent.classList.remove('sidebar-open');
+    }
+    hamburger.addEventListener('click', toggleSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+    // 抽卡動畫
+    const card = document.getElementById('testCard');
+    const cardInner = card.querySelector('.card-inner');
+    const flipBtn = document.getElementById('flipBtn');
+    const resultText = document.getElementById('resultText');
+    let isFlipped = false;
+    let rotating = false;
+    flipBtn.addEventListener('click', () => {
+      if (rotating) return;
+      rotating = true;
+      let startAngle = isFlipped ? 180 : 0;
+      let endAngle = isFlipped ? 0 : 180;
+      let angle = startAngle;
+      let speed = 32;
+      let slowdown = 0.92;
+      function animate() {
+        if (angle < endAngle) {
+          angle += speed;
+          if (angle > endAngle) angle = endAngle;
+          speed *= slowdown;
+          cardInner.style.transform = `rotateY(${angle}deg)`;
+          if (angle < endAngle) {
+            requestAnimationFrame(animate);
+          } else {
+            cardInner.style.transform = `rotateY(${endAngle}deg)`;
+            isFlipped = !isFlipped;
+            rotating = false;
+            // 翻到背面時才顯示內容
+            if (isFlipped) {
+              resultText.textContent = '這是抽到的卡牌內容！';
+              resultText.classList.add('show');
+            } else {
+              resultText.classList.remove('show');
+            }
+          }
+        } else if (angle > endAngle) {
+          angle -= speed;
+          if (angle < endAngle) angle = endAngle;
+          speed *= slowdown;
+          cardInner.style.transform = `rotateY(${angle}deg)`;
+          if (angle > endAngle) {
+            requestAnimationFrame(animate);
+          } else {
+            cardInner.style.transform = `rotateY(${endAngle}deg)`;
+            isFlipped = !isFlipped;
+            rotating = false;
+            resultText.classList.remove('show');
+          }
+        }
+      }
+      animate();
+    });
+  </script>
+</body>
+</html>
