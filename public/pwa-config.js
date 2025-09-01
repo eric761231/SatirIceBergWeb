@@ -1,230 +1,239 @@
-// PWA 配置文件
-const PWA_CONFIG = {
-    // 應用基本信息
-    app: {
-        name: 'Obyssey',
-        shortName: 'Obyssey',
-        description: '基於薩提爾冰山理論的AI療癒對話系統，深入探索內在世界',
-        version: '1.0.0',
-        author: 'Obyssey Team'
-    },
-    
-    // 安裝配置
-    install: {
-        promptDelay: 3000, // 延遲顯示安裝提示的時間（毫秒）
-        showInstallButton: true, // 是否顯示安裝按鈕
-        installButtonText: '安裝App',
-        installButtonTextInstalled: '已安裝',
-        installButtonTextUnsupported: '不支援'
-    },
-    
-    // 主題配置
-    theme: {
-        primaryColor: '#3498db',
-        secondaryColor: '#2c3e50',
-        backgroundColor: '#ecf0f1',
-        textColor: '#222',
-        borderRadius: '16px',
-        shadow: '0 4px 24px rgba(0,0,0,0.08)'
-    },
-    
-    // 功能配置
-    features: {
-        offlineSupport: true,
-        pushNotifications: false,
-        backgroundSync: false,
-        fileHandling: false
-    },
-    
-    // 緩存配置
-    cache: {
-        strategy: 'cache-first', // cache-first, network-first, stale-while-revalidate
-        maxAge: 86400000, // 24小時
-        maxEntries: 100
-    },
-    
-    // 更新配置
-    update: {
-        checkInterval: 3600000, // 1小時檢查一次更新
-        showUpdatePrompt: true,
-        updateButtonText: '更新可用',
-        updateButtonTextUpdating: '更新中...'
+// PWA 配置和推送通知模擬 API
+
+// 模擬推送通知 API
+class PushNotificationAPI {
+  constructor() {
+    this.subscriptions = new Map();
+    this.notificationQueue = [];
+  }
+
+  // 模擬發送推送通知
+  async sendNotification(subscription, notification) {
+    try {
+      // 在實際應用中，這裡會發送真正的推送通知
+      console.log('模擬發送推送通知:', {
+        subscription: subscription.endpoint,
+        notification: notification
+      });
+
+      // 模擬網路延遲
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      // 儲存訂閱資訊
+      this.subscriptions.set(subscription.endpoint, {
+        subscription: subscription,
+        lastNotification: Date.now()
+      });
+
+      // 模擬成功回應
+      return {
+        success: true,
+        message: '推送通知已發送',
+        timestamp: Date.now()
+      };
+    } catch (error) {
+      console.error('發送推送通知失敗:', error);
+      return {
+        success: false,
+        message: '發送失敗',
+        error: error.message
+      };
     }
+  }
+
+  // 獲取所有訂閱
+  getSubscriptions() {
+    return Array.from(this.subscriptions.values());
+  }
+
+  // 移除訂閱
+  removeSubscription(endpoint) {
+    return this.subscriptions.delete(endpoint);
+  }
+}
+
+// 創建全局實例
+window.pushNotificationAPI = new PushNotificationAPI();
+
+// 模擬 API 端點
+window.mockAPI = {
+  // 發送通知端點
+  '/api/send-notification': async (requestData) => {
+    const { subscription, notification } = requestData;
+    
+    try {
+      const result = await window.pushNotificationAPI.sendNotification(subscription, notification);
+      
+      if (result.success) {
+        // 模擬瀏覽器推送通知
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+          const registration = await navigator.serviceWorker.getRegistration();
+          if (registration) {
+            await registration.showNotification(notification.title, {
+              body: notification.body,
+              icon: notification.icon,
+              badge: notification.badge,
+              tag: notification.tag,
+              requireInteraction: notification.requireInteraction,
+              actions: notification.actions,
+              data: notification.data
+            });
+          }
+        }
+        
+        return {
+          status: 200,
+          body: result
+        };
+      } else {
+        return {
+          status: 500,
+          body: result
+        };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        body: {
+          success: false,
+          message: '內部錯誤',
+          error: error.message
+        }
+      };
+    }
+  },
+
+  // 獲取訂閱狀態端點
+  '/api/subscription-status': async () => {
+    const subscriptions = window.pushNotificationAPI.getSubscriptions();
+    return {
+      status: 200,
+      body: {
+        activeSubscriptions: subscriptions.length,
+        subscriptions: subscriptions
+      }
+    };
+  }
 };
 
-// 導出配置
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = PWA_CONFIG;
-} else if (typeof window !== 'undefined') {
-    window.PWA_CONFIG = PWA_CONFIG;
-}
+// 攔截 fetch 請求以模擬 API
+const originalFetch = window.fetch;
+window.fetch = async (url, options = {}) => {
+  // 檢查是否為我們的模擬 API
+  if (url.startsWith('/api/')) {
+    const apiPath = url;
+    
+    if (window.mockAPI[apiPath]) {
+      let requestData = {};
+      
+      if (options.body) {
+        try {
+          requestData = JSON.parse(options.body);
+        } catch (e) {
+          requestData = {};
+        }
+      }
+      
+      const result = await window.mockAPI[apiPath](requestData);
+      
+      // 返回模擬的 Response 物件
+      return new Response(JSON.stringify(result.body), {
+        status: result.status,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+  }
+  
+  // 對於其他請求，使用原始的 fetch
+  return originalFetch(url, options);
+};
 
-// PWA 安裝管理器
-class PWAInstallManager {
-    constructor(config = PWA_CONFIG) {
-        this.config = config;
-        this.deferredPrompt = null;
-        this.isInstalled = false;
-        this.init();
-    }
-    
-    init() {
-        this.checkInstallationStatus();
-        this.setupEventListeners();
-        this.setupServiceWorker();
-    }
-    
-    // 檢查安裝狀態
-    checkInstallationStatus() {
-        if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
-            this.isInstalled = true;
-        }
-        
-        // 檢查是否已安裝到主畫面
-        if (window.navigator.standalone === true) {
-            this.isInstalled = true;
-        }
-    }
-    
-    // 設置事件監聽器
-    setupEventListeners() {
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            this.deferredPrompt = e;
-            this.showInstallButton();
-        });
-        
-        window.addEventListener('appinstalled', () => {
-            this.isInstalled = true;
-            this.hideInstallButton();
-            this.showInstallationSuccess();
-        });
-    }
-    
-    // 設置 Service Worker
-    setupServiceWorker() {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then((registration) => {
-                    console.log('ServiceWorker 註冊成功:', registration);
-                    this.setupUpdateChecking(registration);
-                })
-                .catch((error) => {
-                    console.log('ServiceWorker 註冊失敗:', error);
-                });
-        }
-    }
-    
-    // 設置更新檢查
-    setupUpdateChecking(registration) {
-        if (this.config.update.showUpdatePrompt) {
-            registration.addEventListener('updatefound', () => {
-                const newWorker = registration.installing;
-                newWorker.addEventListener('statechange', () => {
-                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                        this.showUpdatePrompt();
-                    }
-                });
-            });
-        }
-    }
-    
-    // 顯示安裝按鈕
-    showInstallButton() {
-        if (this.config.install.showInstallButton && !this.isInstalled) {
-            const installBtn = document.getElementById('installAppBtn');
-            if (installBtn) {
-                installBtn.style.display = 'inline-block';
-                installBtn.addEventListener('click', () => this.installApp());
-            }
-        }
-    }
-    
-    // 隱藏安裝按鈕
-    hideInstallButton() {
-        const installBtn = document.getElementById('installAppBtn');
-        if (installBtn) {
-            installBtn.style.display = 'none';
-        }
-    }
-    
-    // 安裝應用
-    async installApp() {
-        if (this.deferredPrompt) {
-            this.deferredPrompt.prompt();
-            const choiceResult = await this.deferredPrompt.userChoice;
-            this.deferredPrompt = null;
-            
-            if (choiceResult.outcome === 'accepted') {
-                console.log('用戶接受了安裝提示');
-            } else {
-                console.log('用戶拒絕了安裝提示');
-            }
-        } else {
-            this.showManualInstallInstructions();
-        }
-    }
-    
-    // 顯示手動安裝說明
-    showManualInstallInstructions() {
-        // 更準確的 iOS 檢測邏輯
-        const isIOS = () => {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isIPad = /ipad/.test(userAgent) || 
-                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-            const isIPhone = /iphone/.test(userAgent);
-            const isIPod = /ipod/.test(userAgent);
-            
-            return isIPad || isIPhone || isIPod;
-        };
-        
-        const isAndroid = /Android/.test(navigator.userAgent);
-        
-        let message = '請使用支援PWA的瀏覽器，或已安裝/不支援安裝提示';
-        
-        if (isIOS()) {
-            message = '請點選 Safari 下方的「分享」按鈕，然後選擇「加入主畫面」';
-        } else if (isAndroid) {
-            message = '請點選瀏覽器選單中的「安裝 App」選項';
-        }
-        
-        alert(message);
-    }
-    
-    // 顯示安裝成功提示
-    showInstallationSuccess() {
-        // 可以顯示一個優雅的提示或通知
-        console.log('Obyssey App 安裝成功！');
-    }
-    
-    // 顯示更新提示
-    showUpdatePrompt() {
-        if (this.config.update.showUpdatePrompt) {
-            const updateBtn = document.createElement('button');
-            updateBtn.textContent = this.config.update.updateButtonText;
-            updateBtn.className = 'update-app-btn';
-            updateBtn.addEventListener('click', () => this.updateApp());
-            
-            // 將更新按鈕添加到頁面
-            const container = document.querySelector('.container');
-            if (container) {
-                container.appendChild(updateBtn);
-            }
-        }
-    }
-    
-    // 更新應用
-    updateApp() {
-        if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
-            window.location.reload();
-        }
-    }
-}
+// PWA 安裝提示
+class PWAInstallPrompt {
+  constructor() {
+    this.deferredPrompt = null;
+    this.installButton = null;
+    this.init();
+  }
 
-// 自動初始化 PWA 安裝管理器
-if (typeof window !== 'undefined') {
-    window.addEventListener('DOMContentLoaded', () => {
-        window.pwaManager = new PWAInstallManager();
+  init() {
+    // 監聽 beforeinstallprompt 事件
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      this.deferredPrompt = e;
+      this.showInstallButton();
     });
+
+    // 檢查是否已安裝
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      console.log('應用程式已安裝為 PWA');
+      this.hideInstallButton();
+    }
+  }
+
+  showInstallButton() {
+    if (!this.installButton) {
+      this.createInstallButton();
+    }
+    this.installButton.style.display = 'block';
+  }
+
+  hideInstallButton() {
+    if (this.installButton) {
+      this.installButton.style.display = 'none';
+    }
+  }
+
+  createInstallButton() {
+    this.installButton = document.createElement('button');
+    this.installButton.textContent = '安裝應用程式';
+    this.installButton.className = 'pwa-install-btn';
+    this.installButton.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--accent-cyan);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,170,255,0.3);
+      transition: all 0.2s ease;
+    `;
+
+    this.installButton.addEventListener('click', () => {
+      this.installApp();
+    });
+
+    document.body.appendChild(this.installButton);
+  }
+
+  async installApp() {
+    if (this.deferredPrompt) {
+      this.deferredPrompt.prompt();
+      const { outcome } = await this.deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('用戶接受了安裝提示');
+        this.hideInstallButton();
+      } else {
+        console.log('用戶拒絕了安裝提示');
+      }
+      
+      this.deferredPrompt = null;
+    }
+  }
 }
+
+// 初始化 PWA 安裝提示
+document.addEventListener('DOMContentLoaded', () => {
+  new PWAInstallPrompt();
+});
+
+console.log('PWA 配置和推送通知模擬 API 已載入');

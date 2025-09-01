@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>安裝冥想音樂應用程式</title>
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="../icons/icon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../icons/icon-16x16.png">
+  <style>
+    :root {
+      --bg-primary: #131314;
+      --bg-secondary: #1e1f20;
+      --accent-cyan: #00aaff;
+      --text-primary: #e8eaed;
+      --text-secondary: #9aa0a6;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      color: var(--accent-cyan);
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+    
+    .install-steps {
+      margin-bottom: 30px;
+    }
+    
+    .step {
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-left: 4px solid var(--accent-cyan);
+    }
+    
+    .step h3 {
+      color: var(--accent-cyan);
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    
+    .step p {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+    
+    .step img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    
+    .device-specific {
+      background: rgba(0,170,255,0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .device-specific h3 {
+      color: var(--accent-cyan);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .device-tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg-primary);
+    }
+    
+    .device-tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+    }
+    
+    .device-tab.active {
+      background: var(--accent-cyan);
+      color: var(--bg-primary);
+    }
+    
+    .device-content {
+      display: none;
+    }
+    
+    .device-content.active {
+      display: block;
+    }
+    
+    .benefits {
+      background: rgba(76, 175, 80, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .benefits h3 {
+      color: #4caf50;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    .benefit-list {
+      list-style: none;
+    }
+    
+    .benefit-list li {
+      padding: 8px 0;
+      color: var(--text-secondary);
+      position: relative;
+      padding-left: 25px;
+    }
+    
+    .benefit-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #4caf50;
+      font-weight: bold;
+    }
+    
+    .back-btn {
+      display: inline-block;
+      background: var(--accent-cyan);
+      color: var(--bg-primary);
+      padding: 12px 24px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .back-btn:hover {
+      background: #0099e6;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,170,255,0.3);
+    }
+    
+    .install-btn {
+      display: inline-block;
+      background: #4caf50;
+      color: white;
+      padding: 15px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-size: 18px;
+      margin-left: 15px;
+    }
+    
+    .install-btn:hover {
+      background: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(76,175,80,0.3);
+    }
+    
+    .actions {
+      text-align: center;
+      margin-top: 30px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
+      
+      .header h1 {
+        font-size: 24px;
+      }
+      
+      .device-tabs {
+        flex-direction: column;
+      }
+      
+      .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .back-btn, .install-btn {
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📱 安裝冥想音樂應用程式</h1>
+      <p>將應用程式安裝到手機主頁面，享受更好的使用體驗</p>
+    </div>
+    
+    <div class="install-steps">
+      <div class="step">
+        <h3>🎯 為什麼要安裝應用程式？</h3>
+        <p>安裝後，您可以：</p>
+        <ul class="benefit-list">
+          <li>在手機主頁面直接開啟應用程式</li>
+          <li>接收冥想提醒通知，即使應用程式未開啟</li>
+          <li>享受離線播放功能</li>
+          <li>獲得原生應用程式般的體驗</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="device-specific">
+      <h3>📱 安裝說明</h3>
+      
+      <div class="device-tabs">
+        <button class="device-tab active" onclick="showDevice('android')">Android</button>
+        <button class="device-tab" onclick="showDevice('ios')">iOS</button>
+        <button class="device-tab" onclick="showDevice('desktop')">桌面版</button>
+      </div>
+      
+      <div id="android" class="device-content active">
+        <h4>Android 手機安裝步驟：</h4>
+        <ol>
+          <li>使用 Chrome 瀏覽器開啟冥想音樂頁面</li>
+          <li>點擊瀏覽器選單（三個點）</li>
+          <li>選擇「安裝應用程式」或「加入主畫面」</li>
+          <li>點擊「安裝」確認</li>
+          <li>應用程式將出現在主頁面上</li>
+        </ol>
+      </div>
+      
+      <div id="ios" class="device-content">
+        <h4>iPhone/iPad 安裝步驟：</h4>
+        <ol>
+          <li>使用 Safari 瀏覽器開啟冥想音樂頁面</li>
+          <li>點擊底部的「分享」按鈕</li>
+          <li>選擇「加入主畫面」</li>
+          <li>點擊「加入」確認</li>
+          <li>應用程式將出現在主頁面上</li>
+        </ol>
+      </div>
+      
+      <div id="desktop" class="device-content">
+        <h4>桌面版安裝步驟：</h4>
+        <ol>
+          <li>使用支援 PWA 的瀏覽器（Chrome、Edge、Firefox）</li>
+          <li>在網址列右側會出現安裝圖標</li>
+          <li>點擊安裝圖標</li>
+          <li>選擇「安裝」確認</li>
+          <li>應用程式將出現在開始選單和桌面</li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="benefits">
+      <h3>✨ 安裝後的功能</h3>
+      <ul class="benefit-list">
+        <li>手機主頁面直接開啟</li>
+        <li>背景推送通知提醒</li>
+        <li>離線音樂播放</li>
+        <li>全螢幕沉浸體驗</li>
+        <li>快速存取播放清單</li>
+        <li>自動更新和同步</li>
+      </ul>
+    </div>
+    
+    <div class="actions">
+      <a href="/music.html" class="back-btn">返回音樂播放器</a>
+      <button class="install-btn" onclick="installApp()">立即安裝</button>
+    </div>
+  </div>
+  
+  <script>
+    function showDevice(device) {
+      // 隱藏所有內容
+      document.querySelectorAll('.device-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      
+      // 移除所有標籤的活動狀態
+      document.querySelectorAll('.device-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // 顯示選中的內容
+      document.getElementById(device).classList.add('active');
+      
+      // 設置選中標籤的活動狀態
+      event.target.classList.add('active');
+    }
+    
+    async function installApp() {
+      try {
+        // 檢查是否支援安裝
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+          // 嘗試註冊 Service Worker
+          const registration = await navigator.serviceWorker.register('/public/service-worker.js');
+          console.log('Service Worker 註冊成功:', registration);
+          
+          // 檢查是否有安裝提示
+          if (window.deferredPrompt) {
+            window.deferredPrompt.prompt();
+            const { outcome } = await window.deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+              alert('安裝成功！應用程式已添加到您的主頁面。');
+            } else {
+              alert('安裝被取消。您可以稍後再試。');
+            }
+            
+            window.deferredPrompt = null;
+          } else {
+            // 沒有安裝提示，顯示手動安裝說明
+            alert('請按照上方說明手動安裝應用程式。');
+          }
+        } else {
+          alert('您的瀏覽器不支援 PWA 安裝。請使用 Chrome、Edge 或 Firefox 瀏覽器。');
+        }
+      } catch (error) {
+        console.error('安裝失敗:', error);
+        alert('安裝失敗，請按照上方說明手動安裝。');
+      }
+    }
+    
+    // 檢查是否已安裝
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      document.querySelector('.install-btn').textContent = '已安裝';
+      document.querySelector('.install-btn').disabled = true;
+      document.querySelector('.install-btn').style.background = '#666';
+    }
+  </script>
+</body>
+</html>
