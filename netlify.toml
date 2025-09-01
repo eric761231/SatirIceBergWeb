@@ -16,10 +16,16 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
-# 處理 SPA 路由
+# 處理 SPA 路由 - 將根路徑重定向到冥想頁面
+[[redirects]]
+  from = "/"
+  to = "/meditation.html"
+  status = 200
+
+# 處理其他路由
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/meditation.html"
   status = 200
 
 # 確保 meditation.html 可以直接訪問

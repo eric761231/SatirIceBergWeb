@@ -1,238 +1,80 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>安裝 Obyssey App</title>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16x16.png">
-    <link rel="manifest" href="./manifest.json">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="Obyssey">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <title>冥想音樂播放器</title>
+    <meta http-equiv="refresh" content="0; url=./meditation.html">
     <style>
-        :root {
-            --bg-primary: #131314;
-            --bg-secondary: #1e1f20;
-            --bg-tertiary: #2a2b2c;
-            --text-primary: #e8eaed;
-            --text-secondary: #9aa0a6;
-            --border-color: #3c4043;
-            --accent-blue: #8ab4f8;
-        }
         body {
-            font-family: 'Noto Sans TC', 'Google Sans', Arial, sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
+            font-family: 'Noto Sans TC', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
         .container {
-            max-width: 480px;
-            margin: 40px auto;
-            background: var(--bg-secondary);
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
-            padding: 40px 28px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         h1 {
-            font-size: 2rem;
-            color: var(--accent-blue);
-            text-align: center;
-            margin-bottom: 22px;
-            font-weight: 700;
-            letter-spacing: 1px;
+            color: #00aaff;
+            margin-bottom: 20px;
         }
-        .guide {
-            margin-top: 22px;
+        p {
+            margin-bottom: 30px;
+            font-size: 1.1em;
         }
-        .guide h2 {
-            font-size: 1.15rem;
-            color: var(--accent-blue);
-            margin-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 4px;
-            font-weight: 500;
-        }
-        .guide ul {
-            padding-left: 20px;
-            margin: 0 0 18px 0;
-        }
-        .guide li {
-            margin-bottom: 10px;
-            font-size: 1.05rem;
-            color: var(--text-primary);
-        }
-        .note {
-            color: var(--text-secondary);
-            font-size: 1rem;
-            margin-top: 16px;
-            text-align: center;
-        }
-        .install-app-btn {
-            margin-top: 28px;
-            padding: 14px 28px;
-            border-radius: 10px;
-            background: var(--accent-blue);
-            color: var(--bg-primary);
-            border: none;
-            font-size: 1.15rem;
-            font-weight: bold;
-            cursor: pointer;
+        .loading {
             display: inline-block;
-            box-shadow: 0 2px 8px #0002;
-            transition: background-color 0.3s, opacity 0.3s;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00aaff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
         }
-        .install-app-btn:disabled {
-            background-color: var(--border-color);
-            color: var(--text-secondary);
-            cursor: not-allowed;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
-        .centered {
-            text-align: center;
+        .link {
+            color: #00aaff;
+            text-decoration: none;
+            font-weight: bold;
         }
-        .share-icon {
-            font-size: 1.2em;
-            vertical-align: middle;
-        }
-        #ios-guide, #android-guide {
-            display: none;
-        }
-        @media (max-width: 600px) {
-            .container {
-                margin: 20px auto;
-                padding: 20px;
-            }
-            h1 {
-                font-size: 1.6rem;
-            }
-            .guide h2 {
-                font-size: 1rem;
-            }
-            .guide li {
-                font-size: 0.95rem;
-            }
-            .install-app-btn {
-                padding: 12px 24px;
-                font-size: 1rem;
-            }
+        .link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>安裝 Obyssey App</h1>
-        <div class="centered">
-            <button id="installAppBtn" class="install-app-btn">安裝 App 到手機</button>
+        <h1>🧘‍♀️ 冥想音樂播放器</h1>
+        <p>正在載入冥想頁面...</p>
+        <div style="margin-bottom: 20px;">
+            <span class="loading"></span>
+            <span>自動重定向中...</span>
         </div>
-        
-        <div class="guide">
-            <h2>安裝前提醒</h2>
-            <ul>
-                <li>請「使用手機預設瀏覽器」(iOS 請用 Safari，Android 請用 Chrome) 開啟本頁面。</li>
-                <li>若您在 LINE 或 Facebook 等 App 中開啟，請先複製網址並貼到預設瀏覽器中。</li>
-            </ul>
-
-            <div id="ios-guide">
-                <h2>iOS / iPad 安裝教學</h2>
-                <ul>
-                    <li>1. 請點選 Safari 瀏覽器下方的「分享」按鈕 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233498db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-share'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="分享圖示" class="share-icon"></li>
-                    <li>2. 在彈出的選單中，向下滑動並選擇「加入主畫面」(Add to Home Screen)</li>
-                    <li>3. 點擊右上角的「新增」，即可在桌面上看到 App 圖示</li>
-                </ul>
-            </div>
-            <div id="android-guide">
-                <h2>Android 安裝教學</h2>
-                <ul>
-                    <li>1. 點擊上方的「安裝 App 到手機」按鈕</li>
-                    <li>2. 若按鈕無效或未出現，請點選瀏覽器右上角的「選單 ⋮」</li>
-                    <li>3. 選擇「<b>安裝應用程式</b>」(Install app)</li>
-                    <li>4. 按照提示完成安裝，桌面將會出現 App 圖示</li>
-                </ul>
-            </div>
-        </div>
-        <div class="note">若安裝遇到問題，請確保您的瀏覽器為最新版本。</div>
+        <p>如果沒有自動跳轉，請 <a href="./meditation.html" class="link">點擊這裡</a> 進入冥想頁面</p>
     </div>
-
+    
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./service-worker.js')
-            .then(function(registration) {
-                console.log('Service Worker 註冊成功:', registration);
-            })
-            .catch(function(error) {
-                console.error('Service Worker 註冊失敗:', error);
-            });
-        }
-
-        const installBtn = document.getElementById('installAppBtn');
-        const iosGuide = document.getElementById('ios-guide');
-        const androidGuide = document.getElementById('android-guide');
-        let deferredPrompt = null;
-
-        // 更準確的 iOS 檢測邏輯
-        const isIOS = () => {
-            // 檢測 iOS 設備（包括 iPad）
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isIPad = /ipad/.test(userAgent) || 
-                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-            const isIPhone = /iphone/.test(userAgent);
-            const isIPod = /ipod/.test(userAgent);
-            
-            return isIPad || isIPhone || isIPod;
-        };
-
-        const isInStandaloneMode = () =>
-            (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
-
-        // 監聽 PWA 安裝事件
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'inline-block';
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (isIOS()) {
-                alert('iOS 用戶請依照下方的教學手動安裝。');
-                window.scrollTo(0, document.body.scrollHeight);
-            } else if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`使用者回應: ${outcome}`);
-                if (outcome === 'accepted') {
-                    installBtn.textContent = '安裝成功！';
-                    installBtn.disabled = true;
-                }
-                deferredPrompt = null;
-            } else {
-                alert('應用程式可能已經安裝，或您的瀏覽器不支援自動安裝。請參考下方的 Android 教學手動操作。');
-                window.scrollTo(0, document.body.scrollHeight);
+        // 確保重定向到冥想頁面
+        setTimeout(() => {
+            if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+                window.location.href = './meditation.html';
             }
-        });
-
-        // 頁面載入時檢查並顯示正確的教學
-        window.addEventListener('DOMContentLoaded', () => {
-            if (isInStandaloneMode()) {
-                installBtn.textContent = '已在主畫面開啟';
-                installBtn.disabled = true;
-            } else if (isIOS()) {
-                installBtn.textContent = 'iOS 手動安裝教學';
-                iosGuide.style.display = 'block';
-                androidGuide.style.display = 'none';
-            } else {
-                androidGuide.style.display = 'block';
-                // 如果 deferredPrompt 已存在，按鈕會自動顯示，否則維持隱藏
-                if (!deferredPrompt) {
-                     installBtn.style.display = 'none';
-                }
-            }
-        });
+        }, 100);
     </script>
 </body>
 </html>

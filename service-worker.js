@@ -1,14 +1,15 @@
 // Service Worker for Obyssey PWA
-const CACHE_NAME = 'obyssey-v1.0.1';
-const STATIC_CACHE = 'obyssey-static-v1.0.1';
-const DYNAMIC_CACHE = 'obyssey-dynamic-v1.0.1';
+const CACHE_NAME = 'obyssey-v1.0.2';
+const STATIC_CACHE = 'obyssey-static-v1.0.2';
+const DYNAMIC_CACHE = 'obyssey-dynamic-v1.0.2';
 
 const STATIC_FILES = [
     '/',
+    '/meditation.html',
     '/index.html',
     '/ice.html',
-    '/meditation.html',
     '/notification-test.html',
+    '/pwa-cache-clear.html',
     '/public/install-app.html',
     '/public/pwa-config.js',
     '/manifest.json',
@@ -122,24 +123,24 @@ self.addEventListener('push', (event) => {
   let notificationData = {
     title: '冥想提醒',
     body: '該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。',
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
+    icon: './favicon.ico',
+    badge: './favicon.ico',
     tag: 'meditation-reminder',
     requireInteraction: true,
     actions: [
       {
         action: 'open',
         title: '開始冥想',
-        icon: '/favicon.ico'
+        icon: './favicon.ico'
       },
       {
         action: 'snooze',
         title: '稍後提醒',
-        icon: '/favicon.ico'
+        icon: './favicon.ico'
       }
     ],
     data: {
-      url: '/meditation.html',
+      url: './meditation.html',
       timestamp: Date.now()
     }
   };
@@ -170,7 +171,7 @@ self.addEventListener('notificationclick', (event) => {
   if (event.action === 'open') {
     // 開啟冥想應用
     event.waitUntil(
-      clients.openWindow('/meditation.html')
+      clients.openWindow('./meditation.html')
     );
   } else if (event.action === 'snooze') {
     // 延遲 10 分鐘
@@ -179,7 +180,7 @@ self.addEventListener('notificationclick', (event) => {
         setTimeout(() => {
           self.registration.showNotification('冥想提醒', {
             body: '10分鐘後再次提醒您進行冥想',
-            icon: '/favicon.ico',
+            icon: './favicon.ico',
             tag: 'meditation-reminder'
           });
           resolve();
@@ -189,7 +190,7 @@ self.addEventListener('notificationclick', (event) => {
   } else {
     // 預設動作 - 開啟應用
     event.waitUntil(
-      clients.openWindow('/meditation.html')
+      clients.openWindow('./meditation.html')
     );
   }
 });
@@ -203,7 +204,18 @@ self.addEventListener('sync', (event) => {
         body: '該是冥想的時候了！',
         icon: './favicon.ico',
         tag: 'meditation-reminder',
-        requireInteraction: true
+        requireInteraction: true,
+        actions: [
+          {
+            action: 'open',
+            title: '開始冥想',
+            icon: './favicon.ico'
+          }
+        ],
+        data: {
+          url: './meditation.html',
+          timestamp: Date.now()
+        }
       })
     );
   }
