@@ -23,7 +23,13 @@ const STATIC_FILES = [
     '/icons/icon-152x152.png',
     '/icons/icon-192x192.png',
     '/icons/icon-384x384.png',
-    '/icons/icon-512x512.png'
+    '/icons/icon-512x512.png',
+    '/images/rainbow.png',
+    '/images/HamSa.png',
+    '/images/mindfulness.png',
+    '/images/warroirscreed.png',
+    '/images/hollow.png',
+    '/images/pearOcean.png'
 ];
 
 self.addEventListener('install', (event) => {
