@@ -1021,13 +1021,13 @@
       });
     }
     
-    // 載入 PWA 配置
-    const pwaScript = document.createElement('script');
-    pwaScript.src = '/public/pwa-config.js';
-    pwaScript.onload = () => {
-      console.log('PWA 配置已載入');
-    };
-    document.head.appendChild(pwaScript);
+         // 載入 PWA 配置
+     const pwaScript = document.createElement('script');
+     pwaScript.src = './public/pwa-config.js';
+     pwaScript.onload = () => {
+       console.log('PWA 配置已載入');
+     };
+     document.head.appendChild(pwaScript);
   </script>
 </body>
 </html>

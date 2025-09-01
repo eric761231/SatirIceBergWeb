@@ -1,0 +1,35 @@
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/manifest.json"
+  [headers.values]
+    Content-Type = "application/manifest+json"
+
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# 處理 SPA 路由
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# 確保 meditation.html 可以直接訪問
+[[redirects]]
+  from = "/meditation"
+  to = "/meditation.html"
+  status = 200
+
+# 確保其他 HTML 檔案可以直接訪問
+[[redirects]]
+  from = "/notification-test"
+  to = "/notification-test.html"
+  status = 200

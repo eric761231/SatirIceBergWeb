@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA 快取清理</title>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #00aaff;
+            margin-bottom: 30px;
+        }
+        .btn {
+            background: linear-gradient(45deg, #00aaff, #0088cc);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            width: 100%;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 170, 255, 0.4);
+        }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        .error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        .info {
+            background: rgba(0, 170, 255, 0.2);
+            color: #00aaff;
+            border: 1px solid rgba(0, 170, 255, 0.3);
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 PWA 快取清理工具</h1>
+        <p>如果您的 PWA 出現問題，請使用以下工具清理快取：</p>
+        
+        <button class="btn" onclick="clearServiceWorkerCache()">清理 Service Worker 快取</button>
+        <button class="btn" onclick="unregisterServiceWorker()">註銷 Service Worker</button>
+        <button class="btn" onclick="clearAllCaches()">清理所有快取</button>
+        <button class="btn" onclick="reloadApp()">重新載入應用</button>
+        
+        <div id="status"></div>
+        
+        <a href="./meditation.html" class="back-btn">← 返回冥想頁面</a>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+        }
+
+        async function clearServiceWorkerCache() {
+            try {
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(
+                        cacheNames.map(cacheName => caches.delete(cacheName))
+                    );
+                    showStatus('Service Worker 快取已清理！', 'success');
+                } else {
+                    showStatus('瀏覽器不支援快取 API', 'error');
+                }
+            } catch (error) {
+                showStatus(`清理快取失敗: ${error.message}`, 'error');
+            }
+        }
+
+        async function unregisterServiceWorker() {
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(
+                        registrations.map(registration => registration.unregister())
+                    );
+                    showStatus('Service Worker 已註銷！', 'success');
+                } else {
+                    showStatus('瀏覽器不支援 Service Worker', 'error');
+                }
+            } catch (error) {
+                showStatus(`註銷 Service Worker 失敗: ${error.message}`, 'error');
+            }
+        }
+
+        async function clearAllCaches() {
+            try {
+                // 清理 Service Worker 快取
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(
+                        cacheNames.map(cacheName => caches.delete(cacheName))
+                    );
+                }
+                
+                // 清理 localStorage
+                localStorage.clear();
+                
+                // 清理 sessionStorage
+                sessionStorage.clear();
+                
+                showStatus('所有快取已清理！', 'success');
+            } catch (error) {
+                showStatus(`清理所有快取失敗: ${error.message}`, 'error');
+            }
+        }
+
+        function reloadApp() {
+            showStatus('正在重新載入應用...', 'info');
+            setTimeout(() => {
+                window.location.reload(true);
+            }, 1000);
+        }
+
+        // 頁面載入時檢查 PWA 狀態
+        window.addEventListener('load', () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    if (registrations.length > 0) {
+                        showStatus(`檢測到 ${registrations.length} 個 Service Worker 註冊`, 'info');
+                    } else {
+                        showStatus('未檢測到 Service Worker 註冊', 'info');
+                    }
+                });
+            } else {
+                showStatus('瀏覽器不支援 Service Worker', 'error');
+            }
+        });
+    </script>
+</body>
+</html>
