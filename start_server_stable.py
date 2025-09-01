@@ -76,11 +76,13 @@ class MeditationMusicServer:
                 print("🧘 冥想音樂播放器 - 穩定版測試伺服器")
                 print("=" * 60)
                 print(f"📱 手機測試地址：")
-                print(f"   http://{local_ip}:{self.port}/music.html")
+                print(f"   http://{local_ip}:{self.port}/meditation.html")
+                print(f"   http://{local_ip}:{self.port}/notification-test.html")
                 print(f"   http://{local_ip}:{self.port}/public/install-app.html")
                 print()
                 print(f"💻 電腦測試地址：")
-                print(f"   http://localhost:{self.port}/music.html")
+                print(f"   http://localhost:{self.port}/meditation.html")
+                print(f"   http://localhost:{self.port}/notification-test.html")
                 print(f"   http://localhost:{self.port}/public/install-app.html")
                 print()
                 print("🔧 測試功能：")
@@ -119,7 +121,7 @@ class MeditationMusicServer:
     def open_browser(self):
         """自動開啟瀏覽器"""
         try:
-            webbrowser.open(f"http://localhost:{self.port}/music.html")
+            webbrowser.open(f"http://localhost:{self.port}/meditation.html")
         except:
             pass
     
