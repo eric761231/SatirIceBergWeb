@@ -4087,3 +4087,95 @@ Error: `vercel inspect <url>` expects exactly one argument
 
 
 ============================================================
+[2025-09-01 14:36:36] 更新描述:
+1增2篇9月閱讀
+2
+>>> git add .
+warning: in the working copy of 'index.html', LF will be replaced by CRLF the next time Git touches it
+
+
+>>> git commit -m '1增2篇9月閱讀
+2'
+[main 13e9c32] '1增2篇9月閱讀
+ 28 files changed, 1897 insertions(+), 285 deletions(-)
+ delete mode 100644 _redirects
+ create mode 100644 articles/2025-09/20250908.txt
+ create mode 100644 articles/2025-09/20250909.txt
+ create mode 100644 favicon.ico
+ create mode 100644 images/HamSa.png
+ create mode 100644 images/hollow.png
+ create mode 100644 images/mindfulness.png
+ create mode 100644 images/pearOcean.png
+ create mode 100644 images/rainbow.png
+ create mode 100644 images/warroirscreed.png
+ delete mode 100644 meditation_human.html
+ create mode 100644 music.html
+ create mode 100644 start_server_stable.bat
+ create mode 100644 start_server_stable.py
+
+
+>>> git push origin main
+To https://github.com/eric761231/SatirIceBergWeb.git
+   c43dda0..13e9c32  main -> main
+
+
+>>> vercel ls
+Vercel CLI 46.0.1
+Retrieving project…
+Fetching deployments in eric761231s-projects
+> No deployments found.
+
+
+>>> vercel inspect
+Vercel CLI 46.0.1
+Error: `vercel inspect <url>` expects exactly one argument
+
+  ▲ vercel inspect url|deploymentId [options]
+
+  Show information about a deployment.                                          
+
+  Options:
+
+  -l,  --logs            Prints the build logs instead of the deployment summary     
+       --timeout <TIME>  Time to wait for deployment completion [3m]                 
+       --wait            Blocks until deployment completes                           
+
+
+  Global Options:
+
+       --cwd <DIR>            Sets the current working directory for a single   
+                              run of a command                                  
+  -d,  --debug                Debug mode (default off)                          
+  -Q,  --global-config <DIR>  Path to the global `.vercel` directory            
+  -h,  --help                 Output usage information                          
+  -A,  --local-config <FILE>  Path to the local `vercel.json` file              
+       --no-color             No color mode (default off)                       
+  -S,  --scope                Set a custom scope                                
+  -t,  --token <TOKEN>        Login token                                       
+  -v,  --version              Output the version number                         
+
+
+  Examples:
+
+  - Get information about a deployment by its unique URL
+
+    $ vercel inspect my-deployment-ji2fjij2.vercel.app
+
+  - Get information about the deployment an alias points to
+
+    $ vercel inspect my-deployment.vercel.app
+
+  - Get information about a deployment by piping in the URL
+
+    $ echo my-deployment.vercel.app | vercel inspect
+
+  - Wait up to 90 seconds for deployment to complete
+
+    $ vercel inspect my-deployment.vercel.app --wait --timeout 90s
+
+  - Get deployment build logs
+
+    $ vercel inspect my-deployment.vercel.app --logs
+
+
+============================================================
