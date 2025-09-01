@@ -12,16 +12,16 @@
   <meta name="apple-mobile-web-app-title" content="通知測試" />
   <meta name="mobile-web-app-capable" content="yes" />
   
-  <!-- Manifest -->
-  <link rel="manifest" href="/manifest.json" />
+      <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json" />
   
   <!-- Apple Touch Icons -->
-  <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+      <link rel="apple-touch-icon" href="./icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-192x192.png" />
   
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link rel="icon" type="image/x-icon" href="./favicon.ico" />
   
   <style>
     * {
@@ -223,7 +223,7 @@
       <div class="log-entry log-info">系統初始化中...</div>
     </div>
     
-    <a href="/meditation.html" class="back-btn">← 返回冥想頁面</a>
+            <a href="./meditation.html" class="back-btn">← 返回冥想頁面</a>
   </div>
   
   <script>
@@ -298,7 +298,7 @@
     async function registerServiceWorker() {
       if ('serviceWorker' in navigator) {
         try {
-          const registration = await navigator.serviceWorker.register('/service-worker.js');
+          const registration = await navigator.serviceWorker.register('./service-worker.js');
           addLog('Service Worker 註冊成功', 'success');
           return registration;
         } catch (error) {

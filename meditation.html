@@ -12,16 +12,16 @@
   <meta name="apple-mobile-web-app-title" content="冥想音樂" />
   <meta name="mobile-web-app-capable" content="yes" />
   
-  <!-- Manifest -->
-  <link rel="manifest" href="/manifest.json" />
+      <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json" />
   
   <!-- Apple Touch Icons -->
-  <link rel="apple-touch-icon" href="/icons/icon-152x152.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+      <link rel="apple-touch-icon" href="./icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-192x192.png" />
   
   <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+      <link rel="icon" type="image/x-icon" href="./favicon.ico" />
   
   <style>
     /* 側邊導航欄樣式 from meditation.html */
@@ -405,7 +405,7 @@
         <div class="reminder-actions">
           <button class="btn-save" id="saveReminder">儲存設定</button>
           <button class="btn-test" id="testReminder">測試提醒</button>
-          <a href="/notification-test.html" class="btn-test" style="text-decoration: none; display: inline-block; text-align: center;">通知測試</a>
+                      <a href="./notification-test.html" class="btn-test" style="text-decoration: none; display: inline-block; text-align: center;">通知測試</a>
         </div>
         <div class="reminder-status" id="reminderStatus"></div>
       </div>
@@ -1008,7 +1008,7 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', async () => {
         try {
-          const registration = await navigator.serviceWorker.register('/service-worker.js');
+          const registration = await navigator.serviceWorker.register('./service-worker.js');
           console.log('Service Worker 註冊成功:', registration);
           
           // 檢查推送通知支援

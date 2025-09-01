@@ -4,25 +4,25 @@ const STATIC_CACHE = 'obyssey-static-v1.0.0';
 const DYNAMIC_CACHE = 'obyssey-dynamic-v1.0.0';
 
 const STATIC_FILES = [
-    '/',
-    '/index.html',
-    '/ice.html',
-    '/meditation.html',
-    '/notification-test.html',
-    '/install-app.html',
-    '/pwa-config.js',
-    '/manifest.json',
-    '/sw.js',
-    '/service-worker.js',
-    '/favicon.ico',
-    '/icons/icon-72x72.png',
-    '/icons/icon-96x96.png',
-    '/icons/icon-128x128.png',
-    '/icons/icon-144x144.png',
-    '/icons/icon-152x152.png',
-    '/icons/icon-192x192.png',
-    '/icons/icon-384x384.png',
-    '/icons/icon-512x512.png'
+    './',
+    './index.html',
+    './ice.html',
+    './meditation.html',
+    './notification-test.html',
+    './public/install-app.html',
+    './public/pwa-config.js',
+    './manifest.json',
+    './sw.js',
+    './service-worker.js',
+    './favicon.ico',
+    './icons/icon-72x72.png',
+    './icons/icon-96x96.png',
+    './icons/icon-128x128.png',
+    './icons/icon-144x144.png',
+    './icons/icon-152x152.png',
+    './icons/icon-192x192.png',
+    './icons/icon-384x384.png',
+    './icons/icon-512x512.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -122,24 +122,24 @@ self.addEventListener('push', (event) => {
   let notificationData = {
     title: '冥想提醒',
     body: '該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。',
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
+    icon: './favicon.ico',
+    badge: './favicon.ico',
     tag: 'meditation-reminder',
     requireInteraction: true,
     actions: [
       {
         action: 'open',
         title: '開始冥想',
-        icon: '/favicon.ico'
+        icon: './favicon.ico'
       },
       {
         action: 'snooze',
         title: '稍後提醒',
-        icon: '/favicon.ico'
+        icon: './favicon.ico'
       }
     ],
     data: {
-      url: '/meditation.html',
+      url: './meditation.html',
       timestamp: Date.now()
     }
   };
@@ -170,7 +170,7 @@ self.addEventListener('notificationclick', (event) => {
   if (event.action === 'open') {
     // 開啟冥想應用
     event.waitUntil(
-      clients.openWindow('/meditation.html')
+      clients.openWindow('./meditation.html')
     );
   } else if (event.action === 'snooze') {
     // 延遲 10 分鐘
@@ -179,7 +179,7 @@ self.addEventListener('notificationclick', (event) => {
         setTimeout(() => {
           self.registration.showNotification('冥想提醒', {
             body: '10分鐘後再次提醒您進行冥想',
-            icon: '/favicon.ico',
+            icon: './favicon.ico',
             tag: 'meditation-reminder'
           });
           resolve();
@@ -189,7 +189,7 @@ self.addEventListener('notificationclick', (event) => {
   } else {
     // 預設動作 - 開啟應用
     event.waitUntil(
-      clients.openWindow('/meditation.html')
+      clients.openWindow('./meditation.html')
     );
   }
 });
@@ -201,7 +201,7 @@ self.addEventListener('sync', (event) => {
       // 發送提醒通知
       self.registration.showNotification('冥想提醒', {
         body: '該是冥想的時候了！',
-        icon: '/favicon.ico',
+        icon: './favicon.ico',
         tag: 'meditation-reminder',
         requireInteraction: true
       })
@@ -246,24 +246,24 @@ self.addEventListener('message', (event) => {
       if (shouldRemind && now.getHours() === targetHour && now.getMinutes() === targetMinute) {
         self.registration.showNotification('冥想提醒', {
           body: reminderData.message,
-          icon: '/favicon.ico',
-          badge: '/favicon.ico',
+          icon: './favicon.ico',
+          badge: './favicon.ico',
           tag: 'meditation-reminder',
           requireInteraction: true,
           actions: [
             {
               action: 'open',
               title: '開始冥想',
-              icon: '/favicon.ico'
+              icon: './favicon.ico'
             },
             {
               action: 'snooze',
               title: '稍後提醒',
-              icon: '/favicon.ico'
+              icon: './favicon.ico'
             }
           ],
           data: {
-            url: '/meditation.html',
+            url: './meditation.html',
             timestamp: Date.now()
           }
         });

@@ -1,11 +1,11 @@
 // Service Worker for Meditation Music Player
 const CACHE_NAME = 'meditation-music-v1';
 const urlsToCache = [
-  '/',
-  '/music.html',
-  '/meditationMusic/',
-  '/images/',
-  '/ice-icon.svg'
+  './',
+  './meditation.html',
+  './meditationMusic/',
+  './images/',
+  './favicon.ico'
 ];
 
 // Install event - cache resources
@@ -34,24 +34,24 @@ self.addEventListener('push', (event) => {
   let notificationData = {
     title: '冥想提醒',
     body: '該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。',
-    icon: '/ice-icon.svg',
-    badge: '/ice-icon.svg',
+    icon: './favicon.ico',
+    badge: './favicon.ico',
     tag: 'meditation-reminder',
     requireInteraction: true,
     actions: [
       {
         action: 'open',
         title: '開始冥想',
-        icon: '/ice-icon.svg'
+        icon: './favicon.ico'
       },
       {
         action: 'snooze',
         title: '稍後提醒',
-        icon: '/ice-icon.svg'
+        icon: './favicon.ico'
       }
     ],
     data: {
-      url: '/music.html',
+      url: './meditation.html',
       timestamp: Date.now()
     }
   };
@@ -82,7 +82,7 @@ self.addEventListener('notificationclick', (event) => {
   if (event.action === 'open') {
     // Open the meditation app
     event.waitUntil(
-      clients.openWindow('/music.html')
+      clients.openWindow('./meditation.html')
     );
   } else if (event.action === 'snooze') {
     // Snooze for 10 minutes
@@ -91,7 +91,7 @@ self.addEventListener('notificationclick', (event) => {
         setTimeout(() => {
           self.registration.showNotification('冥想提醒', {
             body: '10分鐘後再次提醒您進行冥想',
-            icon: '/ice-icon.svg',
+            icon: './favicon.ico',
             tag: 'meditation-reminder'
           });
           resolve();
@@ -101,7 +101,7 @@ self.addEventListener('notificationclick', (event) => {
   } else {
     // Default action - open the app
     event.waitUntil(
-      clients.openWindow('/music.html')
+      clients.openWindow('./meditation.html')
     );
   }
 });
@@ -113,7 +113,7 @@ self.addEventListener('sync', (event) => {
       // Send reminder notification
       self.registration.showNotification('冥想提醒', {
         body: '該是冥想的時候了！',
-        icon: '/ice-icon.svg',
+        icon: './favicon.ico',
         tag: 'meditation-reminder',
         requireInteraction: true
       })
