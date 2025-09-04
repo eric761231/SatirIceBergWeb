@@ -1,7 +1,7 @@
 // Service Worker for Obyssey PWA
-const CACHE_NAME = 'obyssey-v1.0.2';
-const STATIC_CACHE = 'obyssey-static-v1.0.2';
-const DYNAMIC_CACHE = 'obyssey-dynamic-v1.0.2';
+const CACHE_NAME = 'obyssey-v1.0.3';
+const STATIC_CACHE = 'obyssey-static-v1.0.3';
+const DYNAMIC_CACHE = 'obyssey-dynamic-v1.0.3';
 
 const STATIC_FILES = [
     '/',
@@ -41,44 +41,59 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys()
-            .then((cacheNames) => {
-                return Promise.all(
-                    cacheNames.map((cacheName) => {
-                        if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
-                            return caches.delete(cacheName);
-                        }
-                    })
-                );
-            })
-            .then(() => self.clients.claim())
-            .then(() => {
-                // 通知所有客戶端 Service Worker 已準備就緒
-                self.clients.matchAll().then(clients => {
-                    clients.forEach(client => {
-                        client.postMessage({
-                            type: 'SW_READY'
-                        });
-                    });
-                });
-            })
-    );
+  event.waitUntil(
+    caches.keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => self.clients.claim())
+      .then(() => {
+        // 通知所有客戶端 Service Worker 已準備就緒
+        self.clients.matchAll().then(clients => {
+          clients.forEach(client => {
+            client.postMessage({
+              type: 'SW_READY'
+            });
+          });
+        });
+        
+        // 恢復提醒檢查
+        loadReminderSettings().then(settings => {
+          if (settings && settings.enabled) {
+            console.log('恢復提醒設定:', settings);
+            startReminderCheck();
+          }
+        });
+      })
+  );
 });
 
 self.addEventListener('fetch', (event) => {
-    const { request } = event;
-    const url = new URL(request.url);
-    if (request.method !== 'GET') return;
-    if (!url.protocol.startsWith('http')) return;
-    if (url.origin === 'chrome-extension://') return;
-    if (isStaticFile(request.url)) {
-        event.respondWith(cacheFirst(request, STATIC_CACHE));
-    } else if (isAPIRequest(request.url)) {
-        event.respondWith(networkFirst(request, DYNAMIC_CACHE));
-    } else {
-        event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE));
-    }
+  const { request } = event;
+  const url = new URL(request.url);
+  if (request.method !== 'GET') return;
+  if (!url.protocol.startsWith('http')) return;
+  if (url.origin === 'chrome-extension://') return;
+  if (isStaticFile(request.url)) {
+    event.respondWith(cacheFirst(request, STATIC_CACHE));
+  } else if (isAPIRequest(request.url)) {
+    event.respondWith(networkFirst(request, DYNAMIC_CACHE));
+  } else {
+    event.respondWith(staleWhileRevalidate(request, DYNAMIC_CACHE));
+  }
+  
+  // 檢查提醒（每分鐘一次）
+  const now = Date.now();
+  if (now - lastReminderCheck > 60000) {
+    lastReminderCheck = now;
+    checkReminders();
+  }
 });
 
 function isStaticFile(url) {
@@ -131,6 +146,10 @@ async function staleWhileRevalidate(request, cacheName) {
         return new Response('策略執行失敗', { status: 503 });
     }
 }
+
+// 改進的背景提醒功能
+let reminderCheckInterval = null;
+let lastReminderCheck = 0;
 
 // 推送通知處理
 self.addEventListener('push', (event) => {
@@ -213,25 +232,12 @@ self.addEventListener('notificationclick', (event) => {
 
 // 背景同步處理離線提醒
 self.addEventListener('sync', (event) => {
+  console.log('背景同步事件:', event.tag);
+  
   if (event.tag === 'meditation-reminder') {
     event.waitUntil(
-      // 發送提醒通知
-      self.registration.showNotification('冥想提醒', {
-        body: '該是冥想的時候了！',
-        icon: '/favicon.ico',
-        tag: 'meditation-reminder',
-        requireInteraction: true,
-        actions: [
-          {
-            action: 'open',
-            title: '開始冥想',
-            icon: '/favicon.ico'
-          }
-        ],
-        data: {
-          url: '/meditation.html',
-          timestamp: Date.now()
-        }
+      checkReminders().catch(error => {
+        console.error('背景同步檢查失敗:', error);
       })
     );
   }
@@ -245,27 +251,133 @@ self.addEventListener('message', (event) => {
     const reminderData = event.data.data;
     console.log('設定提醒:', reminderData);
     
-    // 儲存提醒設定到 localStorage (透過 IndexedDB 或 Cache API)
+    // 儲存提醒設定
     saveReminderSettings(reminderData);
     
-    // 設定背景同步
-    scheduleBackgroundSync(reminderData);
+    // 立即開始檢查提醒
+    startReminderCheck();
+  } else if (event.data.type === 'CLEAR_REMINDER') {
+    console.log('清除提醒設定');
+    clearReminderCheck();
   }
 });
 
-// 儲存提醒設定
+// 啟動提醒檢查
+function startReminderCheck() {
+  // 清除現有的檢查
+  if (reminderCheckInterval) {
+    clearInterval(reminderCheckInterval);
+  }
+  
+  // 立即檢查一次
+  checkReminders();
+  
+  // 設定定期檢查（每30秒檢查一次）
+  reminderCheckInterval = setInterval(() => {
+    checkReminders();
+  }, 30000);
+  
+  console.log('提醒檢查已啟動');
+}
+
+// 清除提醒檢查
+function clearReminderCheck() {
+  if (reminderCheckInterval) {
+    clearInterval(reminderCheckInterval);
+    reminderCheckInterval = null;
+  }
+  console.log('提醒檢查已清除');
+}
+
+// 改進的提醒檢查函數
+async function checkReminders() {
+  try {
+    const reminderSettings = await loadReminderSettings();
+    if (!reminderSettings || !reminderSettings.enabled) {
+      return;
+    }
+    
+    const now = new Date();
+    const [targetHour, targetMinute] = reminderSettings.time.split(':').map(Number);
+    const currentDay = now.getDay();
+    
+    // 檢查頻率設定
+    let shouldRemind = false;
+    if (reminderSettings.frequency === 'daily') {
+      shouldRemind = true;
+    } else if (reminderSettings.frequency === 'weekdays') {
+      if (currentDay >= 1 && currentDay <= 5) {
+        shouldRemind = true;
+      }
+    } else if (reminderSettings.frequency === 'custom') {
+      if (reminderSettings.customDays && reminderSettings.customDays.includes(currentDay)) {
+        shouldRemind = true;
+      }
+    }
+    
+    // 檢查時間是否匹配
+    if (shouldRemind && 
+        now.getHours() === targetHour && 
+        now.getMinutes() === targetMinute) {
+      
+      // 檢查是否已經在這一分鐘內發送過通知
+      const lastNotificationKey = `last-notification-${targetHour}-${targetMinute}-${currentDay}`;
+      const lastNotificationTime = await getLastNotificationTime(lastNotificationKey);
+      const currentMinute = now.getTime() - (now.getTime() % 60000);
+      
+      if (lastNotificationTime < currentMinute) {
+        // 發送通知
+        await self.registration.showNotification('冥想提醒', {
+          body: reminderSettings.message || '該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。',
+          icon: '/favicon.ico',
+          badge: '/favicon.ico',
+          tag: 'meditation-reminder',
+          requireInteraction: true,
+          actions: [
+            {
+              action: 'open',
+              title: '開始冥想',
+              icon: '/favicon.ico'
+            },
+            {
+              action: 'snooze',
+              title: '稍後提醒',
+              icon: '/favicon.ico'
+            }
+          ],
+          data: {
+            url: '/meditation.html',
+            timestamp: Date.now()
+          }
+        });
+        
+        // 記錄發送時間
+        await setLastNotificationTime(lastNotificationKey, currentMinute);
+        console.log('冥想提醒已發送:', {
+          time: reminderSettings.time,
+          message: reminderSettings.message,
+          frequency: reminderSettings.frequency
+        });
+      }
+    }
+  } catch (error) {
+    console.error('檢查提醒失敗:', error);
+  }
+}
+
+// 改進的儲存提醒設定
 async function saveReminderSettings(reminderData) {
   try {
     const cache = await caches.open('reminder-settings');
     const response = new Response(JSON.stringify(reminderData));
     await cache.put('/reminder-settings', response);
-    console.log('提醒設定已儲存');
+    console.log('提醒設定已儲存:', reminderData);
   } catch (error) {
     console.error('儲存提醒設定失敗:', error);
   }
 }
 
-// 讀取提醒設定
+// 改進的讀取提醒設定
 async function loadReminderSettings() {
   try {
     const cache = await caches.open('reminder-settings');
@@ -280,119 +392,18 @@ async function loadReminderSettings() {
   return null;
 }
 
-// 設定背景同步
-async function scheduleBackgroundSync(reminderData) {
+// 清除提醒設定
+async function clearReminderSettings() {
   try {
-    // 使用 Background Sync API
-    if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
-      const registration = await navigator.serviceWorker.ready;
-      await registration.sync.register('meditation-reminder');
-      console.log('背景同步已註冊');
-    }
-    
-    // 立即檢查一次
-    checkReminders();
+    const cache = await caches.open('reminder-settings');
+    await cache.delete('/reminder-settings');
+    console.log('提醒設定已清除');
   } catch (error) {
-    console.error('設定背景同步失敗:', error);
+    console.error('清除提醒設定失敗:', error);
   }
 }
 
-// 定期檢查提醒（使用多種觸發方式）
-let lastCheckTime = 0;
-
-// 1. 使用 fetch 事件觸發
-self.addEventListener('fetch', (event) => {
-  const now = Date.now();
-  // 每分鐘檢查一次提醒
-  if (now - lastCheckTime > 60000) {
-    lastCheckTime = now;
-    checkReminders();
-  }
-});
-
-// 2. 使用 push 事件觸發（如果有推送服務）
-self.addEventListener('push', (event) => {
-  // 除了處理推送通知，也檢查本地提醒
-  checkReminders();
-});
-
-// 3. 使用 periodic sync（如果支援）
-if ('periodicSync' in window) {
-  navigator.serviceWorker.ready.then(registration => {
-    registration.periodicSync.register('meditation-reminder', {
-      minInterval: 60000 // 最小間隔 1 分鐘
-    });
-  });
-}
-
-async function checkReminders() {
-  try {
-    // 讀取儲存的提醒設定
-    const reminderSettings = await loadReminderSettings();
-    if (!reminderSettings) return;
-    
-    const now = new Date();
-    const [targetHour, targetMinute] = reminderSettings.time.split(':').map(Number);
-    const currentDay = now.getDay();
-    
-    let shouldRemind = false;
-    if (reminderSettings.frequency === 'daily') {
-      shouldRemind = true;
-    } else if (reminderSettings.frequency === 'weekdays') {
-      if (currentDay >= 1 && currentDay <= 5) {
-        shouldRemind = true;
-      }
-    } else if (reminderSettings.frequency === 'custom') {
-      if (reminderSettings.customDays.includes(currentDay)) {
-        shouldRemind = true;
-      }
-    }
-    
-    // 檢查是否已經在這一分鐘內發送過通知
-    const lastNotificationKey = `last-notification-${targetHour}-${targetMinute}-${currentDay}`;
-    const lastNotificationTime = await getLastNotificationTime(lastNotificationKey);
-    const currentMinute = now.getTime() - (now.getTime() % 60000); // 當前分鐘的開始時間
-    
-    if (shouldRemind && 
-        now.getHours() === targetHour && 
-        now.getMinutes() === targetMinute && 
-        lastNotificationTime < currentMinute) {
-      
-      // 發送通知
-      await self.registration.showNotification('冥想提醒', {
-        body: reminderSettings.message,
-        icon: '/favicon.ico',
-        badge: '/favicon.ico',
-        tag: 'meditation-reminder',
-        requireInteraction: true,
-        actions: [
-          {
-            action: 'open',
-            title: '開始冥想',
-            icon: '/favicon.ico'
-          },
-          {
-            action: 'snooze',
-            title: '稍後提醒',
-            icon: '/favicon.ico'
-          }
-        ],
-        data: {
-          url: '/meditation.html',
-          timestamp: Date.now()
-        }
-      });
-      
-      // 記錄發送時間
-      await setLastNotificationTime(lastNotificationKey, currentMinute);
-      console.log('冥想提醒已發送');
-    }
-  } catch (error) {
-    console.error('檢查提醒失敗:', error);
-  }
-}
-
-// 儲存最後通知時間
+// 改進的儲存最後通知時間
 async function setLastNotificationTime(key, time) {
   try {
     const cache = await caches.open('notification-times');
@@ -403,7 +414,7 @@ async function setLastNotificationTime(key, time) {
   }
 }
 
-// 讀取最後通知時間
+// 改進的讀取最後通知時間
 async function getLastNotificationTime(key) {
   try {
     const cache = await caches.open('notification-times');

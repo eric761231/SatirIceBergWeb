@@ -1,326 +1,476 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>提醒功能測試</title>
-    <style>
-        body {
-            font-family: 'Noto Sans TC', Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: white;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        h1 {
-            color: #00aaff;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .test-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-        .test-section h3 {
-            color: #00aaff;
-            margin-bottom: 15px;
-        }
-        .status {
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .status.success {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid #4caf50;
-        }
-        .status.error {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid #f44336;
-        }
-        .status.info {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid #2196f3;
-        }
-        button {
-            background: #00aaff;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px;
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            background: #0099e6;
-            transform: translateY(-2px);
-        }
-        button:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-        input, select {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 5px;
-            width: 200px;
-        }
-        .form-group {
-            margin: 15px 0;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #00aaff;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>冥想提醒測試</title>
+  <style>
+    body {
+      font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: #ffffff;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(30, 30, 45, 0.9);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    h1 {
+      color: #00aaff;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .test-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: rgba(45, 45, 60, 0.8);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .test-section h3 {
+      color: #00aaff;
+      margin-top: 0;
+    }
+    
+    .btn {
+      background: #00aaff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 5px;
+      transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+      background: #0099e6;
+      transform: translateY(-1px);
+    }
+    
+    .btn.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn.secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .status {
+      margin-top: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    
+    .status.success {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      display: block;
+    }
+    
+    .status.error {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+      border: 1px solid rgba(244, 67, 54, 0.3);
+      display: block;
+    }
+    
+    .status.info {
+      background: rgba(33, 150, 243, 0.2);
+      color: #2196f3;
+      border: 1px solid rgba(33, 150, 243, 0.3);
+      display: block;
+    }
+    
+    .log {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+    
+    .time-display {
+      font-size: 24px;
+      text-align: center;
+      color: #00aaff;
+      margin: 20px 0;
+      font-weight: bold;
+    }
+    
+    .reminder-info {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+    }
+    
+    .reminder-info h4 {
+      margin-top: 0;
+      color: #00aaff;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧘‍♀️ 提醒功能測試</h1>
-        
-        <div class="test-section">
-            <h3>📱 系統狀態檢查</h3>
-            <div id="systemStatus"></div>
-            <button onclick="checkSystemStatus()">檢查系統狀態</button>
-        </div>
-        
-        <div class="test-section">
-            <h3>🔔 通知權限測試</h3>
-            <div id="notificationStatus"></div>
-            <button onclick="requestNotificationPermission()">請求通知權限</button>
-            <button onclick="testNotification()">測試通知</button>
-        </div>
-        
-        <div class="test-section">
-            <h3>⏰ 提醒設定測試</h3>
-            <div class="form-group">
-                <label>提醒時間：</label>
-                <input type="time" id="testTime" value="12:00">
-            </div>
-            <div class="form-group">
-                <label>提醒訊息：</label>
-                <input type="text" id="testMessage" value="測試提醒訊息" style="width: 300px;">
-            </div>
-            <div class="form-group">
-                <label>頻率：</label>
-                <select id="testFrequency">
-                    <option value="daily">每日</option>
-                    <option value="weekdays">工作日</option>
-                    <option value="custom">自訂</option>
-                </select>
-            </div>
-            <button onclick="setTestReminder()">設定測試提醒</button>
-            <button onclick="clearTestReminder()">清除測試提醒</button>
-        </div>
-        
-        <div class="test-section">
-            <h3>📋 儲存的提醒設定</h3>
-            <div id="savedSettings"></div>
-            <button onclick="loadSavedSettings()">載入儲存的設定</button>
-        </div>
-        
-        <div class="test-section">
-            <h3>🔗 快速連結</h3>
-            <button onclick="window.open('/meditation.html', '_blank')">開啟冥想頁面</button>
-            <button onclick="window.open('/notification-test.html', '_blank')">開啟通知測試頁面</button>
-        </div>
+  <div class="container">
+    <h1>冥想提醒功能測試</h1>
+    
+    <div class="time-display" id="currentTime"></div>
+    
+    <div class="test-section">
+      <h3>通知權限測試</h3>
+      <button class="btn" onclick="testNotificationPermission()">測試通知權限</button>
+      <button class="btn secondary" onclick="requestNotificationPermission()">請求通知權限</button>
+      <div class="status" id="permissionStatus"></div>
     </div>
+    
+    <div class="test-section">
+      <h3>Service Worker 測試</h3>
+      <button class="btn" onclick="testServiceWorker()">測試 Service Worker</button>
+      <button class="btn secondary" onclick="registerServiceWorker()">註冊 Service Worker</button>
+      <div class="status" id="swStatus"></div>
+    </div>
+    
+    <div class="test-section">
+      <h3>提醒功能測試</h3>
+      <button class="btn" onclick="testImmediateNotification()">立即發送測試通知</button>
+      <button class="btn secondary" onclick="setTestReminder()">設定測試提醒（1分鐘後）</button>
+      <button class="btn secondary" onclick="clearAllReminders()">清除所有提醒</button>
+      <div class="status" id="reminderStatus"></div>
+    </div>
+    
+    <div class="test-section">
+      <h3>當前提醒設定</h3>
+      <div class="reminder-info" id="currentReminderInfo">
+        <h4>載入中...</h4>
+      </div>
+      <button class="btn secondary" onclick="loadCurrentReminder()">重新載入設定</button>
+    </div>
+    
+    <div class="test-section">
+      <h3>測試日誌</h3>
+      <div class="log" id="testLog"></div>
+      <button class="btn secondary" onclick="clearLog()">清除日誌</button>
+    </div>
+  </div>
 
-    <script>
-        // 檢查系統狀態
-        function checkSystemStatus() {
-            const statusDiv = document.getElementById('systemStatus');
-            let status = '';
-            
-            // 檢查 Service Worker 支援
-            if ('serviceWorker' in navigator) {
-                status += '<div class="status success">✅ Service Worker 支援</div>';
-            } else {
-                status += '<div class="status error">❌ Service Worker 不支援</div>';
-            }
-            
-            // 檢查通知支援
-            if ('Notification' in window) {
-                status += '<div class="status success">✅ 通知 API 支援</div>';
-            } else {
-                status += '<div class="status error">❌ 通知 API 不支援</div>';
-            }
-            
-            // 檢查推送支援
-            if ('PushManager' in window) {
-                status += '<div class="status success">✅ 推送通知支援</div>';
-            } else {
-                status += '<div class="status error">❌ 推送通知不支援</div>';
-            }
-            
-            // 檢查 PWA 支援
-            if ('standalone' in window.navigator) {
-                status += '<div class="status success">✅ PWA 支援</div>';
-            } else {
-                status += '<div class="status info">ℹ️ PWA 支援有限</div>';
-            }
-            
-            statusDiv.innerHTML = status;
-        }
+  <script>
+    // 更新當前時間
+    function updateTime() {
+      const now = new Date();
+      document.getElementById('currentTime').textContent = now.toLocaleString('zh-TW');
+    }
+    
+    setInterval(updateTime, 1000);
+    updateTime();
+    
+    // 日誌功能
+    function log(message, type = 'info') {
+      const logElement = document.getElementById('testLog');
+      const timestamp = new Date().toLocaleTimeString('zh-TW');
+      const logEntry = document.createElement('div');
+      logEntry.innerHTML = `<span style="color: #888;">[${timestamp}]</span> <span style="color: ${type === 'error' ? '#f44336' : type === 'success' ? '#4caf50' : '#2196f3'};">${message}</span>`;
+      logElement.appendChild(logEntry);
+      logElement.scrollTop = logElement.scrollHeight;
+    }
+    
+    function clearLog() {
+      document.getElementById('testLog').innerHTML = '';
+    }
+    
+    // 顯示狀態
+    function showStatus(elementId, message, type = 'info') {
+      const element = document.getElementById(elementId);
+      element.textContent = message;
+      element.className = `status ${type}`;
+    }
+    
+    // 測試通知權限
+    async function testNotificationPermission() {
+      log('測試通知權限...');
+      
+      if (!('Notification' in window)) {
+        showStatus('permissionStatus', '瀏覽器不支援通知功能', 'error');
+        log('瀏覽器不支援通知功能', 'error');
+        return;
+      }
+      
+      const permission = Notification.permission;
+      log(`通知權限狀態: ${permission}`);
+      
+      if (permission === 'granted') {
+        showStatus('permissionStatus', '通知權限已授予', 'success');
+        log('通知權限已授予', 'success');
+      } else if (permission === 'denied') {
+        showStatus('permissionStatus', '通知權限被拒絕', 'error');
+        log('通知權限被拒絕', 'error');
+      } else {
+        showStatus('permissionStatus', '通知權限未設定', 'info');
+        log('通知權限未設定', 'info');
+      }
+    }
+    
+    // 請求通知權限
+    async function requestNotificationPermission() {
+      log('請求通知權限...');
+      
+      if (!('Notification' in window)) {
+        showStatus('permissionStatus', '瀏覽器不支援通知功能', 'error');
+        return;
+      }
+      
+      try {
+        const permission = await Notification.requestPermission();
+        log(`通知權限結果: ${permission}`);
         
-        // 請求通知權限
-        async function requestNotificationPermission() {
-            const statusDiv = document.getElementById('notificationStatus');
-            
-            if ('Notification' in window) {
-                try {
-                    const permission = await Notification.requestPermission();
-                    if (permission === 'granted') {
-                        statusDiv.innerHTML = '<div class="status success">✅ 通知權限已授予</div>';
-                    } else if (permission === 'denied') {
-                        statusDiv.innerHTML = '<div class="status error">❌ 通知權限被拒絕</div>';
-                    } else {
-                        statusDiv.innerHTML = '<div class="status info">ℹ️ 通知權限未決定</div>';
-                    }
-                } catch (error) {
-                    statusDiv.innerHTML = `<div class="status error">❌ 請求權限失敗: ${error.message}</div>`;
-                }
-            } else {
-                statusDiv.innerHTML = '<div class="status error">❌ 瀏覽器不支援通知功能</div>';
+        if (permission === 'granted') {
+          showStatus('permissionStatus', '通知權限已授予', 'success');
+        } else {
+          showStatus('permissionStatus', '通知權限被拒絕', 'error');
+        }
+      } catch (error) {
+        showStatus('permissionStatus', '請求權限失敗: ' + error.message, 'error');
+        log('請求權限失敗: ' + error.message, 'error');
+      }
+    }
+    
+    // 測試 Service Worker
+    async function testServiceWorker() {
+      log('測試 Service Worker...');
+      
+      if (!('serviceWorker' in navigator)) {
+        showStatus('swStatus', '瀏覽器不支援 Service Worker', 'error');
+        log('瀏覽器不支援 Service Worker', 'error');
+        return;
+      }
+      
+      try {
+        const registration = await navigator.serviceWorker.getRegistration();
+        
+        if (registration) {
+          showStatus('swStatus', 'Service Worker 已註冊', 'success');
+          log('Service Worker 已註冊', 'success');
+          
+          if (registration.active) {
+            log('Service Worker 已啟動', 'success');
+          } else {
+            log('Service Worker 未啟動', 'info');
+          }
+        } else {
+          showStatus('swStatus', 'Service Worker 未註冊', 'info');
+          log('Service Worker 未註冊', 'info');
+        }
+      } catch (error) {
+        showStatus('swStatus', '檢查 Service Worker 失敗: ' + error.message, 'error');
+        log('檢查 Service Worker 失敗: ' + error.message, 'error');
+      }
+    }
+    
+    // 註冊 Service Worker
+    async function registerServiceWorker() {
+      log('註冊 Service Worker...');
+      
+      if (!('serviceWorker' in navigator)) {
+        showStatus('swStatus', '瀏覽器不支援 Service Worker', 'error');
+        return;
+      }
+      
+      try {
+        const registration = await navigator.serviceWorker.register('./service-worker.js');
+        showStatus('swStatus', 'Service Worker 註冊成功', 'success');
+        log('Service Worker 註冊成功', 'success');
+      } catch (error) {
+        showStatus('swStatus', 'Service Worker 註冊失敗: ' + error.message, 'error');
+        log('Service Worker 註冊失敗: ' + error.message, 'error');
+      }
+    }
+    
+    // 立即發送測試通知
+    async function testImmediateNotification() {
+      log('發送立即測試通知...');
+      
+      if (!('Notification' in window)) {
+        showStatus('reminderStatus', '瀏覽器不支援通知功能', 'error');
+        return;
+      }
+      
+      if (Notification.permission !== 'granted') {
+        showStatus('reminderStatus', '請先授予通知權限', 'error');
+        return;
+      }
+      
+      try {
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.ready;
+          await registration.showNotification('冥想提醒測試', {
+            body: '這是一個立即測試通知，時間: ' + new Date().toLocaleString('zh-TW'),
+            icon: '/favicon.ico',
+            badge: '/favicon.ico',
+            tag: 'test-notification',
+            requireInteraction: true,
+            actions: [
+              {
+                action: 'open',
+                title: '開啟應用',
+                icon: '/favicon.ico'
+              }
+            ],
+            data: {
+              url: window.location.href,
+              timestamp: Date.now()
             }
+          });
+          showStatus('reminderStatus', '測試通知已發送（Service Worker）', 'success');
+          log('測試通知已發送（Service Worker）', 'success');
+        } else {
+          new Notification('冥想提醒測試', {
+            body: '這是一個立即測試通知，時間: ' + new Date().toLocaleString('zh-TW'),
+            icon: '/favicon.ico'
+          });
+          showStatus('reminderStatus', '測試通知已發送（原生）', 'success');
+          log('測試通知已發送（原生）', 'success');
         }
-        
-        // 測試通知
-        async function testNotification() {
-            const statusDiv = document.getElementById('notificationStatus');
-            
-            if ('Notification' in window && Notification.permission === 'granted') {
-                try {
-                    if ('serviceWorker' in navigator) {
-                        const registration = await navigator.serviceWorker.ready;
-                        await registration.showNotification('測試通知', {
-                            body: '這是一個測試通知，功能正常！',
-                            icon: '/favicon.ico',
-                            badge: '/favicon.ico',
-                            tag: 'test-notification',
-                            requireInteraction: true,
-                            actions: [
-                                {
-                                    action: 'open',
-                                    title: '開啟應用',
-                                    icon: '/favicon.ico'
-                                }
-                            ],
-                            data: {
-                                url: window.location.href,
-                                timestamp: Date.now()
-                            }
-                        });
-                        statusDiv.innerHTML = '<div class="status success">✅ 測試通知已發送</div>';
-                    } else {
-                        new Notification('測試通知', {
-                            body: '這是一個測試通知，功能正常！',
-                            icon: '/favicon.ico'
-                        });
-                        statusDiv.innerHTML = '<div class="status success">✅ 測試通知已發送</div>';
-                    }
-                } catch (error) {
-                    statusDiv.innerHTML = `<div class="status error">❌ 發送通知失敗: ${error.message}</div>`;
-                }
-            } else {
-                statusDiv.innerHTML = '<div class="status error">❌ 請先授予通知權限</div>';
-            }
+      } catch (error) {
+        showStatus('reminderStatus', '發送通知失敗: ' + error.message, 'error');
+        log('發送通知失敗: ' + error.message, 'error');
+      }
+    }
+    
+    // 設定測試提醒
+    async function setTestReminder() {
+      log('設定測試提醒（1分鐘後）...');
+      
+      const testTime = new Date();
+      testTime.setMinutes(testTime.getMinutes() + 1);
+      
+      const reminderSettings = {
+        time: testTime.toTimeString().slice(0, 5),
+        message: '這是一個測試提醒，設定於 ' + new Date().toLocaleString('zh-TW'),
+        frequency: 'daily',
+        customDays: [],
+        enabled: true,
+        lastSet: Date.now()
+      };
+      
+      // 儲存到 localStorage
+      localStorage.setItem('meditationReminder', JSON.stringify(reminderSettings));
+      
+      // 發送給 Service Worker
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          if (registration.active) {
+            registration.active.postMessage({
+              type: 'SET_REMINDER',
+              data: reminderSettings
+            });
+            showStatus('reminderStatus', `測試提醒已設定，將在 ${testTime.toLocaleTimeString('zh-TW')} 發送`, 'success');
+            log(`測試提醒已設定，將在 ${testTime.toLocaleTimeString('zh-TW')} 發送`, 'success');
+          } else {
+            showStatus('reminderStatus', 'Service Worker 未啟動', 'error');
+            log('Service Worker 未啟動', 'error');
+          }
+        } catch (error) {
+          showStatus('reminderStatus', '設定提醒失敗: ' + error.message, 'error');
+          log('設定提醒失敗: ' + error.message, 'error');
         }
-        
-        // 設定測試提醒
-        async function setTestReminder() {
-            const time = document.getElementById('testTime').value;
-            const message = document.getElementById('testMessage').value;
-            const frequency = document.getElementById('testFrequency').value;
-            
-            const reminderSettings = {
-                time: time,
-                message: message,
-                frequency: frequency,
-                customDays: [1, 2, 3, 4, 5], // 預設工作日
-                enabled: true,
-                lastSet: Date.now()
-            };
-            
-            // 儲存到 localStorage
-            localStorage.setItem('meditationReminder', JSON.stringify(reminderSettings));
-            
-            // 發送到 Service Worker
-            if ('serviceWorker' in navigator) {
-                try {
-                    const registration = await navigator.serviceWorker.ready;
-                    if (registration.active) {
-                        registration.active.postMessage({
-                            type: 'SET_REMINDER',
-                            data: reminderSettings
-                        });
-                        alert('測試提醒已設定！');
-                    } else {
-                        alert('Service Worker 未啟動，請重新整理頁面後再試');
-                    }
-                } catch (error) {
-                    alert(`設定失敗: ${error.message}`);
-                }
-            } else {
-                alert('Service Worker 不支援');
-            }
+      } else {
+        showStatus('reminderStatus', '瀏覽器不支援 Service Worker', 'error');
+        log('瀏覽器不支援 Service Worker', 'error');
+      }
+    }
+    
+    // 清除所有提醒
+    async function clearAllReminders() {
+      log('清除所有提醒...');
+      
+      // 清除 localStorage
+      localStorage.removeItem('meditationReminder');
+      
+      // 通知 Service Worker
+      if ('serviceWorker' in navigator) {
+        try {
+          const registration = await navigator.serviceWorker.ready;
+          if (registration.active) {
+            registration.active.postMessage({
+              type: 'CLEAR_REMINDER'
+            });
+            showStatus('reminderStatus', '所有提醒已清除', 'success');
+            log('所有提醒已清除', 'success');
+          }
+        } catch (error) {
+          showStatus('reminderStatus', '清除提醒失敗: ' + error.message, 'error');
+          log('清除提醒失敗: ' + error.message, 'error');
         }
-        
-        // 清除測試提醒
-        function clearTestReminder() {
-            localStorage.removeItem('meditationReminder');
-            alert('測試提醒已清除');
+      }
+      
+      // 重新載入當前提醒資訊
+      loadCurrentReminder();
+    }
+    
+    // 載入當前提醒設定
+    function loadCurrentReminder() {
+      log('載入當前提醒設定...');
+      
+      const savedReminder = localStorage.getItem('meditationReminder');
+      const reminderInfo = document.getElementById('currentReminderInfo');
+      
+      if (savedReminder) {
+        try {
+          const reminderSettings = JSON.parse(savedReminder);
+          reminderInfo.innerHTML = `
+            <h4>當前提醒設定</h4>
+            <p><strong>時間:</strong> ${reminderSettings.time}</p>
+            <p><strong>訊息:</strong> ${reminderSettings.message}</p>
+            <p><strong>頻率:</strong> ${reminderSettings.frequency}</p>
+            <p><strong>啟用狀態:</strong> ${reminderSettings.enabled ? '已啟用' : '已停用'}</p>
+            <p><strong>設定時間:</strong> ${new Date(reminderSettings.lastSet).toLocaleString('zh-TW')}</p>
+          `;
+          log('當前提醒設定已載入', 'success');
+        } catch (error) {
+          reminderInfo.innerHTML = '<h4>提醒設定格式錯誤</h4>';
+          log('提醒設定格式錯誤: ' + error.message, 'error');
         }
-        
-        // 載入儲存的設定
-        function loadSavedSettings() {
-            const settingsDiv = document.getElementById('savedSettings');
-            const savedReminder = localStorage.getItem('meditationReminder');
-            
-            if (savedReminder) {
-                try {
-                    const settings = JSON.parse(savedReminder);
-                    settingsDiv.innerHTML = `
-                        <div class="status info">
-                            <strong>已儲存的設定：</strong><br>
-                            時間: ${settings.time}<br>
-                            訊息: ${settings.message}<br>
-                            頻率: ${settings.frequency}<br>
-                            啟用: ${settings.enabled ? '是' : '否'}<br>
-                            最後設定: ${new Date(settings.lastSet).toLocaleString()}
-                        </div>
-                    `;
-                } catch (error) {
-                    settingsDiv.innerHTML = '<div class="status error">❌ 解析設定失敗</div>';
-                }
-            } else {
-                settingsDiv.innerHTML = '<div class="status info">ℹ️ 沒有儲存的設定</div>';
-            }
-        }
-        
-        // 頁面載入時自動檢查
-        document.addEventListener('DOMContentLoaded', () => {
-            checkSystemStatus();
-            loadSavedSettings();
-        });
-    </script>
+      } else {
+        reminderInfo.innerHTML = '<h4>無提醒設定</h4>';
+        log('無提醒設定', 'info');
+      }
+    }
+    
+    // 頁面載入時初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      log('提醒測試頁面已載入');
+      loadCurrentReminder();
+      testNotificationPermission();
+      testServiceWorker();
+    });
+    
+    // 監聽 Service Worker 訊息
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        log('收到 Service Worker 訊息: ' + JSON.stringify(event.data));
+      });
+    }
+  </script>
 </body>
 </html>

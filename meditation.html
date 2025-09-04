@@ -432,7 +432,7 @@
         <div class="reminder-actions">
           <button class="btn-save" id="saveReminder">儲存設定</button>
           <button class="btn-test" id="testReminder">測試提醒</button>
-                      <a href="./notification-test.html" class="btn-test" style="text-decoration: none; display: inline-block; text-align: center;">通知測試</a>
+                      <a href="./reminder-test.html" class="btn-test" style="text-decoration: none; display: inline-block; text-align: center;">提醒測試</a>
         </div>
         <div class="reminder-status" id="reminderStatus"></div>
       </div>
@@ -598,10 +598,10 @@
       const reminderMessageTextarea = document.getElementById('reminderMessage');
       const saveReminderBtn = document.getElementById('saveReminder');
       const testReminderBtn = document.getElementById('testReminder');
-             const reminderStatusDiv = document.getElementById('reminderStatus');
-       const frequencyRadios = document.querySelectorAll('input[name="frequency"]');
-       const customDaysSection = document.getElementById('customDaysSection');
-       const customDayCheckboxes = document.querySelectorAll('.day-checkbox input');
+      const reminderStatusDiv = document.getElementById('reminderStatus');
+      const frequencyRadios = document.querySelectorAll('input[name="frequency"]');
+      const customDaysSection = document.getElementById('customDaysSection');
+      const customDayCheckboxes = document.querySelectorAll('.day-checkbox input');
 
 
 
@@ -1004,151 +1004,152 @@
           reminderStatusDiv.style.display = 'block';
       };
 
-             const saveReminder = () => {
-           const reminderTime = reminderTimeInput.value;
-           const reminderMessage = reminderMessageTextarea.value;
-           const frequency = document.querySelector('input[name="frequency"]:checked').value;
-           
-           let customDays = [];
-           if (frequency === 'custom') {
-               customDayCheckboxes.forEach(checkbox => {
-                   if (checkbox.checked) {
-                       customDays.push(parseInt(checkbox.value));
-                   }
-               });
-           }
+      // 改進的提醒功能
+      const saveReminder = () => {
+        const reminderTime = reminderTimeInput.value;
+        const reminderMessage = reminderMessageTextarea.value;
+        const frequency = document.querySelector('input[name="frequency"]:checked').value;
+        
+        let customDays = [];
+        if (frequency === 'custom') {
+          customDayCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+              customDays.push(parseInt(checkbox.value));
+            }
+          });
+        }
 
-           // 清除舊的提醒
-           if (reminderIntervalId) {
-               clearInterval(reminderIntervalId);
-           }
+        // 清除舊的提醒
+        if (reminderIntervalId) {
+          clearInterval(reminderIntervalId);
+        }
 
-           // 儲存提醒設定到 localStorage
-           const reminderSettings = {
-               time: reminderTime,
-               message: reminderMessage,
-               frequency: frequency,
-               customDays: customDays,
-               enabled: true,
-               lastSet: Date.now()
-           };
-           localStorage.setItem('meditationReminder', JSON.stringify(reminderSettings));
+        // 儲存提醒設定到 localStorage
+        const reminderSettings = {
+          time: reminderTime,
+          message: reminderMessage,
+          frequency: frequency,
+          customDays: customDays,
+          enabled: true,
+          lastSet: Date.now()
+        };
+        localStorage.setItem('meditationReminder', JSON.stringify(reminderSettings));
 
-           // 請求通知權限並設定提醒
-           if ('Notification' in window) {
-               Notification.requestPermission().then(permission => {
-                   if (permission === 'granted') {
-                       // 使用 Service Worker 處理背景通知
-                       if ('serviceWorker' in navigator) {
-                           navigator.serviceWorker.ready.then(registration => {
-                               // 發送訊息給 Service Worker 設定提醒
-                               if (registration.active) {
-                                   registration.active.postMessage({
-                                       type: 'SET_REMINDER',
-                                       data: reminderSettings
-                                   });
-                                   console.log('提醒設定已發送到 Service Worker');
-                                   
-                                   // 嘗試註冊背景同步
-                                   if ('sync' in registration) {
-                                       registration.sync.register('meditation-reminder').then(() => {
-                                           console.log('背景同步已註冊');
-                                       }).catch(error => {
-                                           console.log('背景同步註冊失敗:', error);
-                                       });
-                                   }
-                                   
-                                   // 嘗試註冊定期同步（如果支援）
-                                   if ('periodicSync' in window) {
-                                       registration.periodicSync.register('meditation-reminder', {
-                                           minInterval: 60000 // 最小間隔 1 分鐘
-                                       }).then(() => {
-                                           console.log('定期同步已註冊');
-                                       }).catch(error => {
-                                           console.log('定期同步註冊失敗:', error);
-                                       });
-                                   }
-                               } else {
-                                   console.log('Service Worker 未啟動，等待啟動...');
-                                   // 等待 Service Worker 啟動
-                                   navigator.serviceWorker.addEventListener('message', (event) => {
-                                       if (event.data.type === 'SW_READY') {
-                                           registration.active.postMessage({
-                                               type: 'SET_REMINDER',
-                                               data: reminderSettings
-                                           });
-                                       }
-                                   });
-                               }
-                           });
-                       }
-                       
-                       // 本地檢查作為備用（每分鐘檢查一次）
-                       reminderIntervalId = setInterval(() => {
-                           const now = new Date();
-                           const [targetHour, targetMinute] = reminderTime.split(':').map(Number);
-                           const currentDay = now.getDay();
-                           
-                           let shouldRemind = false;
-                           if (frequency === 'daily') {
-                               shouldRemind = true;
-                           } else if (frequency === 'weekdays') {
-                               if (currentDay >= 1 && currentDay <= 5) {
-                                   shouldRemind = true;
-                               }
-                           } else if (frequency === 'custom') {
-                               if (customDays.includes(currentDay)) {
-                                   shouldRemind = true;
-                               }
-                           }
-                           
-                           if (shouldRemind && now.getHours() === targetHour && now.getMinutes() === targetMinute) {
-                               // 使用 Service Worker 顯示通知
-                               if ('serviceWorker' in navigator) {
-                                   navigator.serviceWorker.ready.then(registration => {
-                                       registration.showNotification('冥想提醒', {
-                                           body: reminderMessage,
-                                           icon: '/favicon.ico',
-                                           badge: '/favicon.ico',
-                                           tag: 'meditation-reminder',
-                                           requireInteraction: true,
-                                           actions: [
-                                               {
-                                                   action: 'open',
-                                                   title: '開始冥想',
-                                                   icon: '/favicon.ico'
-                                               },
-                                               {
-                                                   action: 'snooze',
-                                                   title: '稍後提醒',
-                                                   icon: '/favicon.ico'
-                                               }
-                                           ],
-                                           data: {
-                                               url: window.location.href,
-                                               timestamp: Date.now()
-                                           }
-                                       });
-                                   });
-                               } else {
-                                   // 備用方案
-                                   new Notification('冥想提醒', {
-                                       body: reminderMessage,
-                                       icon: '/favicon.ico'
-                                   });
-                               }
-                           }
-                       }, 60 * 1000); // 每分鐘檢查一次
+        // 請求通知權限並設定提醒
+        if ('Notification' in window) {
+          Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+              // 使用 Service Worker 處理背景通知
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                  // 發送訊息給 Service Worker 設定提醒
+                  if (registration.active) {
+                    registration.active.postMessage({
+                      type: 'SET_REMINDER',
+                      data: reminderSettings
+                    });
+                    console.log('提醒設定已發送到 Service Worker');
+                    
+                    // 註冊背景同步
+                    if ('sync' in registration) {
+                      registration.sync.register('meditation-reminder').then(() => {
+                        console.log('背景同步已註冊');
+                      }).catch(error => {
+                        console.log('背景同步註冊失敗:', error);
+                      });
+                    }
+                    
+                    // 註冊定期同步（如果支援）
+                    if ('periodicSync' in window) {
+                      registration.periodicSync.register('meditation-reminder', {
+                        minInterval: 60000 // 最小間隔 1 分鐘
+                      }).then(() => {
+                        console.log('定期同步已註冊');
+                      }).catch(error => {
+                        console.log('定期同步註冊失敗:', error);
+                      });
+                    }
+                  } else {
+                    console.log('Service Worker 未啟動，等待啟動...');
+                    // 等待 Service Worker 啟動
+                    navigator.serviceWorker.addEventListener('message', (event) => {
+                      if (event.data.type === 'SW_READY') {
+                        registration.active.postMessage({
+                          type: 'SET_REMINDER',
+                          data: reminderSettings
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+              
+              // 本地檢查作為備用（每分鐘檢查一次）
+              reminderIntervalId = setInterval(() => {
+                const now = new Date();
+                const [targetHour, targetMinute] = reminderTime.split(':').map(Number);
+                const currentDay = now.getDay();
+                
+                let shouldRemind = false;
+                if (frequency === 'daily') {
+                  shouldRemind = true;
+                } else if (frequency === 'weekdays') {
+                  if (currentDay >= 1 && currentDay <= 5) {
+                    shouldRemind = true;
+                  }
+                } else if (frequency === 'custom') {
+                  if (customDays.includes(currentDay)) {
+                    shouldRemind = true;
+                  }
+                }
+                
+                if (shouldRemind && now.getHours() === targetHour && now.getMinutes() === targetMinute) {
+                  // 使用 Service Worker 顯示通知
+                  if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready.then(registration => {
+                      registration.showNotification('冥想提醒', {
+                        body: reminderMessage,
+                        icon: '/favicon.ico',
+                        badge: '/favicon.ico',
+                        tag: 'meditation-reminder',
+                        requireInteraction: true,
+                        actions: [
+                          {
+                            action: 'open',
+                            title: '開始冥想',
+                            icon: '/favicon.ico'
+                          },
+                          {
+                            action: 'snooze',
+                            title: '稍後提醒',
+                            icon: '/favicon.ico'
+                          }
+                        ],
+                        data: {
+                          url: window.location.href,
+                          timestamp: Date.now()
+                        }
+                      });
+                    });
+                  } else {
+                    // 備用方案
+                    new Notification('冥想提醒', {
+                      body: reminderMessage,
+                      icon: '/favicon.ico'
+                    });
+                  }
+                }
+              }, 60 * 1000); // 每分鐘檢查一次
 
-                       showReminderStatus('提醒已成功儲存！背景提醒功能已啟用。', true);
-                   } else {
-                       showReminderStatus('無法啟用提醒功能，請允許通知權限。', false);
-                   }
-               });
-           } else {
-               showReminderStatus('您的瀏覽器不支援通知功能。', false);
-           }
-       };
+              showReminderStatus('提醒已成功儲存！背景提醒功能已啟用。', true);
+            } else {
+              showReminderStatus('無法啟用提醒功能，請允許通知權限。', false);
+            }
+          });
+        } else {
+          showReminderStatus('您的瀏覽器不支援通知功能。', false);
+        }
+      };
 
       reminderBtn.addEventListener('click', () => {
         reminderModal.style.display = 'grid';

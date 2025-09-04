@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡單背景提醒測試</title>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .test-section h3 {
+            color: #00aaff;
+            margin-bottom: 15px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        .status.warning {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+        .btn {
+            background: #00aaff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn:hover {
+            background: #0099e6;
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #00aaff;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #00aaff;
+        }
+        .instructions {
+            background: rgba(0, 170, 255, 0.1);
+            border: 1px solid rgba(0, 170, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        .instructions h4 {
+            color: #00aaff;
+            margin-bottom: 10px;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        .current-time {
+            text-align: center;
+            font-size: 18px;
+            color: #00aaff;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧘‍♀️ 簡單背景提醒測試</h1>
+        
+        <div class="current-time" id="currentTime"></div>
+        
+        <div class="test-section">
+            <h3>📋 系統檢查</h3>
+            <div id="systemStatus"></div>
+            <button class="btn" onclick="checkSystem()">檢查系統</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🔔 通知權限</h3>
+            <div id="notificationStatus"></div>
+            <button class="btn" onclick="requestPermission()">請求權限</button>
+            <button class="btn" onclick="testNotification()">測試通知</button>
+        </div>
+
+        <div class="test-section">
+            <h3>⏰ 設定提醒</h3>
+            <div class="instructions">
+                <h4>使用步驟：</h4>
+                <ol>
+                    <li>設定時間為當前時間後 1-2 分鐘</li>
+                    <li>點擊「設定提醒」按鈕</li>
+                    <li>關閉此頁面或切換到其他應用</li>
+                    <li>等待通知出現</li>
+                </ol>
+            </div>
+            
+            <div class="form-group">
+                <label for="reminderTime">提醒時間：</label>
+                <input type="time" id="reminderTime" value="">
+            </div>
+            
+            <button class="btn" onclick="setReminder()">設定提醒</button>
+            <button class="btn" onclick="clearReminder()">清除提醒</button>
+            
+            <div id="reminderStatus"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 進階測試</h3>
+            <button class="btn" onclick="forceCheck()">強制檢查提醒</button>
+            <button class="btn" onclick="testBackgroundSync()">測試背景同步</button>
+        </div>
+    </div>
+
+    <script>
+        let currentTimeInterval;
+        
+        // 更新當前時間
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('zh-TW');
+            document.getElementById('currentTime').textContent = `當前時間：${timeString}`;
+        }
+        
+        // 設定預設時間
+        function setDefaultTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 2);
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                              now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('reminderTime').value = timeString;
+        }
+        
+        // 檢查系統
+        function checkSystem() {
+            const statusDiv = document.getElementById('systemStatus');
+            let status = '';
+            
+            // Service Worker
+            if ('serviceWorker' in navigator) {
+                status += '<div class="status success">✅ Service Worker 支援</div>';
+            } else {
+                status += '<div class="status error">❌ Service Worker 不支援</div>';
+            }
+            
+            // 通知 API
+            if ('Notification' in window) {
+                status += '<div class="status success">✅ 通知 API 支援</div>';
+            } else {
+                status += '<div class="status error">❌ 通知 API 不支援</div>';
+            }
+            
+            // 背景同步
+            if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+                status += '<div class="status success">✅ 背景同步支援</div>';
+            } else {
+                status += '<div class="status warning">⚠️ 背景同步不支援</div>';
+            }
+            
+            // 定期同步
+            if ('periodicSync' in window) {
+                status += '<div class="status success">✅ 定期同步支援</div>';
+            } else {
+                status += '<div class="status warning">⚠️ 定期同步不支援</div>';
+            }
+            
+            statusDiv.innerHTML = status;
+        }
+        
+        // 請求通知權限
+        function requestPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    const statusDiv = document.getElementById('notificationStatus');
+                    if (permission === 'granted') {
+                        statusDiv.innerHTML = '<div class="status success">✅ 通知權限已授予</div>';
+                    } else if (permission === 'denied') {
+                        statusDiv.innerHTML = '<div class="status error">❌ 通知權限被拒絕</div>';
+                    } else {
+                        statusDiv.innerHTML = '<div class="status warning">⚠️ 通知權限未決定</div>';
+                    }
+                });
+            } else {
+                document.getElementById('notificationStatus').innerHTML = 
+                    '<div class="status error">❌ 瀏覽器不支援通知功能</div>';
+            }
+        }
+        
+        // 測試通知
+        function testNotification() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification('測試通知', {
+                            body: '這是一個測試通知！',
+                            icon: '/favicon.ico',
+                            badge: '/favicon.ico',
+                            tag: 'test-notification',
+                            requireInteraction: true,
+                            actions: [
+                                {
+                                    action: 'open',
+                                    title: '開啟應用',
+                                    icon: '/favicon.ico'
+                                }
+                            ],
+                            data: {
+                                url: window.location.href,
+                                timestamp: Date.now()
+                            }
+                        });
+                    });
+                } else {
+                    new Notification('測試通知', {
+                        body: '這是一個測試通知！',
+                        icon: '/favicon.ico'
+                    });
+                }
+            } else {
+                alert('請先授予通知權限');
+            }
+        }
+        
+        // 設定提醒
+        function setReminder() {
+            const time = document.getElementById('reminderTime').value;
+            if (!time) {
+                alert('請設定提醒時間');
+                return;
+            }
+            
+            const reminderSettings = {
+                time: time,
+                message: '該是冥想的時候了！請打開應用程式開始冥想。',
+                frequency: 'daily',
+                customDays: [],
+                enabled: true,
+                lastSet: Date.now()
+            };
+            
+            // 儲存到 localStorage
+            localStorage.setItem('meditationReminder', JSON.stringify(reminderSettings));
+            
+            // 發送到 Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    if (registration.active) {
+                        registration.active.postMessage({
+                            type: 'SET_REMINDER',
+                            data: reminderSettings
+                        });
+                        
+                        // 嘗試註冊背景同步
+                        if ('sync' in registration) {
+                            registration.sync.register('meditation-reminder').then(() => {
+                                console.log('背景同步已註冊');
+                            }).catch(error => {
+                                console.log('背景同步註冊失敗:', error);
+                            });
+                        }
+                        
+                        document.getElementById('reminderStatus').innerHTML = 
+                            '<div class="status success">✅ 提醒已設定！請關閉此頁面等待通知。</div>';
+                    } else {
+                        document.getElementById('reminderStatus').innerHTML = 
+                            '<div class="status error">❌ Service Worker 未啟動</div>';
+                    }
+                });
+            } else {
+                document.getElementById('reminderStatus').innerHTML = 
+                    '<div class="status error">❌ Service Worker 不支援</div>';
+            }
+        }
+        
+        // 清除提醒
+        function clearReminder() {
+            localStorage.removeItem('meditationReminder');
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    if (registration.active) {
+                        registration.active.postMessage({
+                            type: 'CLEAR_REMINDER'
+                        });
+                    }
+                });
+            }
+            
+            document.getElementById('reminderStatus').innerHTML = 
+                '<div class="status success">✅ 提醒已清除</div>';
+        }
+        
+        // 強制檢查提醒
+        function forceCheck() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    if (registration.active) {
+                        registration.active.postMessage({
+                            type: 'CHECK_REMINDERS'
+                        });
+                        alert('已發送強制檢查指令到 Service Worker');
+                    } else {
+                        alert('Service Worker 未啟動');
+                    }
+                });
+            } else {
+                alert('Service Worker 不支援');
+            }
+        }
+        
+        // 測試背景同步
+        function testBackgroundSync() {
+            if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.sync.register('test-sync').then(() => {
+                        alert('背景同步測試已註冊');
+                    }).catch(error => {
+                        alert('背景同步測試失敗: ' + error.message);
+                    });
+                });
+            } else {
+                alert('背景同步不支援');
+            }
+        }
+        
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            setDefaultTime();
+            checkSystem();
+            requestPermission();
+            
+            // 開始更新時間
+            updateCurrentTime();
+            currentTimeInterval = setInterval(updateCurrentTime, 1000);
+        });
+        
+        // 註冊 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('./simple-service-worker.js');
+                    console.log('Service Worker 註冊成功:', registration);
+                } catch (error) {
+                    console.error('Service Worker 註冊失敗:', error);
+                }
+            });
+        }
+        
+        // 頁面卸載時清理
+        window.addEventListener('beforeunload', () => {
+            if (currentTimeInterval) {
+                clearInterval(currentTimeInterval);
+            }
+        });
+    </script>
+</body>
+</html>
