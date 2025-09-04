@@ -53,6 +53,16 @@ self.addEventListener('activate', (event) => {
                 );
             })
             .then(() => self.clients.claim())
+            .then(() => {
+                // 通知所有客戶端 Service Worker 已準備就緒
+                self.clients.matchAll().then(clients => {
+                    clients.forEach(client => {
+                        client.postMessage({
+                            type: 'SW_READY'
+                        });
+                    });
+                });
+            })
     );
 });
 
@@ -129,24 +139,24 @@ self.addEventListener('push', (event) => {
   let notificationData = {
     title: '冥想提醒',
     body: '該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。',
-    icon: './favicon.ico',
-    badge: './favicon.ico',
+    icon: '/favicon.ico',
+    badge: '/favicon.ico',
     tag: 'meditation-reminder',
     requireInteraction: true,
     actions: [
       {
         action: 'open',
         title: '開始冥想',
-        icon: './favicon.ico'
+        icon: '/favicon.ico'
       },
       {
         action: 'snooze',
         title: '稍後提醒',
-        icon: './favicon.ico'
+        icon: '/favicon.ico'
       }
     ],
     data: {
-      url: './meditation.html',
+      url: '/meditation.html',
       timestamp: Date.now()
     }
   };
@@ -177,7 +187,7 @@ self.addEventListener('notificationclick', (event) => {
   if (event.action === 'open') {
     // 開啟冥想應用
     event.waitUntil(
-      clients.openWindow('./meditation.html')
+      clients.openWindow('/meditation.html')
     );
   } else if (event.action === 'snooze') {
     // 延遲 10 分鐘
@@ -186,7 +196,7 @@ self.addEventListener('notificationclick', (event) => {
         setTimeout(() => {
           self.registration.showNotification('冥想提醒', {
             body: '10分鐘後再次提醒您進行冥想',
-            icon: './favicon.ico',
+            icon: '/favicon.ico',
             tag: 'meditation-reminder'
           });
           resolve();
@@ -196,7 +206,7 @@ self.addEventListener('notificationclick', (event) => {
   } else {
     // 預設動作 - 開啟應用
     event.waitUntil(
-      clients.openWindow('./meditation.html')
+      clients.openWindow('/meditation.html')
     );
   }
 });
@@ -208,18 +218,18 @@ self.addEventListener('sync', (event) => {
       // 發送提醒通知
       self.registration.showNotification('冥想提醒', {
         body: '該是冥想的時候了！',
-        icon: './favicon.ico',
+        icon: '/favicon.ico',
         tag: 'meditation-reminder',
         requireInteraction: true,
         actions: [
           {
             action: 'open',
             title: '開始冥想',
-            icon: './favicon.ico'
+            icon: '/favicon.ico'
           }
         ],
         data: {
-          url: './meditation.html',
+          url: '/meditation.html',
           timestamp: Date.now()
         }
       })
@@ -235,57 +245,74 @@ self.addEventListener('message', (event) => {
     const reminderData = event.data.data;
     console.log('設定提醒:', reminderData);
     
-    // 儲存提醒設定
+    // 儲存提醒設定到 IndexedDB 或使用其他持久化方法
     self.reminderSettings = reminderData;
     
-    // 設定定時檢查
-    if (self.reminderIntervalId) {
-      clearInterval(self.reminderIntervalId);
-    }
-    
-    self.reminderIntervalId = setInterval(() => {
-      const now = new Date();
-      const [targetHour, targetMinute] = reminderData.time.split(':').map(Number);
-      const currentDay = now.getDay();
-      
-      let shouldRemind = false;
-      if (reminderData.frequency === 'daily') {
-        shouldRemind = true;
-      } else if (reminderData.frequency === 'weekdays') {
-        if (currentDay >= 1 && currentDay <= 5) {
-          shouldRemind = true;
-        }
-      } else if (reminderData.frequency === 'custom') {
-        if (reminderData.customDays.includes(currentDay)) {
-          shouldRemind = true;
-        }
-      }
-      
-      if (shouldRemind && now.getHours() === targetHour && now.getMinutes() === targetMinute) {
-        self.registration.showNotification('冥想提醒', {
-          body: reminderData.message,
-          icon: './favicon.ico',
-          badge: './favicon.ico',
-          tag: 'meditation-reminder',
-          requireInteraction: true,
-          actions: [
-            {
-              action: 'open',
-              title: '開始冥想',
-              icon: './favicon.ico'
-            },
-            {
-              action: 'snooze',
-              title: '稍後提醒',
-              icon: './favicon.ico'
-            }
-          ],
-          data: {
-            url: './meditation.html',
-            timestamp: Date.now()
-          }
-        });
-      }
-    }, 60 * 1000); // 每分鐘檢查一次
+    // 使用 Alarm API 或定期檢查來處理提醒
+    // 由於 Service Worker 不能使用 setInterval，我們使用其他方法
+    checkAndSetReminder(reminderData);
   }
 });
+
+// 定期檢查提醒（使用 fetch 事件觸發）
+let lastCheckTime = 0;
+self.addEventListener('fetch', (event) => {
+  const now = Date.now();
+  // 每分鐘檢查一次提醒
+  if (now - lastCheckTime > 60000) {
+    lastCheckTime = now;
+    checkReminders();
+  }
+});
+
+function checkAndSetReminder(reminderData) {
+  // 立即檢查一次
+  checkReminders();
+}
+
+function checkReminders() {
+  if (!self.reminderSettings) return;
+  
+  const now = new Date();
+  const [targetHour, targetMinute] = self.reminderSettings.time.split(':').map(Number);
+  const currentDay = now.getDay();
+  
+  let shouldRemind = false;
+  if (self.reminderSettings.frequency === 'daily') {
+    shouldRemind = true;
+  } else if (self.reminderSettings.frequency === 'weekdays') {
+    if (currentDay >= 1 && currentDay <= 5) {
+      shouldRemind = true;
+    }
+  } else if (self.reminderSettings.frequency === 'custom') {
+    if (self.reminderSettings.customDays.includes(currentDay)) {
+      shouldRemind = true;
+    }
+  }
+  
+  if (shouldRemind && now.getHours() === targetHour && now.getMinutes() === targetMinute) {
+    self.registration.showNotification('冥想提醒', {
+      body: self.reminderSettings.message,
+      icon: '/favicon.ico',
+      badge: '/favicon.ico',
+      tag: 'meditation-reminder',
+      requireInteraction: true,
+      actions: [
+        {
+          action: 'open',
+          title: '開始冥想',
+          icon: '/favicon.ico'
+        },
+        {
+          action: 'snooze',
+          title: '稍後提醒',
+          icon: '/favicon.ico'
+        }
+      ],
+      data: {
+        url: '/meditation.html',
+        timestamp: Date.now()
+      }
+    });
+  }
+}

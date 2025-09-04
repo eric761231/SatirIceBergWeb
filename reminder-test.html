@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>提醒功能測試</title>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .test-section h3 {
+            color: #00aaff;
+            margin-bottom: 15px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4caf50;
+        }
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+        }
+        .status.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196f3;
+        }
+        button {
+            background: #00aaff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #0099e6;
+            transform: translateY(-2px);
+        }
+        button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        input, select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px;
+            width: 200px;
+        }
+        .form-group {
+            margin: 15px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00aaff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧘‍♀️ 提醒功能測試</h1>
+        
+        <div class="test-section">
+            <h3>📱 系統狀態檢查</h3>
+            <div id="systemStatus"></div>
+            <button onclick="checkSystemStatus()">檢查系統狀態</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔔 通知權限測試</h3>
+            <div id="notificationStatus"></div>
+            <button onclick="requestNotificationPermission()">請求通知權限</button>
+            <button onclick="testNotification()">測試通知</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>⏰ 提醒設定測試</h3>
+            <div class="form-group">
+                <label>提醒時間：</label>
+                <input type="time" id="testTime" value="12:00">
+            </div>
+            <div class="form-group">
+                <label>提醒訊息：</label>
+                <input type="text" id="testMessage" value="測試提醒訊息" style="width: 300px;">
+            </div>
+            <div class="form-group">
+                <label>頻率：</label>
+                <select id="testFrequency">
+                    <option value="daily">每日</option>
+                    <option value="weekdays">工作日</option>
+                    <option value="custom">自訂</option>
+                </select>
+            </div>
+            <button onclick="setTestReminder()">設定測試提醒</button>
+            <button onclick="clearTestReminder()">清除測試提醒</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📋 儲存的提醒設定</h3>
+            <div id="savedSettings"></div>
+            <button onclick="loadSavedSettings()">載入儲存的設定</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 快速連結</h3>
+            <button onclick="window.open('/meditation.html', '_blank')">開啟冥想頁面</button>
+            <button onclick="window.open('/notification-test.html', '_blank')">開啟通知測試頁面</button>
+        </div>
+    </div>
+
+    <script>
+        // 檢查系統狀態
+        function checkSystemStatus() {
+            const statusDiv = document.getElementById('systemStatus');
+            let status = '';
+            
+            // 檢查 Service Worker 支援
+            if ('serviceWorker' in navigator) {
+                status += '<div class="status success">✅ Service Worker 支援</div>';
+            } else {
+                status += '<div class="status error">❌ Service Worker 不支援</div>';
+            }
+            
+            // 檢查通知支援
+            if ('Notification' in window) {
+                status += '<div class="status success">✅ 通知 API 支援</div>';
+            } else {
+                status += '<div class="status error">❌ 通知 API 不支援</div>';
+            }
+            
+            // 檢查推送支援
+            if ('PushManager' in window) {
+                status += '<div class="status success">✅ 推送通知支援</div>';
+            } else {
+                status += '<div class="status error">❌ 推送通知不支援</div>';
+            }
+            
+            // 檢查 PWA 支援
+            if ('standalone' in window.navigator) {
+                status += '<div class="status success">✅ PWA 支援</div>';
+            } else {
+                status += '<div class="status info">ℹ️ PWA 支援有限</div>';
+            }
+            
+            statusDiv.innerHTML = status;
+        }
+        
+        // 請求通知權限
+        async function requestNotificationPermission() {
+            const statusDiv = document.getElementById('notificationStatus');
+            
+            if ('Notification' in window) {
+                try {
+                    const permission = await Notification.requestPermission();
+                    if (permission === 'granted') {
+                        statusDiv.innerHTML = '<div class="status success">✅ 通知權限已授予</div>';
+                    } else if (permission === 'denied') {
+                        statusDiv.innerHTML = '<div class="status error">❌ 通知權限被拒絕</div>';
+                    } else {
+                        statusDiv.innerHTML = '<div class="status info">ℹ️ 通知權限未決定</div>';
+                    }
+                } catch (error) {
+                    statusDiv.innerHTML = `<div class="status error">❌ 請求權限失敗: ${error.message}</div>`;
+                }
+            } else {
+                statusDiv.innerHTML = '<div class="status error">❌ 瀏覽器不支援通知功能</div>';
+            }
+        }
+        
+        // 測試通知
+        async function testNotification() {
+            const statusDiv = document.getElementById('notificationStatus');
+            
+            if ('Notification' in window && Notification.permission === 'granted') {
+                try {
+                    if ('serviceWorker' in navigator) {
+                        const registration = await navigator.serviceWorker.ready;
+                        await registration.showNotification('測試通知', {
+                            body: '這是一個測試通知，功能正常！',
+                            icon: '/favicon.ico',
+                            badge: '/favicon.ico',
+                            tag: 'test-notification',
+                            requireInteraction: true,
+                            actions: [
+                                {
+                                    action: 'open',
+                                    title: '開啟應用',
+                                    icon: '/favicon.ico'
+                                }
+                            ],
+                            data: {
+                                url: window.location.href,
+                                timestamp: Date.now()
+                            }
+                        });
+                        statusDiv.innerHTML = '<div class="status success">✅ 測試通知已發送</div>';
+                    } else {
+                        new Notification('測試通知', {
+                            body: '這是一個測試通知，功能正常！',
+                            icon: '/favicon.ico'
+                        });
+                        statusDiv.innerHTML = '<div class="status success">✅ 測試通知已發送</div>';
+                    }
+                } catch (error) {
+                    statusDiv.innerHTML = `<div class="status error">❌ 發送通知失敗: ${error.message}</div>`;
+                }
+            } else {
+                statusDiv.innerHTML = '<div class="status error">❌ 請先授予通知權限</div>';
+            }
+        }
+        
+        // 設定測試提醒
+        async function setTestReminder() {
+            const time = document.getElementById('testTime').value;
+            const message = document.getElementById('testMessage').value;
+            const frequency = document.getElementById('testFrequency').value;
+            
+            const reminderSettings = {
+                time: time,
+                message: message,
+                frequency: frequency,
+                customDays: [1, 2, 3, 4, 5], // 預設工作日
+                enabled: true,
+                lastSet: Date.now()
+            };
+            
+            // 儲存到 localStorage
+            localStorage.setItem('meditationReminder', JSON.stringify(reminderSettings));
+            
+            // 發送到 Service Worker
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.ready;
+                    if (registration.active) {
+                        registration.active.postMessage({
+                            type: 'SET_REMINDER',
+                            data: reminderSettings
+                        });
+                        alert('測試提醒已設定！');
+                    } else {
+                        alert('Service Worker 未啟動，請重新整理頁面後再試');
+                    }
+                } catch (error) {
+                    alert(`設定失敗: ${error.message}`);
+                }
+            } else {
+                alert('Service Worker 不支援');
+            }
+        }
+        
+        // 清除測試提醒
+        function clearTestReminder() {
+            localStorage.removeItem('meditationReminder');
+            alert('測試提醒已清除');
+        }
+        
+        // 載入儲存的設定
+        function loadSavedSettings() {
+            const settingsDiv = document.getElementById('savedSettings');
+            const savedReminder = localStorage.getItem('meditationReminder');
+            
+            if (savedReminder) {
+                try {
+                    const settings = JSON.parse(savedReminder);
+                    settingsDiv.innerHTML = `
+                        <div class="status info">
+                            <strong>已儲存的設定：</strong><br>
+                            時間: ${settings.time}<br>
+                            訊息: ${settings.message}<br>
+                            頻率: ${settings.frequency}<br>
+                            啟用: ${settings.enabled ? '是' : '否'}<br>
+                            最後設定: ${new Date(settings.lastSet).toLocaleString()}
+                        </div>
+                    `;
+                } catch (error) {
+                    settingsDiv.innerHTML = '<div class="status error">❌ 解析設定失敗</div>';
+                }
+            } else {
+                settingsDiv.innerHTML = '<div class="status info">ℹ️ 沒有儲存的設定</div>';
+            }
+        }
+        
+        // 頁面載入時自動檢查
+        document.addEventListener('DOMContentLoaded', () => {
+            checkSystemStatus();
+            loadSavedSettings();
+        });
+    </script>
+</body>
+</html>

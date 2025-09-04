@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>冥想音樂播放器</title>
-    <meta http-equiv="refresh" content="0; url=./meditation.html">
+    <meta http-equiv="refresh" content="0; url=./public/install-app.html">
     <style>
         body {
             font-family: 'Noto Sans TC', Arial, sans-serif;
@@ -65,14 +65,14 @@
             <span class="loading"></span>
             <span>自動重定向中...</span>
         </div>
-        <p>如果沒有自動跳轉，請 <a href="./meditation.html" class="link">點擊這裡</a> 進入冥想頁面</p>
+        <p>如果沒有自動跳轉，請 <a href="./public/install-app.html" class="link">點擊這裡</a> 進入安裝頁面</p>
     </div>
     
     <script>
-        // 確保重定向到冥想頁面
+        // 確保重定向到安裝頁面
         setTimeout(() => {
             if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-                window.location.href = './meditation.html';
+                window.location.href = './public/install-app.html';
             }
         }, 100);
     </script>

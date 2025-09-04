@@ -467,10 +467,24 @@
             // 通知 Service Worker 恢復提醒
             if ('serviceWorker' in navigator) {
               navigator.serviceWorker.ready.then(registration => {
-                registration.active.postMessage({
-                  type: 'SET_REMINDER',
-                  data: reminderSettings
-                });
+                if (registration.active) {
+                  registration.active.postMessage({
+                    type: 'SET_REMINDER',
+                    data: reminderSettings
+                  });
+                  console.log('已恢復提醒設定到 Service Worker');
+                } else {
+                  console.log('Service Worker 未啟動，等待啟動...');
+                  // 等待 Service Worker 啟動
+                  navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data.type === 'SW_READY') {
+                      registration.active.postMessage({
+                        type: 'SET_REMINDER',
+                        data: reminderSettings
+                      });
+                    }
+                  });
+                }
               });
             }
           }
@@ -962,6 +976,7 @@
               });
           }
 
+          // 清除舊的提醒
           if (reminderIntervalId) {
               clearInterval(reminderIntervalId);
           }
@@ -977,6 +992,7 @@
           };
           localStorage.setItem('meditationReminder', JSON.stringify(reminderSettings));
 
+          // 請求通知權限並設定提醒
           if ('Notification' in window) {
               Notification.requestPermission().then(permission => {
                   if (permission === 'granted') {
@@ -984,14 +1000,28 @@
                       if ('serviceWorker' in navigator) {
                           navigator.serviceWorker.ready.then(registration => {
                               // 發送訊息給 Service Worker 設定提醒
-                              registration.active.postMessage({
-                                  type: 'SET_REMINDER',
-                                  data: reminderSettings
-                              });
+                              if (registration.active) {
+                                  registration.active.postMessage({
+                                      type: 'SET_REMINDER',
+                                      data: reminderSettings
+                                  });
+                                  console.log('提醒設定已發送到 Service Worker');
+                              } else {
+                                  console.log('Service Worker 未啟動，等待啟動...');
+                                  // 等待 Service Worker 啟動
+                                  navigator.serviceWorker.addEventListener('message', (event) => {
+                                      if (event.data.type === 'SW_READY') {
+                                          registration.active.postMessage({
+                                              type: 'SET_REMINDER',
+                                              data: reminderSettings
+                                          });
+                                      }
+                                  });
+                              }
                           });
                       }
                       
-                      // 同時保留本地檢查作為備用
+                      // 本地檢查作為備用（每分鐘檢查一次）
                       reminderIntervalId = setInterval(() => {
                           const now = new Date();
                           const [targetHour, targetMinute] = reminderTime.split(':').map(Number);
@@ -1046,7 +1076,7 @@
                                   });
                               }
                           }
-                      }, 60 * 1000); // Check every minute
+                      }, 60 * 1000); // 每分鐘檢查一次
 
                       showReminderStatus('提醒已成功儲存！', true);
                   } else {
