@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景提醒功能測試</title>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        h1 {
+            color: #00aaff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .test-section h3 {
+            color: #00aaff;
+            margin-bottom: 15px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4caf50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        .status.warning {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+        .btn {
+            background: #00aaff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #0099e6;
+            transform: translateY(-2px);
+        }
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .reminder-form {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-group label {
+            font-weight: bold;
+            color: #00aaff;
+        }
+        .form-group input, .form-group textarea {
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #00aaff;
+        }
+        .instructions {
+            background: rgba(0, 170, 255, 0.1);
+            border: 1px solid rgba(0, 170, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .instructions h4 {
+            color: #00aaff;
+            margin-bottom: 10px;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧘‍♀️ 背景提醒功能測試</h1>
+        
+        <div class="test-section">
+            <h3>📋 系統狀態檢查</h3>
+            <div id="systemStatus"></div>
+            <button class="btn" onclick="checkSystemStatus()">檢查系統狀態</button>
+        </div>
+
+        <div class="test-section">
+            <h3>🔔 通知權限測試</h3>
+            <div id="notificationStatus"></div>
+            <button class="btn" onclick="requestNotificationPermission()">請求通知權限</button>
+            <button class="btn" onclick="testNotification()">測試通知</button>
+        </div>
+
+        <div class="test-section">
+            <h3>⏰ 背景提醒設定</h3>
+            <div class="instructions">
+                <h4>使用說明：</h4>
+                <ol>
+                    <li>設定一個即將到來的時間（例如：當前時間後 1-2 分鐘）</li>
+                    <li>點擊「設定背景提醒」按鈕</li>
+                    <li>關閉此頁面或切換到其他應用程式</li>
+                    <li>等待設定的時間到達，應該會收到通知</li>
+                </ol>
+            </div>
+            
+            <div class="reminder-form">
+                <div class="form-group">
+                    <label for="testTime">提醒時間：</label>
+                    <input type="time" id="testTime" value="">
+                </div>
+                <div class="form-group">
+                    <label for="testMessage">提醒訊息：</label>
+                    <textarea id="testMessage" rows="3" placeholder="輸入測試提醒訊息...">這是一個背景提醒測試！即使沒有打開應用程式，您也應該收到這個通知。</textarea>
+                </div>
+                <div class="form-group">
+                    <label>提醒頻率：</label>
+                    <div>
+                        <input type="radio" id="daily" name="frequency" value="daily" checked>
+                        <label for="daily">每日</label>
+                    </div>
+                </div>
+                <button class="btn" onclick="setBackgroundReminder()">設定背景提醒</button>
+            </div>
+            
+            <div id="reminderStatus"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 進階測試</h3>
+            <button class="btn" onclick="checkServiceWorkerStatus()">檢查 Service Worker 狀態</button>
+            <button class="btn" onclick="clearAllReminders()">清除所有提醒</button>
+            <button class="btn" onclick="testBackgroundSync()">測試背景同步</button>
+        </div>
+
+        <div class="test-section">
+            <h3>📱 快速連結</h3>
+            <a href="./meditation.html" class="btn" style="text-decoration: none; display: inline-block;">冥想音樂播放器</a>
+            <a href="./reminder-test.html" class="btn" style="text-decoration: none; display: inline-block;">一般提醒測試</a>
+        </div>
+    </div>
+
+    <script>
+        // 設定預設時間為當前時間後 2 分鐘
+        function setDefaultTime() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 2);
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                              now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('testTime').value = timeString;
+        }
+
+        // 檢查系統狀態
+        function checkSystemStatus() {
+            const statusDiv = document.getElementById('systemStatus');
+            let status = '';
+
+            // 檢查 Service Worker 支援
+            if ('serviceWorker' in navigator) {
+                status += '<div class="status success">✅ Service Worker 支援</div>';
+            } else {
+                status += '<div class="status error">❌ Service Worker 不支援</div>';
+            }
+
+            // 檢查通知 API 支援
+            if ('Notification' in window) {
+                status += '<div class="status success">✅ 通知 API 支援</div>';
+            } else {
+                status += '<div class="status error">❌ 通知 API 不支援</div>';
+            }
+
+            // 檢查背景同步支援
+            if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+                status += '<div class="status success">✅ 背景同步支援</div>';
+            } else {
+                status += '<div class="status warning">⚠️ 背景同步不支援</div>';
+            }
+
+            // 檢查定期同步支援
+            if ('periodicSync' in window) {
+                status += '<div class="status success">✅ 定期同步支援</div>';
+            } else {
+                status += '<div class="status warning">⚠️ 定期同步不支援</div>';
+            }
+
+            // 檢查推送通知支援
+            if ('PushManager' in window) {
+                status += '<div class="status success">✅ 推送通知支援</div>';
+            } else {
+                status += '<div class="status warning">⚠️ 推送通知不支援</div>';
+            }
+
+            statusDiv.innerHTML = status;
+        }
+
+        // 請求通知權限
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission().then(permission => {
+                    const statusDiv = document.getElementById('notificationStatus');
+                    if (permission === 'granted') {
+                        statusDiv.innerHTML = '<div class="status success">✅ 通知權限已授予</div>';
+                    } else if (permission === 'denied') {
+                        statusDiv.innerHTML = '<div class="status error">❌ 通知權限被拒絕</div>';
+                    } else {
+                        statusDiv.innerHTML = '<div class="status warning">⚠️ 通知權限未決定</div>';
+                    }
+                });
+            } else {
+                document.getElementById('notificationStatus').innerHTML = 
+                    '<div class="status error">❌ 瀏覽器不支援通知功能</div>';
+            }
+        }
+
+        // 測試通知
+        function testNotification() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification('背景提醒測試', {
+                            body: '這是一個測試通知，確認通知功能正常運作！',
+                            icon: '/favicon.ico',
+                            badge: '/favicon.ico',
+                            tag: 'test-notification',
+                            requireInteraction: true,
+                            actions: [
+                                {
+                                    action: 'open',
+                                    title: '開啟應用',
+                                    icon: '/favicon.ico'
+                                }
+                            ],
+                            data: {
+                                url: window.location.href,
+                                timestamp: Date.now()
+                            }
+                        });
+                    });
+                } else {
+                    new Notification('背景提醒測試', {
+                        body: '這是一個測試通知，確認通知功能正常運作！',
+                        icon: '/favicon.ico'
+                    });
+                }
+            } else {
+                alert('請先授予通知權限');
+            }
+        }
+
+        // 設定背景提醒
+        function setBackgroundReminder() {
+            const time = document.getElementById('testTime').value;
+            const message = document.getElementById('testMessage').value;
+            const frequency = document.querySelector('input[name="frequency"]:checked').value;
+
+            if (!time) {
+                alert('請設定提醒時間');
+                return;
+            }
+
+            const reminderSettings = {
+                time: time,
+                message: message,
+                frequency: frequency,
+                customDays: [],
+                enabled: true,
+                lastSet: Date.now()
+            };
+
+            // 儲存到 localStorage
+            localStorage.setItem('meditationReminder', JSON.stringify(reminderSettings));
+
+            // 發送到 Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    if (registration.active) {
+                        registration.active.postMessage({
+                            type: 'SET_REMINDER',
+                            data: reminderSettings
+                        });
+
+                        // 嘗試註冊背景同步
+                        if ('sync' in registration) {
+                            registration.sync.register('meditation-reminder').then(() => {
+                                console.log('背景同步已註冊');
+                            }).catch(error => {
+                                console.log('背景同步註冊失敗:', error);
+                            });
+                        }
+
+                        // 嘗試註冊定期同步
+                        if ('periodicSync' in window) {
+                            registration.periodicSync.register('meditation-reminder', {
+                                minInterval: 60000
+                            }).then(() => {
+                                console.log('定期同步已註冊');
+                            }).catch(error => {
+                                console.log('定期同步註冊失敗:', error);
+                            });
+                        }
+
+                        document.getElementById('reminderStatus').innerHTML = 
+                            '<div class="status success">✅ 背景提醒已設定！請關閉此頁面並等待通知。</div>';
+                    } else {
+                        document.getElementById('reminderStatus').innerHTML = 
+                            '<div class="status error">❌ Service Worker 未啟動</div>';
+                    }
+                });
+            } else {
+                document.getElementById('reminderStatus').innerHTML = 
+                    '<div class="status error">❌ Service Worker 不支援</div>';
+            }
+        }
+
+        // 檢查 Service Worker 狀態
+        function checkServiceWorkerStatus() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    console.log('Service Worker 註冊:', registrations);
+                    alert(`找到 ${registrations.length} 個 Service Worker 註冊`);
+                });
+            } else {
+                alert('Service Worker 不支援');
+            }
+        }
+
+        // 清除所有提醒
+        function clearAllReminders() {
+            localStorage.removeItem('meditationReminder');
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.ready.then(registration => {
+                    if (registration.active) {
+                        registration.active.postMessage({
+                            type: 'CLEAR_REMINDER'
+                        });
+                    }
+                });
+            }
+            
+            alert('所有提醒已清除');
+        }
+
+        // 測試背景同步
+        function testBackgroundSync() {
+            if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.sync.register('test-sync').then(() => {
+                        alert('背景同步測試已註冊');
+                    }).catch(error => {
+                        alert('背景同步測試失敗: ' + error.message);
+                    });
+                });
+            } else {
+                alert('背景同步不支援');
+            }
+        }
+
+        // 頁面載入時初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            setDefaultTime();
+            checkSystemStatus();
+            requestNotificationPermission();
+        });
+
+        // 註冊 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', async () => {
+                try {
+                    const registration = await navigator.serviceWorker.register('./service-worker.js');
+                    console.log('Service Worker 註冊成功:', registration);
+                } catch (error) {
+                    console.error('Service Worker 註冊失敗:', error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
