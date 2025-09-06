@@ -154,6 +154,25 @@
             </div>
         </div>
         <div class="note">若安裝遇到問題，請確保您的瀏覽器為最新版本。</div>
+        <div class="centered" style="margin-top:20px;">
+            <button id="clearCacheBtn" style="background:#e53935;color:#fff;padding:12px 24px;border:none;border-radius:8px;font-size:1rem;cursor:pointer;">清除快取（解決安裝異常）</button>
+        </div>
+        // 清除快取與 Service Worker
+        document.getElementById('clearCacheBtn').addEventListener('click', async function() {
+            try {
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
+                }
+                if ('serviceWorker' in navigator) {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    await Promise.all(regs.map(reg => reg.unregister()));
+                }
+                alert('快取與 Service Worker 已清除，請手動重新整理頁面！');
+            } catch(e) {
+                alert('清除快取失敗，請手動清除瀏覽器資料');
+            }
+        });
     </div>
 
     <script>
