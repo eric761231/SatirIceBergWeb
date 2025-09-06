@@ -4844,3 +4844,31 @@ Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 
 ============================================================
+[2025-09-06 20:43:01] 更新描述:
+更新app主要頁面、修復安卓版安裝頁面按鈕功能
+>>> git add .
+warning: in the working copy of 'simple-reminder-test.html', LF will be replaced by CRLF the next time Git touches it
+
+
+>>> git commit -m '更新app主要頁面、修復安卓版安裝頁面按鈕功能'
+[main b0d44df] '更新app主要頁面、修復安卓版安裝頁面按鈕功能'
+ 9 files changed, 319 insertions(+), 343 deletions(-)
+ delete mode 100644 index.js
+ delete mode 100644 music.html
+ delete mode 100644 "\346\211\213\346\251\237\347\253\257\346\217\220\351\206\222\345\212\237\350\203\275\350\252\252\346\230\216.md"
+ delete mode 100644 "\350\203\214\346\231\257\346\217\220\351\206\222\346\270\254\350\251\246\350\252\252\346\230\216.md"
+
+
+>>> git push origin main
+To https://github.com/eric761231/SatirIceBergWeb.git
+   0b82674..b0d44df  main -> main
+
+
+>>> vercel ls
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+
+>>> vercel inspect
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+============================================================

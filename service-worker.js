@@ -33,10 +33,22 @@ const STATIC_FILES = [
 ];
 
 self.addEventListener('install', (event) => {
+    console.log('🔧 Service Worker 安裝中...');
     event.waitUntil(
         caches.open(STATIC_CACHE)
-            .then((cache) => cache.addAll(STATIC_FILES))
-            .then(() => self.skipWaiting())
+            .then((cache) => {
+                console.log('📦 開始快取檔案...');
+                return cache.addAll(STATIC_FILES);
+            })
+            .then(() => {
+                console.log('✅ Service Worker 安裝完成');
+                return self.skipWaiting();
+            })
+            .catch((error) => {
+                console.error('❌ Service Worker 安裝失敗:', error);
+                // 即使快取失敗，也要繼續安裝
+                return self.skipWaiting();
+            })
     );
 });
 
