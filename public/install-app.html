@@ -457,11 +457,23 @@
     async function checkPWAInstallability() {
       log('檢查 PWA 安裝條件...');
       
+      // 檢測設備類型
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      
+      log(`設備類型: ${isMobile ? '手機' : '桌面'}`);
+      if (isMobile) {
+        log(`手機類型: ${isAndroid ? 'Android' : isIOS ? 'iOS' : '其他'}`);
+      }
+      
       const checks = {
         serviceWorker: 'serviceWorker' in navigator,
         manifest: !!document.querySelector('link[rel="manifest"]'),
         https: location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1',
-        manifestAccessible: false // 預設為 false
+        manifestAccessible: false, // 預設為 false
+        userAgent: navigator.userAgent,
+        isMobile: isMobile
       };
       
       log(`Service Worker 支援: ${checks.serviceWorker}`);
@@ -477,6 +489,29 @@
             const manifest = await response.json();
             log('Manifest 文件可訪問', 'success');
             checks.manifestAccessible = true;
+            
+            // 檢查 manifest 的關鍵屬性
+            const requiredFields = ['name', 'short_name', 'start_url', 'display', 'icons'];
+            const missingFields = requiredFields.filter(field => !manifest[field]);
+            
+            if (missingFields.length > 0) {
+              log(`Manifest 缺少必要欄位: ${missingFields.join(', ')}`, 'error');
+            } else {
+              log('Manifest 格式正確', 'success');
+            }
+            
+            // 檢查圖標
+            if (manifest.icons && manifest.icons.length > 0) {
+              const hasRequiredSizes = manifest.icons.some(icon => 
+                ['192x192', '512x512'].includes(icon.sizes)
+              );
+              if (hasRequiredSizes) {
+                log('Manifest 包含必要圖標尺寸', 'success');
+              } else {
+                log('Manifest 缺少必要圖標尺寸 (192x192, 512x512)', 'error');
+              }
+            }
+            
           } else {
             log(`Manifest 文件無法訪問: ${response.status}`, 'error');
             checks.manifestAccessible = false;
@@ -489,6 +524,19 @@
         log('Manifest 連結不存在', 'error');
       }
       
+      // 手機特殊檢查
+      if (isMobile) {
+        if (!checks.https && !location.hostname.includes('localhost')) {
+          log('⚠️ 手機上需要 HTTPS 才能安裝 PWA', 'warning');
+        }
+        
+        if (isAndroid) {
+          log('Android 設備建議使用 Chrome 瀏覽器', 'info');
+        } else if (isIOS) {
+          log('iOS 設備必須使用 Safari 瀏覽器', 'info');
+        }
+      }
+      
       // 詳細記錄每個檢查結果
       log(`檢查結果詳情:`, 'info');
       log(`- Service Worker: ${checks.serviceWorker}`, checks.serviceWorker ? 'success' : 'error');
@@ -496,7 +544,9 @@
       log(`- Manifest 可訪問: ${checks.manifestAccessible}`, checks.manifestAccessible ? 'success' : 'error');
       log(`- HTTPS/Localhost: ${checks.https}`, checks.https ? 'success' : 'error');
       
-      const allChecksPass = Object.values(checks).every(check => check === true);
+      const allChecksPass = Object.values(checks).every(check => 
+        typeof check === 'boolean' ? check : true
+      );
       log(`PWA 安裝條件檢查結果: ${allChecksPass ? '通過' : '失敗'}`, allChecksPass ? 'success' : 'error');
       
       return allChecksPass;
@@ -594,48 +644,75 @@
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
       const isChrome = /Chrome/i.test(navigator.userAgent);
       const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
+      const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       
       let message = '';
       
       if (isAndroid && isChrome) {
         message = `📱 Android Chrome 安裝步驟：
-
-1️⃣ 點擊瀏覽器右上角的「⋮」選單
-2️⃣ 尋找「安裝應用程式」或「加入主畫面」
-3️⃣ 點擊該選項並確認安裝
-4️⃣ 應用程式將出現在主頁面
-
-💡 如果看不到安裝選項，請確保：
-• 使用最新版 Chrome
-• 重新整理頁面後再試`;
+ 
+ 1️⃣ 點擊瀏覽器右上角的「⋮」選單
+ 2️⃣ 尋找「安裝應用程式」或「加入主畫面」
+ 3️⃣ 點擊該選項並確認安裝
+ 4️⃣ 應用程式將出現在主頁面
+ 
+ 💡 如果看不到安裝選項：
+ • 確保使用最新版 Chrome
+ • 重新整理頁面後再試
+ • 檢查是否已安裝過此應用`;
+      } else if (isAndroid && !isChrome) {
+        message = `📱 Android 其他瀏覽器安裝步驟：
+ 
+ 1️⃣ 點擊瀏覽器選單（三個點或三條線）
+ 2️⃣ 尋找「加入主畫面」或「安裝應用程式」
+ 3️⃣ 點擊該選項並確認安裝
+ 
+ 💡 建議使用 Chrome 瀏覽器以獲得最佳體驗`;
       } else if (isIOS && isSafari) {
-        message = `📱 iPhone/iPad 安裝步驟：
-
-1️⃣ 點擊底部的「分享」按鈕 📤
-2️⃣ 向下滑動找到「加入主畫面」
-3️⃣ 點擊「加入主畫面」
-4️⃣ 點擊右上角「加入」確認
-
-💡 注意：必須使用 Safari 瀏覽器`;
-      } else if (!isAndroid && !isIOS) {
+        message = `📱 iPhone/iPad Safari 安裝步驟：
+ 
+ 1️⃣ 點擊底部的「分享」按鈕 📤
+ 2️⃣ 向下滑動找到「加入主畫面」
+ 3️⃣ 點擊「加入主畫面」
+ 4️⃣ 點擊右上角「加入」確認
+ 
+ 💡 注意：必須使用 Safari 瀏覽器`;
+      } else if (isIOS && !isSafari) {
+        message = `📱 iPhone/iPad 其他瀏覽器：
+ 
+ ⚠️ iOS 設備只能使用 Safari 瀏覽器安裝 PWA
+ 
+ 請切換到 Safari 瀏覽器，然後：
+ 1️⃣ 點擊底部的「分享」按鈕
+ 2️⃣ 選擇「加入主畫面」`;
+      } else if (!isMobile) {
         message = `💻 桌面版安裝步驟：
-
-1️⃣ 查看網址列右側的安裝圖標
-2️⃣ 點擊安裝圖標
-3️⃣ 在彈出視窗中點擊「安裝」
-4️⃣ 應用程式將出現在系統中
-
-💡 支援的瀏覽器：Chrome、Edge、Firefox`;
+ 
+ 1️⃣ 查看網址列右側的安裝圖標
+ 2️⃣ 點擊安裝圖標
+ 3️⃣ 在彈出視窗中點擊「安裝」
+ 4️⃣ 應用程式將出現在系統中
+ 
+ 💡 支援的瀏覽器：Chrome、Edge、Firefox`;
       } else {
         message = `📱 手動安裝步驟：
-
-請根據您的裝置選擇相應的安裝方法：
-
-Android: 使用 Chrome 瀏覽器，點選選單中的「安裝應用程式」
-iPhone: 使用 Safari 瀏覽器，點選分享按鈕中的「加入主畫面」
-桌面版: 點擊網址列旁的安裝圖標
-
-如仍有問題，請嘗試重新整理頁面或清除快取`;
+ 
+ 請根據您的裝置選擇相應的安裝方法：
+ 
+ Android: 使用 Chrome 瀏覽器，點選選單中的「安裝應用程式」
+ iPhone: 使用 Safari 瀏覽器，點選分享按鈕中的「加入主畫面」
+ 桌面版: 點擊網址列旁的安裝圖標
+ 
+ 如仍有問題，請嘗試重新整理頁面或清除快取`;
+      }
+      
+      // 添加手機特定的額外提示
+      if (isMobile) {
+        message += `\n\n🔧 手機安裝常見問題：
+ • 確保網路連線穩定
+ • 清除瀏覽器快取後重試
+ • 檢查瀏覽器是否為最新版本
+ • 某些瀏覽器可能不支援 PWA 安裝`;
       }
       
       showNotification(message, 'info');
@@ -679,9 +756,64 @@ iPhone: 使用 Safari 瀏覽器，點選分享按鈕中的「加入主畫面」
           return;
         }
         
-        // 如果沒有 deferredPrompt，顯示手動安裝指導
-        log('沒有自動安裝提示可用，顯示手動指導', 'warning');
-        showManualInstallGuide();
+        // 如果沒有 deferredPrompt，嘗試手機特定的方法
+        log('沒有自動安裝提示可用，嘗試手機特定方法', 'warning');
+        
+        const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+          // 手機上嘗試強制觸發安裝提示
+          log('嘗試手機特定的安裝方法...');
+          
+          // 嘗試訪問主頁面來觸發 beforeinstallprompt
+          try {
+            const response = await fetch('/meditation.html');
+            if (response.ok) {
+              log('主頁面可訪問，嘗試觸發安裝提示', 'success');
+              
+              // 等待一下看是否觸發了 beforeinstallprompt
+              await new Promise(resolve => setTimeout(resolve, 2000));
+              
+              if (deferredPrompt && isInstallable) {
+                log('成功觸發 beforeinstallprompt！', 'success');
+                updateInstallButton('立即安裝', false, '#4caf50');
+                
+                // 立即觸發安裝提示
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                
+                if (outcome === 'accepted') {
+                  log('用戶接受安裝', 'success');
+                  showNotification('🎉 安裝成功！', 'success');
+                  updateInstallButton('已安裝', true, '#4caf50');
+                } else {
+                  log('用戶拒絕安裝', 'warning');
+                  showNotification('安裝被取消', 'warning');
+                }
+                
+                deferredPrompt = null;
+                isInstallable = false;
+                return;
+              }
+            }
+          } catch (error) {
+            log(`主頁面訪問失敗: ${error.message}`, 'error');
+          }
+          
+          // 如果還是沒有觸發，嘗試在新視窗中打開
+          log('嘗試在新視窗中打開主頁面...');
+          const newWindow = window.open('/meditation.html', '_blank');
+          
+          if (newWindow) {
+            showNotification('📱 已在新視窗中打開主頁面，請在新視窗中查看安裝提示！', 'info');
+          } else {
+            log('無法打開新視窗，顯示手動安裝指導', 'warning');
+            showManualInstallGuide();
+          }
+        } else {
+          // 桌面版顯示手動安裝指導
+          showManualInstallGuide();
+        }
         
       } catch (error) {
         log(`安裝過程發生錯誤: ${error.message}`, 'error');
