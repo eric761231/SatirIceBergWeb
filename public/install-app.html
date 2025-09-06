@@ -349,6 +349,13 @@
         <li>快速存取播放清單</li>
         <li>自動更新和同步</li>
       </ul>
+      
+      <div id="mobileNotice" style="display: none; background: rgba(255,193,7,0.1); border: 1px solid #ffc107; border-radius: 8px; padding: 15px; margin-top: 20px;">
+        <h4 style="color: #ffc107; margin: 0 0 10px 0;">📱 手機安裝說明</h4>
+        <p style="margin: 0; color: var(--text-secondary);">
+          Android Chrome 通常會自動顯示安裝選項，如果沒有則需要手動操作瀏覽器選單。iPhone 需要手動操作 Safari 瀏覽器。
+        </p>
+      </div>
     </div>
     
     <div class="actions">
@@ -651,15 +658,20 @@
       if (isAndroid && isChrome) {
         message = `📱 Android Chrome 安裝步驟：
  
+ 通常 Android Chrome 會自動顯示安裝選項，如果沒有：
+ 
+ 手動操作：
  1️⃣ 點擊瀏覽器右上角的「⋮」選單
- 2️⃣ 尋找「安裝應用程式」或「加入主畫面」
+ 2️⃣ 向下滑動尋找「安裝應用程式」或「加入主畫面」
  3️⃣ 點擊該選項並確認安裝
  4️⃣ 應用程式將出現在主頁面
  
  💡 如果看不到安裝選項：
  • 確保使用最新版 Chrome
  • 重新整理頁面後再試
- • 檢查是否已安裝過此應用`;
+ • 檢查是否已安裝過此應用
+ • 清除瀏覽器快取後重試
+ • 某些網站可能需要多次訪問才會顯示安裝選項`;
       } else if (isAndroid && !isChrome) {
         message = `📱 Android 其他瀏覽器安裝步驟：
  
@@ -671,6 +683,9 @@
       } else if (isIOS && isSafari) {
         message = `📱 iPhone/iPad Safari 安裝步驟：
  
+ ⚠️ 手機上不會自動跳出安裝選項！
+ 
+ 請手動操作：
  1️⃣ 點擊底部的「分享」按鈕 📤
  2️⃣ 向下滑動找到「加入主畫面」
  3️⃣ 點擊「加入主畫面」
@@ -756,23 +771,25 @@
           return;
         }
         
-        // 如果沒有 deferredPrompt，嘗試手機特定的方法
-        log('沒有自動安裝提示可用，嘗試手機特定方法', 'warning');
+        // 如果沒有 deferredPrompt，嘗試多種方法觸發安裝
+        log('沒有自動安裝提示可用，嘗試觸發安裝', 'warning');
         
-        const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isAndroid = /Android/i.test(navigator.userAgent);
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        const isChrome = /Chrome/i.test(navigator.userAgent);
         
-        if (isMobile) {
-          // 手機上嘗試強制觸發安裝提示
-          log('嘗試手機特定的安裝方法...');
+        if (isAndroid && isChrome) {
+          // Android Chrome 應該能夠自動安裝
+          log('Android Chrome 設備，嘗試觸發安裝提示...');
           
           // 嘗試訪問主頁面來觸發 beforeinstallprompt
           try {
             const response = await fetch('/meditation.html');
             if (response.ok) {
-              log('主頁面可訪問，嘗試觸發安裝提示', 'success');
+              log('主頁面可訪問，等待 beforeinstallprompt 事件...', 'success');
               
               // 等待一下看是否觸發了 beforeinstallprompt
-              await new Promise(resolve => setTimeout(resolve, 2000));
+              await new Promise(resolve => setTimeout(resolve, 3000));
               
               if (deferredPrompt && isInstallable) {
                 log('成功觸發 beforeinstallprompt！', 'success');
@@ -810,8 +827,12 @@
             log('無法打開新視窗，顯示手動安裝指導', 'warning');
             showManualInstallGuide();
           }
+        } else if (isIOS) {
+          // iOS 設備需要手動安裝
+          log('iOS 設備需要手動安裝', 'info');
+          showManualInstallGuide();
         } else {
-          // 桌面版顯示手動安裝指導
+          // 其他設備顯示手動安裝指導
           showManualInstallGuide();
         }
         
@@ -869,8 +890,17 @@
         });
       });
       
-      // 添加調試信息切換（雙擊標題）
-      document.querySelector('h1').addEventListener('dblclick', toggleDebugInfo);
+       // 添加調試信息切換（雙擊標題）
+       document.querySelector('h1').addEventListener('dblclick', toggleDebugInfo);
+       
+       // 檢測手機設備並顯示提示
+       const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+       if (isMobile) {
+         const mobileNotice = document.getElementById('mobileNotice');
+         if (mobileNotice) {
+           mobileNotice.style.display = 'block';
+         }
+       }
       
       // 檢查是否已安裝
       if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -906,7 +936,10 @@
          // 註冊 Service Worker
          await registerServiceWorker();
          
-         // 如果還沒有觸發 beforeinstallprompt，等待一下
+         // 檢測設備類型
+         const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+         
+         // 所有設備都等待 beforeinstallprompt 事件
          if (!isInstallable) {
            log('等待 beforeinstallprompt 事件...');
            updateInstallButton('準備中...', true, '#ff9800');
