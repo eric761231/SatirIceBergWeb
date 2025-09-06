@@ -1,9 +1,9 @@
 {
-  "name": "obyssey-web",
+  "name": "meditation-music-player",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "meditation.html",
   "scripts": {
-    "start": "node index.js",
+    "start": "python start_server_stable.py",
     "test": "echo No tests configured"
   },
   "dependencies": {

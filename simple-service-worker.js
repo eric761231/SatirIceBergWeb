@@ -350,3 +350,4 @@ async function getLastNotificationTime(key) {
 }
 
 console.log('Service Worker 腳本已載入');
+

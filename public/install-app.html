@@ -311,12 +311,32 @@
     </div>
     
     <div class="actions">
-      <a href="/music.html" class="back-btn">返回音樂播放器</a>
+      <a href="../meditation.html" class="back-btn">返回音樂播放器</a>
       <button class="install-btn" onclick="installApp()">立即安裝</button>
     </div>
   </div>
   
   <script>
+    // 全域變數儲存安裝提示
+    let deferredPrompt;
+    
+    // 監聽 beforeinstallprompt 事件
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('beforeinstallprompt 事件觸發');
+      // 阻止瀏覽器預設的安裝提示
+      e.preventDefault();
+      // 儲存事件以便稍後使用
+      deferredPrompt = e;
+      
+      // 顯示安裝按鈕
+      const installBtn = document.querySelector('.install-btn');
+      if (installBtn) {
+        installBtn.style.display = 'inline-block';
+        installBtn.textContent = '立即安裝';
+        installBtn.disabled = false;
+      }
+    });
+    
     function showDevice(device) {
       // 隱藏所有內容
       document.querySelectorAll('.device-content').forEach(content => {
@@ -337,43 +357,110 @@
     
     async function installApp() {
       try {
-        // 檢查是否支援安裝
-        if ('serviceWorker' in navigator && 'PushManager' in window) {
-          // 嘗試註冊 Service Worker
-          const registration = await navigator.serviceWorker.register('/public/service-worker.js');
-          console.log('Service Worker 註冊成功:', registration);
-          
-          // 檢查是否有安裝提示
-          if (window.deferredPrompt) {
-            window.deferredPrompt.prompt();
-            const { outcome } = await window.deferredPrompt.userChoice;
-            
-            if (outcome === 'accepted') {
-              alert('安裝成功！應用程式已添加到您的主頁面。');
-            } else {
-              alert('安裝被取消。您可以稍後再試。');
-            }
-            
-            window.deferredPrompt = null;
-          } else {
-            // 沒有安裝提示，顯示手動安裝說明
-            alert('請按照上方說明手動安裝應用程式。');
+        console.log('開始安裝流程...');
+        
+        // 檢查是否支援 Service Worker
+        if ('serviceWorker' in navigator) {
+          try {
+            // 註冊 Service Worker (修正路徑)
+            const registration = await navigator.serviceWorker.register('../service-worker.js');
+            console.log('Service Worker 註冊成功:', registration);
+          } catch (swError) {
+            console.warn('Service Worker 註冊失敗:', swError);
           }
+        }
+        
+        // 檢查是否有安裝提示
+        if (deferredPrompt) {
+          console.log('顯示安裝提示...');
+          // 顯示安裝提示
+          deferredPrompt.prompt();
+          
+          // 等待用戶選擇
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log('用戶選擇:', outcome);
+          
+          if (outcome === 'accepted') {
+            alert('🎉 安裝成功！應用程式已添加到您的主頁面。');
+            
+            // 更新按鈕狀態
+            const installBtn = document.querySelector('.install-btn');
+            if (installBtn) {
+              installBtn.textContent = '已安裝';
+              installBtn.disabled = true;
+              installBtn.style.background = '#4caf50';
+            }
+          } else {
+            alert('安裝被取消。您可以稍後再試。');
+          }
+          
+          // 清除 deferredPrompt
+          deferredPrompt = null;
         } else {
-          alert('您的瀏覽器不支援 PWA 安裝。請使用 Chrome、Edge 或 Firefox 瀏覽器。');
+          // 沒有安裝提示，檢查是否已安裝
+          if (window.matchMedia('(display-mode: standalone)').matches) {
+            alert('✅ 應用程式已經安裝！');
+            
+            const installBtn = document.querySelector('.install-btn');
+            if (installBtn) {
+              installBtn.textContent = '已安裝';
+              installBtn.disabled = true;
+              installBtn.style.background = '#4caf50';
+            }
+          } else {
+            // 顯示手動安裝說明
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            
+            if (isAndroid) {
+              alert('📱 請按照上方 Android 安裝說明手動安裝應用程式：\n\n1. 點擊瀏覽器選單（三個點）\n2. 選擇「安裝應用程式」或「加入主畫面」\n3. 點擊「安裝」確認');
+            } else if (isIOS) {
+              alert('📱 請按照上方 iOS 安裝說明手動安裝應用程式：\n\n1. 點擊底部的「分享」按鈕\n2. 選擇「加入主畫面」\n3. 點擊「加入」確認');
+            } else {
+              alert('💻 請按照上方桌面版安裝說明手動安裝應用程式：\n\n1. 在網址列右側會出現安裝圖標\n2. 點擊安裝圖標\n3. 選擇「安裝」確認');
+            }
+          }
         }
       } catch (error) {
         console.error('安裝失敗:', error);
-        alert('安裝失敗，請按照上方說明手動安裝。');
+        alert('❌ 安裝失敗，請按照上方說明手動安裝。');
       }
     }
     
-    // 檢查是否已安裝
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      document.querySelector('.install-btn').textContent = '已安裝';
-      document.querySelector('.install-btn').disabled = true;
-      document.querySelector('.install-btn').style.background = '#666';
-    }
+    // 頁面載入時檢查安裝狀態
+    document.addEventListener('DOMContentLoaded', () => {
+      // 檢查是否已安裝
+      if (window.matchMedia('(display-mode: standalone)').matches) {
+        const installBtn = document.querySelector('.install-btn');
+        if (installBtn) {
+          installBtn.textContent = '已安裝';
+          installBtn.disabled = true;
+          installBtn.style.background = '#4caf50';
+        }
+      }
+      
+      // 檢查瀏覽器支援
+      if (!('serviceWorker' in navigator)) {
+        console.warn('此瀏覽器不支援 Service Worker');
+      }
+      
+      if (!('PushManager' in window)) {
+        console.warn('此瀏覽器不支援推送通知');
+      }
+    });
+    
+    // 監聽 appinstalled 事件
+    window.addEventListener('appinstalled', (evt) => {
+      console.log('應用程式已安裝');
+      alert('🎉 應用程式安裝成功！');
+      
+      const installBtn = document.querySelector('.install-btn');
+      if (installBtn) {
+        installBtn.textContent = '已安裝';
+        installBtn.disabled = true;
+        installBtn.style.background = '#4caf50';
+      }
+    });
   </script>
 </body>
 </html>

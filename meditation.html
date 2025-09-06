@@ -232,7 +232,7 @@
     /* Controls */
     .controls { padding: 16px 18px 8px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
     .left, .right { display: flex; align-items: center; gap: 16px; }
-    .btn { background: none; border: none; padding: 0; width: 40px; height: 40px; display:grid; place-items:center; cursor:pointer; opacity:.9; color: var(--text-secondary); border-radius: 50%; transition: all 0.2s ease; }
+    .btn { background: none; border: none; padding: 0; width: 40px; height: 40px; display:grid; place-items:center; cursor:pointer; opacity:.9; color: var(--text-secondary); border-radius: 50%; transition: all 0.2s ease; position: relative; }
     .btn.active { color: var(--accent-cyan); opacity: 1; }
     .btn svg { width: 24px; height: 24px; }
     .btn:hover { opacity: 1; background: rgba(0, 170, 255, 0.1); }
@@ -294,8 +294,8 @@
     .btn-save, .btn-test { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
     .btn-save { background: var(--accent-cyan); color: var(--bg-primary); }
     .btn-save:hover { background: #0099e6; transform: translateY(-1px); }
-    .btn-test { background: rgba(255,255,255,0.1); color: var(--text-primary); border: 1px solid rgba(255,255,255,0.2); }
-    .btn-test:hover { background: rgba(255,255,255,0.15); transform: translateY(-1px); }
+    .btn-test { background: rgba(244, 67, 54, 0.8); color: var(--text-primary); }
+    .btn-test:hover { background: rgba(244, 67, 54, 1); transform: translateY(-1px); }
     .reminder-status { margin-top: 16px; padding: 12px; border-radius: 8px; font-size: 14px; text-align: center; display: none; }
     .reminder-status.success { background: rgba(76, 175, 80, 0.2); color: #4caf50; border: 1px solid rgba(76, 175, 80, 0.3); display: block; }
     .reminder-status.error { background: rgba(244, 67, 54, 0.2); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.3); display: block; }
@@ -374,7 +374,13 @@
         <span id="deviceName">本機播放</span>
       </div>
       <div class="mini">
-        <button class="btn" id="reminder" title="冥想提醒設定"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></button>
+        <button class="btn" id="reminder" title="冥想提醒設定">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12,6 12,12 16,14"/>
+          </svg>
+          <span id="reminderIndicator" style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #4caf50; border-radius: 50%; display: none;"></span>
+        </button>
       </div>
     </div>
     <audio id="audio" preload="metadata"></audio>
@@ -429,10 +435,18 @@
           <h3>提醒訊息</h3>
           <textarea id="reminderMessage" placeholder="輸入您的冥想提醒訊息..." rows="3">該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。</textarea>
         </div>
+        <div class="reminder-section" id="reminderStatusSection" style="display: none;">
+          <h3>提醒狀態</h3>
+          <div id="reminderStatusInfo" style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; font-size: 14px;">
+            <div><strong>狀態:</strong> <span id="reminderEnabledStatus">未設定</span></div>
+            <div><strong>時間:</strong> <span id="reminderTimeStatus">-</span></div>
+            <div><strong>頻率:</strong> <span id="reminderFrequencyStatus">-</span></div>
+            <div><strong>最後設定:</strong> <span id="reminderLastSetStatus">-</span></div>
+          </div>
+        </div>
         <div class="reminder-actions">
           <button class="btn-save" id="saveReminder">儲存設定</button>
-          <button class="btn-test" id="testReminder">測試提醒</button>
-                      <a href="./reminder-test.html" class="btn-test" style="text-decoration: none; display: inline-block; text-align: center;">提醒測試</a>
+          <button class="btn-test" id="clearReminder">清除提醒</button>
         </div>
         <div class="reminder-status" id="reminderStatus"></div>
       </div>
@@ -593,11 +607,10 @@
       const reminderModal = document.getElementById('reminderModal');
       const closeReminder = document.getElementById('closeReminder');
       
-      // 修正後的提醒相關元素宣告
+      // 提醒相關元素宣告
       const reminderTimeInput = document.getElementById('reminderTime');
       const reminderMessageTextarea = document.getElementById('reminderMessage');
       const saveReminderBtn = document.getElementById('saveReminder');
-      const testReminderBtn = document.getElementById('testReminder');
       const reminderStatusDiv = document.getElementById('reminderStatus');
       const frequencyRadios = document.querySelectorAll('input[name="frequency"]');
       const customDaysSection = document.getElementById('customDaysSection');
@@ -777,9 +790,14 @@
           shuffled.unshift(currentTrackInShuffled);
           currentPlaylist = shuffled;
         } else {
-          currentPlaylist = [...originalPlaylist];
+          // 恢復到原始順序或保存的順序
+          loadPlaylistOrder();
         }
         currentTrackIndex = currentPlaylist.findIndex(t => t.id === currentTrackId);
+        
+        // 保存播放清單順序
+        savePlaylistOrder();
+        
         initPlaylistUI();
       });
       
@@ -809,13 +827,10 @@
         ) {
           // 循環滾動歌詞
           const totalScrollDistance = lyricsText.scrollHeight - lyricsContainer.clientHeight;
-          let scrollPos = audio.currentTime * scrollSpeed;
-          if (scrollPos >= totalScrollDistance) {
-            // 到底後自動回頂繼續滾動
-            lyricsContainer.scrollTop = 0;
-            audio.currentTime = 0;
-          } else {
-            lyricsContainer.scrollTop = scrollPos;
+          if (totalScrollDistance > 0) {
+            // 計算滾動位置，使用模運算實現循環滾動
+            const scrollPos = (audio.currentTime * scrollSpeed) % (totalScrollDistance + 100);
+            lyricsContainer.scrollTop = Math.min(scrollPos, totalScrollDistance);
           }
         }
       });
@@ -935,6 +950,45 @@
           item.classList.toggle('active', item.dataset.id === currentPlaylist[currentTrackIndex].id);
         });
       };
+
+      // 保存播放清單順序到 localStorage
+      const savePlaylistOrder = () => {
+        const playlistOrder = currentPlaylist.map(track => track.id);
+        localStorage.setItem('meditationPlaylistOrder', JSON.stringify(playlistOrder));
+        console.log('播放清單順序已保存:', playlistOrder);
+      };
+
+      // 從 localStorage 載入播放清單順序
+      const loadPlaylistOrder = () => {
+        const savedOrder = localStorage.getItem('meditationPlaylistOrder');
+        if (savedOrder) {
+          try {
+            const playlistOrder = JSON.parse(savedOrder);
+            console.log('載入播放清單順序:', playlistOrder);
+            
+            // 根據保存的順序重新排列播放清單
+            const reorderedPlaylist = [];
+            playlistOrder.forEach(id => {
+              const track = originalPlaylist.find(t => t.id === id);
+              if (track) {
+                reorderedPlaylist.push({ ...track });
+              }
+            });
+            
+            // 如果有些曲目不在保存的順序中，添加它們
+            originalPlaylist.forEach(track => {
+              if (!playlistOrder.includes(track.id)) {
+                reorderedPlaylist.push({ ...track });
+              }
+            });
+            
+            currentPlaylist = reorderedPlaylist;
+            console.log('播放清單順序已恢復');
+          } catch (error) {
+            console.error('載入播放清單順序失敗:', error);
+          }
+        }
+      };
       
       resetPlaylistOrderBtn.addEventListener('click', () => {
         const currentTrackId = currentPlaylist[currentTrackIndex].id;
@@ -942,6 +996,11 @@
         currentTrackIndex = currentPlaylist.findIndex(t => t.id === currentTrackId);
         isShuffled = false;
         shuffleBtn.classList.remove('active');
+        
+        // 清除保存的播放清單順序
+        localStorage.removeItem('meditationPlaylistOrder');
+        console.log('播放清單順序已重置');
+        
         initPlaylistUI();
       });
 
@@ -979,6 +1038,9 @@
         currentPlaylist = newOrderedIds.map(id => originalPlaylist.find(track => track.id === id));
         currentTrackIndex = currentPlaylist.findIndex(track => track.id === currentTrackId);
 
+        // 保存播放清單順序到 localStorage
+        savePlaylistOrder();
+
         initPlaylistUI();
       });
       
@@ -1002,6 +1064,57 @@
           reminderStatusDiv.classList.remove('success', 'error');
           reminderStatusDiv.classList.add(isSuccess ? 'success' : 'error');
           reminderStatusDiv.style.display = 'block';
+      };
+
+      // 更新提醒狀態顯示
+      const updateReminderStatus = () => {
+        const savedReminder = localStorage.getItem('meditationReminder');
+        const statusSection = document.getElementById('reminderStatusSection');
+        const enabledStatus = document.getElementById('reminderEnabledStatus');
+        const timeStatus = document.getElementById('reminderTimeStatus');
+        const frequencyStatus = document.getElementById('reminderFrequencyStatus');
+        const lastSetStatus = document.getElementById('reminderLastSetStatus');
+        const reminderIndicator = document.getElementById('reminderIndicator');
+        
+        if (savedReminder) {
+          try {
+            const reminderSettings = JSON.parse(savedReminder);
+            statusSection.style.display = 'block';
+            enabledStatus.textContent = reminderSettings.enabled ? '已啟用' : '已停用';
+            timeStatus.textContent = reminderSettings.time || '-';
+            
+            // 更新狀態指示器
+            if (reminderSettings.enabled) {
+              reminderIndicator.style.display = 'block';
+              reminderIndicator.style.background = '#4caf50'; // 綠色表示已啟用
+            } else {
+              reminderIndicator.style.display = 'block';
+              reminderIndicator.style.background = '#ff9800'; // 橙色表示已停用
+            }
+            
+            let frequencyText = '-';
+            if (reminderSettings.frequency === 'daily') {
+              frequencyText = '每日';
+            } else if (reminderSettings.frequency === 'weekdays') {
+              frequencyText = '工作日';
+            } else if (reminderSettings.frequency === 'custom') {
+              frequencyText = '自訂';
+            }
+            frequencyStatus.textContent = frequencyText;
+            
+            if (reminderSettings.lastSet) {
+              lastSetStatus.textContent = new Date(reminderSettings.lastSet).toLocaleString('zh-TW');
+            } else {
+              lastSetStatus.textContent = '-';
+            }
+          } catch (error) {
+            statusSection.style.display = 'none';
+            reminderIndicator.style.display = 'none';
+          }
+        } else {
+          statusSection.style.display = 'none';
+          reminderIndicator.style.display = 'none';
+        }
       };
 
       // 改進的提醒功能
@@ -1141,18 +1254,20 @@
                 }
               }, 60 * 1000); // 每分鐘檢查一次
 
-              showReminderStatus('提醒已成功儲存！背景提醒功能已啟用。', true);
-            } else {
-              showReminderStatus('無法啟用提醒功能，請允許通知權限。', false);
-            }
-          });
-        } else {
-          showReminderStatus('您的瀏覽器不支援通知功能。', false);
-        }
-      };
+                             showReminderStatus('提醒已成功儲存！背景提醒功能已啟用。', true);
+               updateReminderStatus(); // 更新狀態顯示
+             } else {
+               showReminderStatus('無法啟用提醒功能，請允許通知權限。', false);
+             }
+           });
+         } else {
+           showReminderStatus('您的瀏覽器不支援通知功能。', false);
+         }
+       };
 
       reminderBtn.addEventListener('click', () => {
         reminderModal.style.display = 'grid';
+        updateReminderStatus(); // 開啟模態框時更新狀態
       });
 
       closeReminder.addEventListener('click', () => {
@@ -1172,54 +1287,51 @@
 
       saveReminderBtn.addEventListener('click', saveReminder);
 
-      testReminderBtn.addEventListener('click', () => {
-        if ('Notification' in window) {
-          Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-              // 使用 Service Worker 發送測試通知
-              if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.ready.then(registration => {
-                  registration.showNotification('冥想提醒測試', {
-                    body: '這是一個測試通知，您的通知功能運作正常！',
-                    icon: '/favicon.ico',
-                    badge: '/favicon.ico',
-                    tag: 'test-notification',
-                    requireInteraction: true,
-                    actions: [
-                      {
-                        action: 'open',
-                        title: '開啟應用',
-                        icon: '/favicon.ico'
-                      }
-                    ],
-                    data: {
-                      url: window.location.href,
-                      timestamp: Date.now()
-                    }
-                  });
-                  showReminderStatus('測試通知已發送！', true);
-                });
-              } else {
-                // 備用方案
-                new Notification('冥想提醒測試', {
-                  body: '這是一個測試通知，您的通知功能運作正常！',
-                  icon: '/favicon.ico'
-                });
-                showReminderStatus('測試通知已發送！', true);
-              }
-            } else {
-              showReminderStatus('無法發送測試通知，請允許通知權限。', false);
+      // 清除提醒功能
+      const clearReminderBtn = document.getElementById('clearReminder');
+      clearReminderBtn.addEventListener('click', () => {
+        // 清除本地儲存
+        localStorage.removeItem('meditationReminder');
+        
+        // 清除本地定時器
+        if (reminderIntervalId) {
+          clearInterval(reminderIntervalId);
+          reminderIntervalId = null;
+        }
+        
+        // 通知 Service Worker 清除提醒
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.ready.then(registration => {
+            if (registration.active) {
+              registration.active.postMessage({
+                type: 'CLEAR_REMINDER'
+              });
             }
           });
-        } else {
-          showReminderStatus('您的瀏覽器不支援通知功能。', false);
         }
+        
+        // 重置 UI
+        reminderTimeInput.value = '08:00';
+        reminderMessageTextarea.value = '該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。';
+        document.querySelector('input[name="frequency"][value="daily"]').checked = true;
+        customDaysSection.style.display = 'none';
+        document.querySelectorAll('.day-checkbox input').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        
+        showReminderStatus('提醒已清除', true);
+        updateReminderStatus(); // 更新狀態顯示
       });
+
 
              // 頁面載入時預載入所有背景圖片
        preloadImages();
        
+       // 載入播放清單順序
+       loadPlaylistOrder();
        
+       // 更新提醒狀態
+       updateReminderStatus();
        
        loadTrack(currentTrackIndex);
        addLyricsEventListeners();
