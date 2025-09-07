@@ -12,16 +12,15 @@
   <meta name="apple-mobile-web-app-title" content="冥想音樂" />
   <meta name="mobile-web-app-capable" content="yes" />
   
-      <!-- Manifest -->
-    <link rel="manifest" href="./manifest.json" />
+  <!-- Manifest -->
+  <link rel="manifest" href="./manifest.json" />
   
   <!-- Apple Touch Icons -->
-      <link rel="apple-touch-icon" href="./icons/icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152x152.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-192x192.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-192x192.png" />
   
   <!-- Favicon -->
-      <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+  <link rel="icon" type="image/x-icon" href="./favicon.ico" />
   
   <style>
     /* 側邊導航欄樣式 from meditation.html */
@@ -171,7 +170,7 @@
 
     .lyrics-scroll-container {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
       position: absolute;
       inset: 0;
@@ -179,13 +178,12 @@
       height: 100%;
       overflow: auto;
       position: relative;
-      .lyrics-text.warriors-creed-style {
-        color: #111;
-        font-weight: bold;
-        text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
-      }
-      align-items: flex-start;
-      justify-content: center;
+    }
+
+    .lyrics-text.warriors-creed-style {
+      color: #111;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
     }
 
     .lyrics-scroll-container::-webkit-scrollbar {
@@ -211,6 +209,7 @@
       width: 100%;
       white-space: pre-line;
       cursor: grab; /* 改為 grab 表示可拖動 */
+      -webkit-user-select: none;
       user-select: none;
       transform: translateY(0px); /* 由 JS 控制 */
     }
@@ -226,7 +225,7 @@
     /* Seek bar */
     .seek { padding: 8px 18px 0 18px; }
     .time { display:flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
-    input[type="range"] { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 999px; background: rgba(255,255,255,.1); outline: none; }
+    input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 999px; background: rgba(255,255,255,.1); outline: none; }
     input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--accent-cyan); box-shadow: 0 0 0 6px rgba(0,170,255,.2); cursor: pointer; }
 
     /* Controls */
@@ -251,7 +250,8 @@
     .device { display:flex; gap:10px; align-items:center; font-size: 14px; }
     .mini { display:flex; gap:14px; align-items:center; }
     .mini .btn { width: 34px; height: 34px; opacity:.85; }
-    .playlist-btn { margin-left: auto; background: rgba(0,170,255,.2); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 999px; font-size: 12px; color: var(--text-primary); font-weight: 700; cursor: pointer; border: 1px solid rgba(0,170,255,.3); transition: all 0.2s ease; }
+    .justify-end { justify-content: flex-end; }
+    .playlist-btn { margin-left: auto; background: rgba(0,170,255,.2); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 999px; font-size: 12px; color: var(--text-primary); font-weight: 700; cursor: pointer; border: 1px solid rgba(0,170,255,.3); transition: all 0.2s ease; }
     .playlist-btn:hover { background: rgba(0,170,255,.3); transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,170,255,0.3); }
 
     /* Playlist modal */
@@ -261,7 +261,7 @@
     .playlist-title { font-size: 20px; font-weight: 700; color: var(--accent-cyan); }
     .close-btn { background: none; border: none; color: var(--text-primary); font-size: 24px; cursor: pointer; }
     #playlistItems { display: flex; flex-direction: column; gap: 8px; }
-    .playlist-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; cursor: pointer; transition: background .2s; user-select: none; }
+    .playlist-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 8px; cursor: pointer; transition: background .2s; -webkit-user-select: none; user-select: none; }
     .playlist-item:hover { background: rgba(0,170,255,.1); }
     .playlist-item.active { background: var(--accent-cyan); }
     .playlist-item.active .playlist-item-title, .playlist-item.active .playlist-item-duration { color: var(--bg-primary); }
@@ -300,6 +300,16 @@
     .reminder-status.success { background: rgba(76, 175, 80, 0.2); color: #4caf50; border: 1px solid rgba(76, 175, 80, 0.3); display: block; }
     .reminder-status.error { background: rgba(244, 67, 54, 0.2); color: #f44336; border: 1px solid rgba(244, 67, 54, 0.3); display: block; }
     #artBackground { border: none; }
+
+    /* Utilities extracted from inline styles */
+    .indicator-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #4caf50; border-radius: 50%; }
+    .mt-20 { margin-top: 20px; }
+    .mt-12 { margin-top: 12px; }
+    .text-center { text-align: center; }
+    .note-small { color: var(--text-secondary); font-size: 12px; }
+    .btn-reset { background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.2s ease; }
+    .hidden { display: none; }
+    .reminder-status-info { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; font-size: 14px; }
   </style>
 </head>
 <body>
@@ -330,19 +340,17 @@
       </div>
       <button class="playlist-btn" id="playlistBtn">播放清單</button>
     </div>
-
-          <div class="artwrap">
-        <div class="art">
-          <div class="art-bg" id="artBackground">
-            <div class="loading-indicator"></div>
-                       <div class="lyrics-scroll-container">
-             <div class="lyrics-text" id="lyricsText">靜心聆聽，感受內在的寧靜與和諧</div>
-           </div>
-           
+    <div class="artwrap">
+      <div class="art">
+        <div class="art-bg" id="artBackground">
+          <div class="loading-indicator"></div>
+          <div class="lyrics-scroll-container">
+            <div class="lyrics-text" id="lyricsText">靜心聆聽，感受內在的寧靜與和諧</div>
           </div>
-          <div class="lyrics-overlay"></div>
         </div>
+        <div class="lyrics-overlay"></div>
       </div>
+    </div>
 
     <div class="info">
       <div class="trackTitle" id="trackTitle">彩虹冥想</div>
@@ -350,7 +358,7 @@
     </div>
 
     <div class="seek">
-      <input id="seek" type="range" min="0" max="100" value="0" step="0.1" />
+      <input id="seek" type="range" min="0" max="100" value="0" step="0.1" aria-label="播放進度" title="播放進度" />
       <div class="time"><span id="cur">0:00</span><span id="dur">0:00</span></div>
     </div>
 
@@ -362,7 +370,7 @@
       <div class="playwrap">
         <button class="play" id="play" data-state="play" title="播放 / 暫停"><svg viewBox="0 0 48 48" fill="currentColor"><path class="play-icon" d="M18 14 L36 24 L18 34 Z" /><path class="pause-icon" d="M16 14 H22 V34 H16 Z M26 14 H32 V34 H26 Z" /></svg></button>
       </div>
-      <div class="right" style="justify-content:end">
+          <div class="right justify-end">
         <button class="btn" id="next" title="下一首"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 19 22 12 13 5 13 19"></polygon><line x1="2" y1="5" x2="2" y2="19"/></svg></button>
         <button class="btn" id="repeat" title="循環播放"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></button>
       </div>
@@ -379,7 +387,7 @@
             <circle cx="12" cy="12" r="10"/>
             <polyline points="12,6 12,12 16,14"/>
           </svg>
-          <span id="reminderIndicator" style="position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #4caf50; border-radius: 50%; display: none;"></span>
+          <span id="reminderIndicator" class="indicator-dot hidden"></span>
         </button>
       </div>
     </div>
@@ -393,9 +401,9 @@
         <button class="close-btn" id="closePlaylist">&times;</button>
       </div>
       <div id="playlistItems"></div>
-      <div style="margin-top: 20px; text-align: center; color: var(--text-secondary); font-size: 12px;">💡 按住拖曳圖示可重新排序</div>
-      <div style="margin-top: 12px; text-align: center;">
-        <button id="resetPlaylistOrder" style="background: rgba(255,255,255,0.1); color: var(--text-secondary); border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: all 0.2s ease;">重置為原始順序</button>
+      <div class="mt-20 text-center note-small">💡 按住拖曳圖示可重新排序</div>
+      <div class="mt-12 text-center">
+        <button id="resetPlaylistOrder" class="btn-reset">重置為原始順序</button>
       </div>
     </div>
   </div>
@@ -409,7 +417,7 @@
       <div class="reminder-body">
         <div class="reminder-section">
           <h3>每日提醒時間</h3>
-          <div class="time-inputs"><input type="time" id="reminderTime" value="08:00"></div>
+          <div class="time-inputs"><input type="time" id="reminderTime" value="08:00" aria-label="提醒時間" title="提醒時間"></div>
         </div>
         <div class="reminder-section">
           <h3>提醒頻率</h3>
@@ -419,7 +427,7 @@
             <label class="radio-option"><input type="radio" name="frequency" value="custom"><span>自訂</span></label>
           </div>
         </div>
-        <div class="reminder-section" id="customDaysSection" style="display: none;">
+        <div class="reminder-section hidden" id="customDaysSection">
           <h3>自訂提醒日期</h3>
           <div class="day-checkboxes">
             <label class="day-checkbox"><input type="checkbox" value="1"><span>週一</span></label>
@@ -435,9 +443,9 @@
           <h3>提醒訊息</h3>
           <textarea id="reminderMessage" placeholder="輸入您的冥想提醒訊息..." rows="3">該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。</textarea>
         </div>
-        <div class="reminder-section" id="reminderStatusSection" style="display: none;">
+        <div class="reminder-section hidden" id="reminderStatusSection">
           <h3>提醒狀態</h3>
-          <div id="reminderStatusInfo" style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; font-size: 14px;">
+          <div id="reminderStatusInfo" class="reminder-status-info">
             <div><strong>狀態:</strong> <span id="reminderEnabledStatus">未設定</span></div>
             <div><strong>時間:</strong> <span id="reminderTimeStatus">-</span></div>
             <div><strong>頻率:</strong> <span id="reminderFrequencyStatus">-</span></div>
@@ -476,54 +484,55 @@
             }
             if (reminderSettings.customDays && reminderSettings.frequency === 'custom') {
               reminderSettings.customDays.forEach(day => {
-                const checkbox = document.querySelector(`input[name="customDays"][value="${day}"]`);
+                const checkbox = document.querySelector(`.day-checkbox input[value="${day}"]`);
                 if (checkbox) checkbox.checked = true;
               });
             }
             
-                         // 通知 Service Worker 恢復提醒
-             if ('serviceWorker' in navigator) {
-               navigator.serviceWorker.ready.then(registration => {
-                 if (registration.active) {
-                   registration.active.postMessage({
-                     type: 'SET_REMINDER',
-                     data: reminderSettings
-                   });
-                   console.log('已恢復提醒設定到 Service Worker');
-                   
-                   // 嘗試註冊背景同步
-                   if ('sync' in registration) {
-                     registration.sync.register('meditation-reminder').then(() => {
-                       console.log('背景同步已註冊');
-                     }).catch(error => {
-                       console.log('背景同步註冊失敗:', error);
-                     });
-                   }
-                   
-                   // 嘗試註冊定期同步（如果支援）
-                   if ('periodicSync' in window) {
-                     registration.periodicSync.register('meditation-reminder', {
-                       minInterval: 60000 // 最小間隔 1 分鐘
-                     }).then(() => {
-                       console.log('定期同步已註冊');
-                     }).catch(error => {
-                       console.log('定期同步註冊失敗:', error);
-                     });
-                   }
-                 } else {
-                   console.log('Service Worker 未啟動，等待啟動...');
-                   // 等待 Service Worker 啟動
-                   navigator.serviceWorker.addEventListener('message', (event) => {
-                     if (event.data.type === 'SW_READY') {
-                       registration.active.postMessage({
-                         type: 'SET_REMINDER',
-                         data: reminderSettings
-                       });
-                     }
-                   });
-                 }
-               });
-             }
+            
+            // 通知 Service Worker 恢復提醒
+            if ('serviceWorker' in navigator) {
+              navigator.serviceWorker.ready.then(registration => {
+                if (registration.active) {
+                  registration.active.postMessage({
+                    type: 'SET_REMINDER',
+                    data: reminderSettings
+                  });
+                  console.log('已恢復提醒設定到 Service Worker');
+                  
+                  // 嘗試註冊背景同步
+                  if ('sync' in registration) {
+                    registration.sync.register('meditation-reminder').then(() => {
+                      console.log('背景同步已註冊');
+                    }).catch(error => {
+                      console.log('背景同步註冊失敗:', error);
+                    });
+                  }
+                  
+                  // 嘗試註冊定期同步（如果支援）
+                  if ('periodicSync' in window) {
+                    registration.periodicSync.register('meditation-reminder', {
+                      minInterval: 60000 // 最小間隔 1 分鐘
+                    }).then(() => {
+                      console.log('定期同步已註冊');
+                    }).catch(error => {
+                      console.log('定期同步註冊失敗:', error);
+                    });
+                  }
+                } else {
+                  console.log('Service Worker 未啟動，等待啟動...');
+                  // 等待 Service Worker 啟動
+                  navigator.serviceWorker.addEventListener('message', (event) => {
+                    if (event.data.type === 'SW_READY') {
+                      registration.active.postMessage({
+                        type: 'SET_REMINDER',
+                        data: reminderSettings
+                      });
+                    }
+                  });
+                }
+              });
+            }
           }
         } catch (error) {
           console.error('恢復提醒設定失敗:', error);
@@ -569,7 +578,7 @@
         { id: "rainbow", title: "彩虹冥想", artist: "冥想音樂合輯", file: "meditationMusic/meditation1_rainbow.mp3", duration: "0:00", background: "images/rainbow.png" },
         { id: "hamsa", title: "哈姆薩冥想", artist: "冥想音樂合輯", file: "meditationMusic/meditation2_hamsa.mp3", duration: "0:00", background: "images/HamSa.png" },
         { id: "mindfulness", title: "正念冥想", artist: "冥想音樂合輯", file: "meditationMusic/meditation3_mindfulness.mp3", duration: "0:00", background: "images/mindfulness.png" },
-  { id: "warriors_creed", title: "戰士信條", artist: "冥想音樂合輯", file: "meditationMusic/meditation4_warriorscreed.mp3", duration: "0:00", background: "images/warroirscreed.png" },
+        { id: "warriors_creed", title: "戰士信條", artist: "冥想音樂合輯", file: "meditationMusic/meditation4_warriorscreed.mp3", duration: "0:00", background: "images/warroirscreed.png" },
         { id: "hollow_body", title: "空心冥想", artist: "冥想音樂合輯", file: "meditationMusic/meditation5_hollowbody.mp3", duration: "0:00", background: "images/hollow.png" },
         { id: "pearl_ocean", title: "珍珠與海洋", artist: "冥想音樂合輯", file: "meditationMusic/meditation6_pearl&ocean.mp3", duration: "0:00", background: "images/pearOcean.png" }
       ];
@@ -1079,16 +1088,16 @@
         if (savedReminder) {
           try {
             const reminderSettings = JSON.parse(savedReminder);
-            statusSection.style.display = 'block';
+            statusSection.classList.remove('hidden');
             enabledStatus.textContent = reminderSettings.enabled ? '已啟用' : '已停用';
             timeStatus.textContent = reminderSettings.time || '-';
             
             // 更新狀態指示器
             if (reminderSettings.enabled) {
-              reminderIndicator.style.display = 'block';
+              reminderIndicator.classList.remove('hidden');
               reminderIndicator.style.background = '#4caf50'; // 綠色表示已啟用
             } else {
-              reminderIndicator.style.display = 'block';
+              reminderIndicator.classList.remove('hidden');
               reminderIndicator.style.background = '#ff9800'; // 橙色表示已停用
             }
             
@@ -1108,12 +1117,12 @@
               lastSetStatus.textContent = '-';
             }
           } catch (error) {
-            statusSection.style.display = 'none';
-            reminderIndicator.style.display = 'none';
+            statusSection.classList.add('hidden');
+            reminderIndicator.classList.add('hidden');
           }
         } else {
-          statusSection.style.display = 'none';
-          reminderIndicator.style.display = 'none';
+          statusSection.classList.add('hidden');
+          reminderIndicator.classList.add('hidden');
         }
       };
 
@@ -1253,8 +1262,7 @@
                   }
                 }
               }, 60 * 1000); // 每分鐘檢查一次
-
-                             showReminderStatus('提醒已成功儲存！背景提醒功能已啟用。', true);
+               showReminderStatus('提醒已成功儲存！背景提醒功能已啟用。', true);
                updateReminderStatus(); // 更新狀態顯示
              } else {
                showReminderStatus('無法啟用提醒功能，請允許通知權限。', false);
@@ -1265,56 +1273,53 @@
          }
        };
 
-      reminderBtn.addEventListener('click', () => {
-        reminderModal.style.display = 'grid';
-        updateReminderStatus(); // 開啟模態框時更新狀態
-      });
+       reminderBtn.addEventListener('click', () => {
+         reminderModal.style.display = 'grid';
+         updateReminderStatus(); // 開啟模態框時更新狀態
+       });
 
-      closeReminder.addEventListener('click', () => {
-        reminderModal.style.display = 'none';
-        reminderStatusDiv.style.display = 'none';
-      });
+       closeReminder.addEventListener('click', () => {
+         reminderModal.style.display = 'none';
+         reminderStatusDiv.style.display = 'none';
+       });
 
-      frequencyRadios.forEach(radio => {
-        radio.addEventListener('change', () => {
-          if (radio.value === 'custom') {
-            customDaysSection.style.display = 'block';
-          } else {
-            customDaysSection.style.display = 'none';
-          }
-        });
-      });
+       frequencyRadios.forEach(radio => {
+         radio.addEventListener('change', () => {
+           if (radio.value === 'custom') {
+              customDaysSection.classList.remove('hidden');
+           } else {
+              customDaysSection.classList.add('hidden');
+           }
+         });
+       });
 
-      saveReminderBtn.addEventListener('click', saveReminder);
-
-      // 清除提醒功能
-      const clearReminderBtn = document.getElementById('clearReminder');
-      clearReminderBtn.addEventListener('click', () => {
+        saveReminderBtn.addEventListener('click', saveReminder);
+        // 清除提醒功能
+        const clearReminderBtn = document.getElementById('clearReminder');
+        clearReminderBtn.addEventListener('click', () => {
         // 清除本地儲存
         localStorage.removeItem('meditationReminder');
-        
         // 清除本地定時器
         if (reminderIntervalId) {
-          clearInterval(reminderIntervalId);
-          reminderIntervalId = null;
+            clearInterval(reminderIntervalId);
+            reminderIntervalId = null;
         }
-        
         // 通知 Service Worker 清除提醒
         if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.ready.then(registration => {
-            if (registration.active) {
-              registration.active.postMessage({
-                type: 'CLEAR_REMINDER'
-              });
-            }
-          });
+           navigator.serviceWorker.ready.then(registration => {
+             if (registration.active) {
+                registration.active.postMessage({
+                  type: 'CLEAR_REMINDER'
+                });
+             }
+           });
         }
         
         // 重置 UI
         reminderTimeInput.value = '08:00';
         reminderMessageTextarea.value = '該是冥想的時候了！讓我們一起靜心，感受內在的寧靜。';
         document.querySelector('input[name="frequency"][value="daily"]').checked = true;
-        customDaysSection.style.display = 'none';
+        customDaysSection.classList.add('hidden');
         document.querySelectorAll('.day-checkbox input').forEach(checkbox => {
           checkbox.checked = false;
         });
@@ -1322,19 +1327,24 @@
         showReminderStatus('提醒已清除', true);
         updateReminderStatus(); // 更新狀態顯示
       });
+      // 頁面載入時預載入所有背景圖片
+      preloadImages();
+      // 先載入保存的播放清單順序，之後從第 1 首開始
+      loadPlaylistOrder();
+      currentTrackIndex = 0;
+      loadTrack(currentTrackIndex);
+      addLyricsEventListeners();
+      // 嘗試自動播放（若被瀏覽器阻擋則靜默失敗）
+      setTimeout(() => {
+        try {
+            setPlayState(true);
+        } catch (e) {
+            console.log('自動播放被阻擋');
+        }
+      }, 0);
 
-
-             // 頁面載入時預載入所有背景圖片
-       preloadImages();
-       
-       // 載入播放清單順序
-       loadPlaylistOrder();
-       
-       // 更新提醒狀態
-       updateReminderStatus();
-       
-       loadTrack(currentTrackIndex);
-       addLyricsEventListeners();
+      // 更新提醒狀態
+      updateReminderStatus();
     });
     
     // PWA 和 Service Worker 註冊
@@ -1354,13 +1364,13 @@
       });
     }
     
-         // 載入 PWA 配置
-     const pwaScript = document.createElement('script');
-     pwaScript.src = './public/pwa-config.js';
-     pwaScript.onload = () => {
-       console.log('PWA 配置已載入');
-     };
-     document.head.appendChild(pwaScript);
+    // 載入 PWA 配置
+    const pwaScript = document.createElement('script');
+    pwaScript.src = './public/pwa-config.js';
+    pwaScript.onload = () => {
+      console.log('PWA 配置已載入');
+    };
+    document.head.appendChild(pwaScript);
   </script>
 </body>
 </html>
