@@ -12,6 +12,7 @@
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --bg-primary: #131314;
@@ -28,14 +29,20 @@
             color: var(--text-primary);
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
         }
         .container {
             max-width: 480px;
-            margin: 40px auto;
+            width: 100%;
+            margin: 40px 20px;
             background: var(--bg-secondary);
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.18);
             padding: 40px 28px;
+            box-sizing: border-box;
         }
         h1 {
             font-size: 2rem;
@@ -64,6 +71,7 @@
             margin-bottom: 10px;
             font-size: 1.05rem;
             color: var(--text-primary);
+            line-height: 1.6;
         }
         .note {
             color: var(--text-secondary);
@@ -81,7 +89,9 @@
             font-size: 1.15rem;
             font-weight: bold;
             cursor: pointer;
-            display: inline-block;
+            display: none; /* 由 JS 控制顯示 */
+            width: 100%;
+            box-sizing: border-box;
             box-shadow: 0 2px 8px #0002;
             transition: background-color 0.3s, opacity 0.3s;
         }
@@ -94,26 +104,23 @@
             text-align: center;
         }
         .share-icon {
-            font-size: 1.2em;
+            display: inline-block;
             vertical-align: middle;
+            width: 20px;
+            height: 20px;
+            margin: 0 4px;
         }
         #ios-guide, #android-guide {
-            display: none;
+            display: none; /* 由 JS 控制顯示 */
         }
         @media (max-width: 600px) {
             .container {
-                margin: 20px auto;
+                margin: 20px;
                 padding: 20px;
             }
-            h1 {
-                font-size: 1.6rem;
-            }
-            .guide h2 {
-                font-size: 1rem;
-            }
-            .guide li {
-                font-size: 0.95rem;
-            }
+            h1 { font-size: 1.6rem; }
+            .guide h2 { font-size: 1rem; }
+            .guide li { font-size: 0.95rem; }
             .install-app-btn {
                 padding: 12px 24px;
                 font-size: 1rem;
@@ -138,7 +145,7 @@
             <div id="ios-guide">
                 <h2>iOS / iPad 安裝教學</h2>
                 <ul>
-                    <li>1. 請點選 Safari 瀏覽器下方的「分享」按鈕 <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233498db' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-share'%3E%3Cpath d='M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8'%3E%3C/path%3E%3Cpolyline points='16 6 12 2 8 6'%3E%3C/polyline%3E%3Cline x1='12' y1='2' x2='12' y2='15'%3E%3C/line%3E%3C/svg%3E" alt="分享圖示" class="share-icon"></li>
+                    <li>1. 請點選 Safari 瀏覽器下方的「分享」按鈕 <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" fill="#8ab4f8"><path d="M25,3A22,22,0,1,0,47,25,22,22,0,0,0,25,3Zm0,41A19,19,0,1,1,44,25,19,19,0,0,1,25,44Z"/><path d="M26.21,30.13a1.5,1.5,0,0,0,2.12,0l8.49-8.49a1.5,1.5,0,0,0-2.12-2.12L28,26.29V11.5a1.5,1.5,0,0,0-3,0V26.29l-6.72-6.77a1.5,1.5,0,0,0-2.12,2.12Z"/></svg></li>
                     <li>2. 在彈出的選單中，向下滑動並選擇「加入主畫面」(Add to Home Screen)</li>
                     <li>3. 點擊右上角的「新增」，即可在桌面上看到 App 圖示</li>
                 </ul>
@@ -155,10 +162,96 @@
         </div>
         <div class="note">若安裝遇到問題，請確保您的瀏覽器為最新版本。</div>
         <div class="centered" style="margin-top:20px;">
-            <button id="clearCacheBtn" style="background:#e53935;color:#fff;padding:12px 24px;border:none;border-radius:8px;font-size:1rem;cursor:pointer;">清除快取（解決安裝異常）</button>
+            <button id="clearCacheBtn" style="background:#e53935;color:#fff;padding:12px 24px;border:none;border-radius:8px;font-size:1rem;cursor:pointer;">清除快取 (解決安裝異常)</button>
         </div>
-        // 清除快取與 Service Worker
-        document.getElementById('clearCacheBtn').addEventListener('click', async function() {
+    </div>
+
+    <script>
+        // DOM 元素
+        const installBtn = document.getElementById('installAppBtn');
+        const iosGuide = document.getElementById('ios-guide');
+        const androidGuide = document.getElementById('android-guide');
+        const clearCacheBtn = document.getElementById('clearCacheBtn');
+        let deferredPrompt = null;
+
+        // --- 1. Service Worker 註冊 ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+            .then(registration => {
+                console.log('Service Worker 註冊成功:', registration);
+            })
+            .catch(error => {
+                console.error('Service Worker 註冊失敗:', error);
+            });
+        }
+
+        // --- 2. 設備與環境檢測 ---
+        const isIOS = () => {
+            const userAgent = navigator.userAgent;
+            // 檢測 iPhone, iPad, iPod
+            const isAppleDevice = /iPhone|iPad|iPod/.test(userAgent);
+            // 檢測 iPad on iOS 13+
+            const isMacAndHasTouch = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+            return isAppleDevice || isMacAndHasTouch;
+        };
+
+        const isInStandaloneMode = () => 
+            (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
+
+        // --- 3. PWA 安裝邏輯 ---
+
+        // 監聽 PWA 安裝事件 (僅限支援的瀏覽器，如 Chrome)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // 只有在可以安裝時，才顯示按鈕
+            if (installBtn) {
+                installBtn.style.display = 'block';
+            }
+        });
+
+        // 安裝按鈕點擊事件
+        installBtn.addEventListener('click', async () => {
+            if (isIOS()) {
+                // iOS 用戶點擊按鈕時，平滑滾動到教學區塊
+                alert('iOS 用戶請依照下方的教學手動安裝。');
+                iosGuide.scrollIntoView({ behavior: 'smooth' });
+            } else if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installBtn.textContent = '安裝成功！';
+                    installBtn.disabled = true;
+                }
+                deferredPrompt = null;
+            } else {
+                alert('應用程式可能已經安裝，或您的瀏覽器不支援自動安裝。請參考下方的 Android 教學手動操作。');
+                androidGuide.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        // --- 4. 頁面初始化邏輯 ---
+
+        // 頁面載入時檢查並顯示正確的內容
+        window.addEventListener('DOMContentLoaded', () => {
+            if (isInStandaloneMode()) {
+                installBtn.textContent = '已透過主畫面開啟';
+                installBtn.disabled = true;
+                installBtn.style.display = 'block';
+            } else if (isIOS()) {
+                installBtn.textContent = '查看 iOS 手動安裝教學';
+                installBtn.style.display = 'block';
+                iosGuide.style.display = 'block';
+                androidGuide.style.display = 'none';
+            } else {
+                androidGuide.style.display = 'block';
+                // 對於 Android，按鈕的顯示由 beforeinstallprompt 事件控制
+                // 如果瀏覽器不支援或已安裝，按鈕將保持隱藏
+            }
+        });
+
+        // --- 5. 清除快取功能 ---
+        clearCacheBtn.addEventListener('click', async () => {
             try {
                 if ('caches' in window) {
                     const cacheNames = await caches.keys();
@@ -169,84 +262,10 @@
                     await Promise.all(regs.map(reg => reg.unregister()));
                 }
                 alert('快取與 Service Worker 已清除，請手動重新整理頁面！');
+                // 可選擇自動重整： location.reload();
             } catch(e) {
-                alert('清除快取失敗，請手動清除瀏覽器資料');
-            }
-        });
-    </div>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-            .then(function(registration) {
-                console.log('Service Worker 註冊成功:', registration);
-            })
-            .catch(function(error) {
-                console.error('Service Worker 註冊失敗:', error);
-            });
-        }
-
-        const installBtn = document.getElementById('installAppBtn');
-        const iosGuide = document.getElementById('ios-guide');
-        const androidGuide = document.getElementById('android-guide');
-        let deferredPrompt = null;
-
-        // 更準確的 iOS 檢測邏輯
-        const isIOS = () => {
-            // 檢測 iOS 設備（包括 iPad）
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isIPad = /ipad/.test(userAgent) || 
-                          (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-            const isIPhone = /iphone/.test(userAgent);
-            const isIPod = /ipod/.test(userAgent);
-            
-            return isIPad || isIPhone || isIPod;
-        };
-
-        const isInStandaloneMode = () =>
-            (window.matchMedia('(display-mode: standalone)').matches) || (window.navigator.standalone);
-
-        // 監聽 PWA 安裝事件
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installBtn.style.display = 'inline-block';
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (isIOS()) {
-                alert('iOS 用戶請依照下方的教學手動安裝。');
-                window.scrollTo(0, document.body.scrollHeight);
-            } else if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`使用者回應: ${outcome}`);
-                if (outcome === 'accepted') {
-                    installBtn.textContent = '安裝成功！';
-                    installBtn.disabled = true;
-                }
-                deferredPrompt = null;
-            } else {
-                alert('應用程式可能已經安裝，或您的瀏覽器不支援自動安裝。請參考下方的 Android 教學手動操作。');
-                window.scrollTo(0, document.body.scrollHeight);
-            }
-        });
-
-        // 頁面載入時檢查並顯示正確的教學
-        window.addEventListener('DOMContentLoaded', () => {
-            if (isInStandaloneMode()) {
-                installBtn.textContent = '已在主畫面開啟';
-                installBtn.disabled = true;
-            } else if (isIOS()) {
-                installBtn.textContent = 'iOS 手動安裝教學';
-                iosGuide.style.display = 'block';
-                androidGuide.style.display = 'none';
-            } else {
-                androidGuide.style.display = 'block';
-                // 如果 deferredPrompt 已存在，按鈕會自動顯示，否則維持隱藏
-                if (!deferredPrompt) {
-                     installBtn.style.display = 'none';
-                }
+                console.error('清除失敗:', e);
+                alert('清除快取失敗，請手動清除瀏覽器資料。');
             }
         });
     </script>

@@ -4965,3 +4965,28 @@ Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 
 ============================================================
+[2025-09-06 22:33:26] 更新描述:
+更新安裝頁面，新增清除快取按鈕
+>>> git add .
+
+
+>>> git commit -m '更新安裝頁面，新增清除快取按鈕'
+[main c78ab84] '更新安裝頁面，新增清除快取按鈕'
+ 4 files changed, 42 insertions(+), 136 deletions(-)
+ delete mode 100644 PWA_UPDATE_GUIDE.md
+ delete mode 100644 path-test.html
+
+
+>>> git push origin main
+To https://github.com/eric761231/SatirIceBergWeb.git
+   348b902..c78ab84  main -> main
+
+
+>>> vercel ls
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+
+>>> vercel inspect
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+============================================================
