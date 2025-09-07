@@ -26,22 +26,27 @@ self.addEventListener('install', (event) => {
 
 // Fetch event - serve from cache when offline
 self.addEventListener('fetch', (event) => {
-  // 僅處理 GET 請求
-  if (event.request.method !== 'GET') return;
+  const req = event.request;
+  // 僅處理 GET；忽略 Range/媒體/跨來源，避免音訊被截斷或錯誤快取
+  if (req.method !== 'GET') return;
+  if (req.headers.has('range')) return; // 讓瀏覽器直接處理分段請求
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  if (req.destination === 'audio' || req.destination === 'video') return;
+
   event.respondWith(
     (async () => {
-      const cached = await caches.match(event.request);
+      const cached = await caches.match(req);
       if (cached) return cached;
       try {
-        const resp = await fetch(event.request);
-        // 將成功的回應放入快取（僅同源）
-        if (resp && resp.ok && new URL(event.request.url).origin === location.origin) {
+        const resp = await fetch(req);
+        // 僅快取完整 200 回應，避免將 206 Partial Content 放入快取
+        if (resp && resp.status === 200) {
           const cache = await caches.open(CACHE_NAME);
-          cache.put(event.request, resp.clone());
+          cache.put(req, resp.clone());
         }
         return resp;
       } catch (e) {
-        // 網路失敗時回退快取（若有）
         return cached || new Response('Offline', { status: 503 });
       }
     })()

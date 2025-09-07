@@ -26,13 +26,21 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // Try network first, fallback to cache
-  event.respondWith(
-    fetch(event.request).then(resp => {
-      // optionally cache GET navigations
-      return resp;
-    }).catch(() => caches.match(event.request))
-  );
+  const req = event.request;
+  // 僅處理 GET，且忽略 Range/音訊/跨來源
+  if (req.method !== 'GET') return;
+  if (req.headers.has('range')) return; // 讓瀏覽器原生處理分段請求
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  if (req.destination === 'audio' || req.destination === 'video') return; // 媒體交給瀏覽器
+
+  // 僅攔截導覽與少數核心資源，採用網路優先、失敗退回快取
+  const corePaths = new Set(['/','/meditation.html','/manifest.json','/favicon.ico','/icons/icon-192x192.png','/icons/icon-512x512.png']);
+  if (req.mode === 'navigate' || corePaths.has(url.pathname)) {
+    event.respondWith(
+      fetch(req).catch(() => caches.match(req))
+    );
+  }
 });
 
 self.addEventListener('push', event => {

@@ -126,6 +126,18 @@
                 font-size: 1rem;
             }
         }
+
+        /* utilities */
+        .section-spacer { margin-top: 20px; }
+        .danger-btn {
+            background: #e53935;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -161,13 +173,10 @@
             </div>
         </div>
         <div class="note">若安裝遇到問題，請確保您的瀏覽器為最新版本。</div>
-        <div class="centered" style="margin-top:20px;">
-            <button id="clearCacheBtn" style="background:#e53935;color:#fff;padding:12px 24px;border:none;border-radius:8px;font-size:1rem;cursor:pointer;">清除快取 (解決安裝異常)</button>
+        <div class="centered section-spacer">
+            <button id="clearCacheBtn" class="danger-btn">清除快取 (解決安裝異常)</button>
         </div>
-        <div class="centered" style="margin-top:12px;">
-            <button id="forceShowInstall" style="background:#ffc107;color:#000;padding:10px 18px;border:none;border-radius:8px;font-size:0.95rem;cursor:pointer;">顯示安裝按鈕（測試）</button>
-        </div>
-        <div id="pwaDebug" style="margin-top:16px;color:var(--text-secondary);font-family:monospace;white-space:pre-wrap;">調試資訊載入中...</div>
+        
     </div>
 
     <script>
@@ -274,48 +283,7 @@
             }
         });
 
-        // --- PWA 調試工具：顯示 manifest 與已註冊的 Service Worker ---
-        async function loadPWADebug() {
-            const debugEl = document.getElementById('pwaDebug');
-            let out = '';
-            try {
-                // fetch manifest
-                const manifestResp = await fetch('/manifest.json', {cache: 'no-store'});
-                if (manifestResp.ok) {
-                    const mf = await manifestResp.json();
-                    out += 'manifest.json:\n' + JSON.stringify(mf, null, 2) + '\n\n';
-                } else {
-                    out += '無法取得 manifest.json: ' + manifestResp.status + '\n\n';
-                }
-            } catch (err) {
-                out += 'fetch manifest 錯誤: ' + err.message + '\n\n';
-            }
-
-            try {
-                if ('serviceWorker' in navigator) {
-                    const regs = await navigator.serviceWorker.getRegistrations();
-                    out += 'Service Worker 註冊數: ' + regs.length + '\n';
-                    regs.forEach((r, i) => {
-                        out += `#${i}: scope=${r.scope} active=${!!r.active} installing=${!!r.installing} waiting=${!!r.waiting}\n`;
-                    });
-                } else {
-                    out += '此瀏覽器不支援 Service Worker\n';
-                }
-            } catch (err) {
-                out += '列出 SW 發生錯誤: ' + err.message + '\n';
-            }
-
-            debugEl.textContent = out;
-        }
-
-        document.getElementById('forceShowInstall').addEventListener('click', () => {
-            // 測試用：強制顯示安裝按鈕（不觸發 beforeinstallprompt）
-            const el = document.getElementById('installAppBtn');
-            if (el) el.style.display = 'block';
-        });
-
-        // load debug 資訊
-        loadPWADebug();
+        
     </script>
 </body>
 </html>
