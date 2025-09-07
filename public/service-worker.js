@@ -1,29 +1,50 @@
 // Service Worker for Meditation Music Player
-const CACHE_NAME = 'meditation-music-v1';
+const CACHE_NAME = 'meditation-music-v2';
+// 僅列出確定存在的檔案，避免因快取目錄或 404 導致安裝失敗
 const urlsToCache = [
-  './',
-  './meditation.html',
-  './meditationMusic/',
-  './images/',
-  './favicon.ico'
+  '/',
+  '/meditation.html',
+  '/favicon.ico'
 ];
 
 // Install event - cache resources
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(urlsToCache))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      try {
+        await cache.addAll(urlsToCache);
+      } catch (e) {
+        // 忽略個別檔案快取失敗，避免整體安裝失敗
+        console.warn('Cache addAll error:', e);
+      }
+      // 立即接管
+      await self.skipWaiting();
+    })()
   );
 });
 
 // Fetch event - serve from cache when offline
 self.addEventListener('fetch', (event) => {
+  // 僅處理 GET 請求
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
-      })
+    (async () => {
+      const cached = await caches.match(event.request);
+      if (cached) return cached;
+      try {
+        const resp = await fetch(event.request);
+        // 將成功的回應放入快取（僅同源）
+        if (resp && resp.ok && new URL(event.request.url).origin === location.origin) {
+          const cache = await caches.open(CACHE_NAME);
+          cache.put(event.request, resp.clone());
+        }
+        return resp;
+      } catch (e) {
+        // 網路失敗時回退快取（若有）
+        return cached || new Response('Offline', { status: 503 });
+      }
+    })()
   );
 });
 
@@ -82,7 +103,7 @@ self.addEventListener('notificationclick', (event) => {
   if (event.action === 'open') {
     // Open the meditation app
     event.waitUntil(
-      clients.openWindow('./meditation.html')
+      clients.openWindow('/meditation.html')
     );
   } else if (event.action === 'snooze') {
     // Snooze for 10 minutes
@@ -101,9 +122,20 @@ self.addEventListener('notificationclick', (event) => {
   } else {
     // Default action - open the app
     event.waitUntil(
-      clients.openWindow('./meditation.html')
+      clients.openWindow('/meditation.html')
     );
   }
+});
+
+// 於 activate 階段清理舊版快取並接管控制
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    (async () => {
+      const keys = await caches.keys();
+      await Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)));
+      await self.clients.claim();
+    })()
+  );
 });
 
 // Background sync for offline reminders
