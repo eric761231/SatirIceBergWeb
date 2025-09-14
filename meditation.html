@@ -270,9 +270,47 @@
     .playlist-item-info { flex: 1; }
     .playlist-item-title { font-weight: 600; color: var(--text-primary); }
     .playlist-item-duration { font-size: 12px; color: var(--text-secondary); opacity: .7; }
-    .drag-handle { width: 24px; height: 24px; cursor: grab; opacity: 0.6; display: grid; place-items: center; }
-    .drag-handle:active { cursor: grabbing; }
-    .playlist-item.dragging { opacity: 0.4; }
+    .drag-handle { 
+      width: 24px; 
+      height: 24px; 
+      cursor: grab; 
+      opacity: 0.6; 
+      display: grid; 
+      place-items: center; 
+      touch-action: none; 
+      -webkit-user-select: none;
+      user-select: none;
+      transition: opacity 0.2s ease;
+    }
+    .drag-handle:active { cursor: grabbing; opacity: 1; }
+    .playlist-item.dragging { 
+      opacity: 0.8; 
+      transform: scale(1.02); 
+      transition: none; 
+      z-index: 1000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .playlist-item.placeholder { 
+      height: 60px; 
+      background: rgba(0,170,255,0.1); 
+      border: 2px dashed rgba(0,170,255,0.3); 
+      border-radius: 8px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      margin: 4px 0;
+      transition: all 0.2s ease;
+    }
+    .playlist-content { 
+      background: var(--bg-secondary); 
+      border-radius: 16px; 
+      padding: 24px; 
+      max-width: 400px; 
+      width: 90%; 
+      max-height: 80vh; 
+      overflow-y: auto; 
+      border: 1px solid rgba(255,255,255,0.1);
+    }
 
     /* Reminder Modal */
     .reminder-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.8); display: none; place-items: center; z-index: 1000; }
@@ -914,7 +952,7 @@
           const item = document.createElement('div');
           item.className = `playlist-item ${index === currentTrackIndex ? 'active' : ''}`;
           item.dataset.id = track.id;
-          item.innerHTML = `<div class="drag-handle" draggable="true"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 5h3v2h-3zm-7 0h3v2H3zm7 12h3v2h-3zm-7 0h3v2H3zm7-6h3v2h-3zm-7 0h3v2H3z"></path></svg></div><div class="playlist-item-number">${index + 1}</div><div class="playlist-item-info"><div class="playlist-item-title">${track.title}</div><div class="playlist-item-duration">${track.duration}</div></div>`;
+          item.innerHTML = `<div class="drag-handle" draggable="true" style="touch-action: none; -webkit-user-select: none; user-select: none;"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 5h3v2h-3zm-7 0h3v2H3zm7 12h3v2h-3zm-7 0h3v2H3zm7-6h3v2h-3zm-7 0h3v2H3z"></path></svg></div><div class="playlist-item-number">${index + 1}</div><div class="playlist-item-info"><div class="playlist-item-title">${track.title}</div><div class="playlist-item-duration">${track.duration}</div></div>`;
           
           // 為播放清單項目添加圖片預載入
           item.addEventListener('mouseenter', () => {
@@ -1014,48 +1052,171 @@
       });
 
       let draggedItem = null;
+      let isDragging = false;
+      let touchStartY = 0;
+      let touchStartX = 0;
+      let placeholder = null;
+
+      // 觸覺回饋函數（iOS支援）
+      function triggerHapticFeedback(type = 'light') {
+        if ('vibrate' in navigator) {
+          // Android 震動
+          navigator.vibrate(type === 'light' ? 10 : 50);
+        }
+        // iOS 觸覺回饋（需要在觸控事件中調用）
+        if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
+          // iOS 13+ 觸覺回饋（這裡只是示例，實際需要用戶互動才能觸發）
+        }
+      }
+
+      // 創建佔位元素
+      function createPlaceholder() {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'playlist-item placeholder';
+        placeholder.innerHTML = '<div style="text-align: center; color: var(--text-secondary); font-size: 12px; opacity: 0.7;">移動到這裡</div>';
+        return placeholder;
+      }
+
+      // 桌面拖曳事件
       playlistItemsContainer.addEventListener('dragstart', e => {
         if (e.target.closest('.drag-handle')) {
           draggedItem = e.target.closest('.playlist-item');
-          setTimeout(() => draggedItem.classList.add('dragging'), 0);
+          draggedItem.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/html', draggedItem.outerHTML);
+        } else {
+          e.preventDefault();
         }
       });
+
       playlistItemsContainer.addEventListener('dragend', () => {
-        if(draggedItem) {
+        if (draggedItem) {
           draggedItem.classList.remove('dragging');
           draggedItem = null;
         }
-      });
-      playlistItemsContainer.addEventListener('dragover', e => {
-        e.preventDefault();
-        const afterElement = getDragAfterElement(playlistItemsContainer, e.clientY);
-        if (draggedItem) {
-          if (afterElement == null) {
-            playlistItemsContainer.appendChild(draggedItem);
-          } else {
-            playlistItemsContainer.insertBefore(draggedItem, afterElement);
-          }
+        if (placeholder && placeholder.parentNode) {
+          placeholder.parentNode.removeChild(placeholder);
+          placeholder = null;
         }
       });
+
+      playlistItemsContainer.addEventListener('dragover', e => {
+        e.preventDefault();
+        if (!draggedItem) return;
+        
+        const afterElement = getDragAfterElement(playlistItemsContainer, e.clientY);
+        if (afterElement == null) {
+          playlistItemsContainer.appendChild(draggedItem);
+        } else {
+          playlistItemsContainer.insertBefore(draggedItem, afterElement);
+        }
+      });
+
       playlistItemsContainer.addEventListener('drop', e => {
         e.preventDefault();
         if (!draggedItem) return;
         
-        const newOrderedIds = [...playlistItemsContainer.children].map(item => item.dataset.id);
+        const newOrderedIds = [...playlistItemsContainer.children].map(item => item.dataset.id).filter(id => id);
         const currentTrackId = currentPlaylist[currentTrackIndex].id;
 
         currentPlaylist = newOrderedIds.map(id => originalPlaylist.find(track => track.id === id));
         currentTrackIndex = currentPlaylist.findIndex(track => track.id === currentTrackId);
 
-        // 保存播放清單順序到 localStorage
         savePlaylistOrder();
-
         initPlaylistUI();
       });
+
+      // 觸控拖曳事件 (iOS 支援)
+      playlistItemsContainer.addEventListener('touchstart', e => {
+        const dragHandle = e.target.closest('.drag-handle');
+        if (dragHandle) {
+          e.preventDefault(); // 防止預設滾動行為
+          draggedItem = dragHandle.closest('.playlist-item');
+          isDragging = true;
+          
+          // 觸覺回饋
+          triggerHapticFeedback('light');
+          
+          const touch = e.touches[0];
+          touchStartY = touch.clientY;
+          touchStartX = touch.clientX;
+          
+          draggedItem.classList.add('dragging');
+          
+          // 創建視覺回饋
+          draggedItem.style.transform = 'scale(1.05)';
+          draggedItem.style.zIndex = '1000';
+          draggedItem.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+          
+          // 添加佔位元素
+          placeholder = createPlaceholder();
+          draggedItem.parentNode.insertBefore(placeholder, draggedItem.nextSibling);
+        }
+      }, { passive: false });
+
+      playlistItemsContainer.addEventListener('touchmove', e => {
+        if (!isDragging || !draggedItem) return;
+        
+        e.preventDefault(); // 防止頁面滾動
+        
+        const touch = e.touches[0];
+        const deltaY = touch.clientY - touchStartY;
+        
+        // 移動被拖曳的項目
+        draggedItem.style.transform = `translateY(${deltaY}px) scale(1.05)`;
+        
+        // 找到應該插入的位置
+        const afterElement = getDragAfterElement(playlistItemsContainer, touch.clientY);
+        
+        if (placeholder && placeholder.parentNode) {
+          placeholder.parentNode.removeChild(placeholder);
+        }
+        
+        if (afterElement == null) {
+          playlistItemsContainer.appendChild(placeholder);
+        } else {
+          playlistItemsContainer.insertBefore(placeholder, afterElement);
+        }
+      }, { passive: false });
+
+      playlistItemsContainer.addEventListener('touchend', e => {
+        if (!isDragging || !draggedItem) return;
+        
+        e.preventDefault();
+        
+        // 重置樣式
+        draggedItem.style.transform = '';
+        draggedItem.style.zIndex = '';
+        draggedItem.style.boxShadow = '';
+        draggedItem.classList.remove('dragging');
+        
+        // 將項目移動到佔位元素的位置
+        if (placeholder && placeholder.parentNode) {
+          placeholder.parentNode.insertBefore(draggedItem, placeholder);
+          placeholder.parentNode.removeChild(placeholder);
+        }
+        
+        // 更新播放清單順序
+        const newOrderedIds = [...playlistItemsContainer.children]
+          .filter(item => !item.classList.contains('placeholder'))
+          .map(item => item.dataset.id);
+        const currentTrackId = currentPlaylist[currentTrackIndex].id;
+
+        currentPlaylist = newOrderedIds.map(id => originalPlaylist.find(track => track.id === id));
+        currentTrackIndex = currentPlaylist.findIndex(track => track.id === currentTrackId);
+
+        savePlaylistOrder();
+        initPlaylistUI();
+        
+        // 重置狀態
+        draggedItem = null;
+        isDragging = false;
+        placeholder = null;
+      }, { passive: false });
       
-      // Fix: Complete the drag-and-drop helper function
+      // 修正的拖放輔助函數，排除拖曳中的項目和佔位元素
       function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.playlist-item:not(.dragging)')];
+        const draggableElements = [...container.querySelectorAll('.playlist-item:not(.dragging):not(.placeholder)')];
         return draggableElements.reduce((closest, child) => {
           const box = child.getBoundingClientRect();
           const offset = y - box.top - box.height / 2;
