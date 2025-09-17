@@ -1,0 +1,22 @@
+星期五                                                        第七週
+Friday                                                    Week Seven
+
+在量子物理學中，許多矛盾的情境都與光（或更廣的說，是電磁波）的雙重性質相關。
+一方面我們很清楚它必然由波組成，因為它產生著名的干涉現象：當有兩個光源時，
+光的強度將不總是兩者之和，可能多於或少於兩者之和，這可以由兩個光源所發出的波之干涉來解釋：
+在波峰重合之處我們將看到比兩者之和更多的光，在波峰和波谷重合之處我們將看到較少的光。
+這種干涉現象可在電磁輻射的干涉實驗中觀察到，因此我們必須得出這種輻射由波所組成的結論。
+另一方面，電磁輻射也產生所謂的光電效應；
+當紫外線照射在一些金屬表面，它可以“敲出”一些電子，將一些金屬表面的電子打出，所以它必須由移動的粒子組成。
+類似的情況發生在X射線的“散射”實驗中；
+這些實驗只有在被解釋為光粒子與電子的碰撞時才能正確解釋。
+然而，擁有這些干涉圖樣的特徵的波理論與粒子碰撞的描述之間所產生的問題是：電磁輻射如何能同時由粒子（即侷限於一個非常小的體積的實體）和波（這些波在一個很大的區域內展開）構成。
+這種現實既不符合語言也不符合想像。
+
+——Fritjof Capra
+
+In atomic physics, many of the paradoxical situations are connected with the dual nature of light or—more generally—of electromagnetic radiation. On the one hand, it is clear that this radiation must consist of waves because it produces the well-known interference phenomena associated with waves: when there are two sources of light, the intensity of the light will not necessarily be just the sum of that which comes from the two sources, but may be more or less. This can easily be explained by the interference of the waves emanating from the two sources: in those places where two crests coincide we shall have more light than the sum of the two; where a crest and a trough coincide we shall have less. The precise amount of interference can easily be calculated. Interference phenomena of this kind can be observed whenever one deals with electromagnetic radiation, and force us to conclude that this radiation consists of waves.
+On the other hand, electromagnetic radiation also produces the so-called photoelectric effect: when ultraviolet light is shone on the surface of some metals it can "kick out" electrons from the surface of the metal, and therefore it must consist of moving particles. A similar situation occurs in the "scattering" experiments of X-rays. These experiments can only be interpreted correctly if they are described as collisions of "light particles" with electrons. And yet, they show the interference patterns characteristic of waves. The question which puzzled physicists was how electromagnetic radiation could simultaneously consist of particles (i.e. of entities confined to a very small volume) and of waves, which are spread out over a large area of space. Neither language or imagination could deal with this kind of reality....
+
+——Fritjof Capra
+The Tao of Physics, pp. 46–47
