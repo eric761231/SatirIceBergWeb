@@ -5467,3 +5467,60 @@ Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 
 ============================================================
+[2025-09-17 20:40:48] 更新描述:
+更新5~8周閱讀
+更新冥想4~6音樂
+>>> git add .
+warning: in the working copy of 'articles/2025-07/20250710.txt', LF will be replaced by CRLF the next time Git touches it
+
+
+>>> git commit -m '更新5~8周閱讀
+更新冥想4~6音樂'
+[main 8b57e9e] '更新5~8周閱讀
+ 39 files changed, 690 insertions(+), 8 deletions(-)
+ rename articles/{20250815.txt => 2025-05/20250525.txt} (100%)
+ create mode 100644 articles/2025-05/20250526.txt
+ create mode 100644 articles/2025-05/20250527.txt
+ create mode 100644 articles/2025-05/20250528.txt
+ create mode 100644 articles/2025-05/20250529.txt
+ create mode 100644 articles/2025-05/20250530.txt
+ create mode 100644 articles/2025-05/20250531.txt
+ create mode 100644 articles/2025-06/20250601.txt
+ create mode 100644 articles/2025-06/20250602.txt
+ create mode 100644 articles/2025-06/20250603.txt
+ create mode 100644 articles/2025-06/20250604.txt
+ create mode 100644 articles/2025-06/20250605.txt
+ create mode 100644 articles/2025-06/20250606.txt
+ create mode 100644 articles/2025-06/20250607.txt
+ create mode 100644 articles/2025-06/20250608.txt
+ create mode 100644 articles/2025-06/20250609.txt
+ create mode 100644 articles/2025-06/20250610.txt
+ create mode 100644 articles/2025-06/20250611.txt
+ create mode 100644 articles/2025-06/20250612.txt
+ create mode 100644 articles/2025-06/20250613.txt
+ create mode 100644 articles/2025-06/20250614.txt
+ create mode 100644 articles/2025-06/20250615.txt
+ create mode 100644 articles/2025-06/20250616.txt
+ create mode 100644 articles/2025-06/20250617.txt
+ create mode 100644 articles/2025-06/20250618.txt
+ create mode 100644 articles/2025-06/20250619.txt
+ create mode 100644 articles/2025-06/20250620.txt
+ create mode 100644 articles/2025-06/20250621.txt
+ create mode 100644 articles/2025-09/20250914.txt
+ create mode 100644 articles/2025-09/20250915.txt
+ create mode 100644 articles/2025-09/20250916.txt
+
+
+>>> git push origin main
+To https://github.com/eric761231/SatirIceBergWeb.git
+   d10378d..8b57e9e  main -> main
+
+
+>>> vercel ls
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+
+>>> vercel inspect
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+============================================================
