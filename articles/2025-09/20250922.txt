@@ -1,7 +1,5 @@
-星期一
-Monday
-第二十二週
-Week Twenty Two
+星期一                                                     第二十二週
+Monday                                                    Week Twenty Two
 
 獲得覺悟猶如映照在水中的月亮,月亮不會濕,水也不會受到干擾。
 雖然月的亮光是那樣廣大,但它仍可映照在即使只有一吋寬的小水塘,
@@ -11,8 +9,9 @@ Week Twenty Two
 水滴的深度就是月亮的高度。
 至於映照的時間有多長,你應該去檢視水的廣闊或微小,也去辨别月
 亮的明亮或晦暗。
--Dogen
-道元禪師
+
+——Dogen
+  道元禪師
 
 Gaining enlightenment is like the moon reflecting in the water.
 The moon does not get wet, nor is the water disturbed.
@@ -29,4 +28,5 @@ As for the duration of the reflection, you should examine the
 water's vastness or smallness,
 And you should discern the brightness or dimness of the
 heavenly moon.
--Dogen
+
+——Dogen
