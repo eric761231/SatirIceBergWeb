@@ -5580,3 +5580,65 @@ Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 
 ============================================================
+[2025-09-19 17:35:46] 更新描述:
+更新第9~12周閱讀文章
+>>> git add .
+warning: in the working copy of 'articles/2025-07/20250721.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250722.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250723.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250724.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250725.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250726.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250727.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250728.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250729.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250730.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250731.txt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'articles/2025-07/20250717.txt', LF will be replaced by CRLF the next time Git touches it
+
+
+>>> git commit -m '更新第9~12周閱讀文章'
+[main 65656f7] '更新第9~12周閱讀文章'
+ 56 files changed, 685 insertions(+), 101 deletions(-)
+ create mode 100644 articles/2025-06/20250622.txt
+ create mode 100644 articles/2025-06/20250623.txt
+ create mode 100644 articles/2025-06/20250624.txt
+ create mode 100644 articles/2025-06/20250625.txt
+ create mode 100644 articles/2025-06/20250626.txt
+ create mode 100644 articles/2025-06/20250628.txt
+ create mode 100644 articles/2025-06/20250629.txt
+ create mode 100644 articles/2025-06/20250630.txt
+ create mode 100644 articles/2025-07/20250701.txt
+ create mode 100644 articles/2025-07/20250702.txt
+ create mode 100644 articles/2025-07/20250703.txt
+ create mode 100644 articles/2025-07/20250704.txt
+ create mode 100644 articles/2025-07/20250705.txt
+ create mode 100644 articles/2025-07/20250706.txt
+ create mode 100644 articles/2025-07/20250707.txt
+ create mode 100644 articles/2025-07/20250708.txt
+ create mode 100644 articles/2025-07/20250709.txt
+ create mode 100644 articles/2025-07/20250711.txt
+ create mode 100644 articles/2025-07/20250712.txt
+ create mode 100644 articles/2025-07/20250713.txt
+ create mode 100644 articles/2025-07/20250714.txt
+ create mode 100644 articles/2025-07/20250715.txt
+ create mode 100644 articles/2025-07/20250716.txt
+ create mode 100644 articles/2025-07/20250717.txt
+ create mode 100644 articles/2025-07/20250718.txt
+ create mode 100644 articles/2025-07/20250719.txt
+ create mode 100644 articles/2025-07/20250720.txt
+
+
+>>> git push origin main
+To https://github.com/eric761231/SatirIceBergWeb.git
+   f8db870..65656f7  main -> main
+
+
+>>> vercel ls
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+
+>>> vercel inspect
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+============================================================
