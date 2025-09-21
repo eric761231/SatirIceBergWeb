@@ -5642,3 +5642,26 @@ Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
 
 ============================================================
+[2025-09-19 18:42:52] 更新描述:
+1更新articles.json
+>>> git add .
+
+
+>>> git commit -m '1更新articles.json'
+[main 0d9ca19] '1更新articles.json'
+ 3 files changed, 430 insertions(+), 52 deletions(-)
+
+
+>>> git push origin main
+To https://github.com/eric761231/SatirIceBergWeb.git
+   65656f7..0d9ca19  main -> main
+
+
+>>> vercel ls
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+
+>>> vercel inspect
+Error: Couldn't parse JSON file C:\python_training\test_iceberg\vercel.json.
+
+============================================================
