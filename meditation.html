@@ -537,9 +537,22 @@
         const track = currentPlaylist[index];
         if (!track) return;
 
+        // 暫停當前播放並重置狀態
+        audio.pause();
+        playBtn.dataset.state = 'play';
+        
         titleEl.textContent = track.title;
         artistEl.textContent = track.artist;
+        
+        // 重置進度條
+        cur.textContent = '0:00';
+        dur.textContent = '0:00';
+        seek.value = 0;
+        seek.max = 0;
+        
+        // 設置音頻源並處理錯誤
         audio.src = track.file;
+        audio.load(); // 強制重新加載
         
         // 優化背景圖載入
         if (imageCache.has(track.background)) {
@@ -589,8 +602,39 @@
 
       const setPlayState = (isPlaying) => {
         if (isPlaying) {
-          audio.play().catch(e => console.error("Playback failed:", e));
-          playBtn.dataset.state = 'pause';
+          // 檢查音頻是否已加載
+          if (audio.readyState >= 2) {
+            // 音頻已加載，可以播放
+            audio.play().then(() => {
+              playBtn.dataset.state = 'pause';
+            }).catch(e => {
+              console.error("播放失敗:", e);
+              playBtn.dataset.state = 'play';
+              alert('無法播放音頻，請檢查文件是否存在或瀏覽器是否支援此格式。');
+            });
+          } else {
+            // 等待音頻加載完成
+            const playWhenReady = () => {
+              if (audio.readyState >= 2) {
+                audio.play().then(() => {
+                  playBtn.dataset.state = 'pause';
+                }).catch(e => {
+                  console.error("播放失敗:", e);
+                  playBtn.dataset.state = 'play';
+                  alert('無法播放音頻，請檢查文件是否存在或瀏覽器是否支援此格式。');
+                });
+                audio.removeEventListener('canplay', playWhenReady);
+                audio.removeEventListener('error', playWhenReady);
+              }
+            };
+            audio.addEventListener('canplay', playWhenReady, { once: true });
+            audio.addEventListener('error', () => {
+              console.error('音頻載入失敗:', audio.src);
+              playBtn.dataset.state = 'play';
+              alert('音頻文件載入失敗，請檢查文件是否存在。');
+              audio.removeEventListener('canplay', playWhenReady);
+            }, { once: true });
+          }
         } else {
           audio.pause();
           playBtn.dataset.state = 'play';
@@ -653,6 +697,19 @@
         initPlaylistUI();
       });
       
+      // 音頻錯誤處理
+      audio.addEventListener('error', (e) => {
+        console.error('音頻載入錯誤:', e);
+        const track = currentPlaylist[currentTrackIndex];
+        console.error('無法載入音頻:', track ? track.file : '未知');
+        playBtn.dataset.state = 'play';
+        cur.textContent = '0:00';
+        dur.textContent = '0:00';
+        seek.value = 0;
+        seek.max = 0;
+        alert(`音頻文件載入失敗: ${track ? track.title : '未知曲目'}\n請檢查文件是否存在: ${track ? track.file : ''}`);
+      });
+
       audio.addEventListener('loadedmetadata', () => {
         dur.textContent = formatTime(audio.duration);
         seek.max = audio.duration;
