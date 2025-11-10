@@ -381,7 +381,7 @@
       <div class="mini">
       </div>
     </div>
-    <audio id="audio" preload="metadata"></audio>
+    <audio id="audio" preload="metadata" playsinline webkit-playsinline></audio>
   </div>
 
   <div class="playlist-modal" id="playlistModal">
@@ -550,9 +550,26 @@
         seek.value = 0;
         seek.max = 0;
         
+        // iOS Safari 需要確保音頻元素有正確的屬性
+        audio.setAttribute('playsinline', '');
+        audio.setAttribute('webkit-playsinline', '');
+        audio.setAttribute('preload', 'metadata');
+        
+        // 清除之前的錯誤狀態
+        audio.removeAttribute('error');
+        
         // 設置音頻源並處理錯誤
-        audio.src = track.file;
-        audio.load(); // 強制重新加載
+        // 對 URL 進行編碼，處理特殊字符（如 & 符號）
+        const encodedUrl = encodeURI(track.file);
+        console.log(`載入音頻: ${track.title} -> ${encodedUrl}`);
+        audio.src = encodedUrl;
+        
+        // 強制重新加載，確保 iOS Safari 能正確處理
+        try {
+          audio.load();
+        } catch (e) {
+          console.error('音頻載入異常:', e);
+        }
         
         // 優化背景圖載入
         if (imageCache.has(track.background)) {
@@ -602,38 +619,100 @@
 
       const setPlayState = (isPlaying) => {
         if (isPlaying) {
+          // iOS Safari 需要確保音頻元素有正確的屬性
+          audio.setAttribute('playsinline', '');
+          audio.setAttribute('webkit-playsinline', '');
+          
+        // 檢查音頻源是否已設置
+          if (!audio.src || audio.src === '') {
+            console.error('音頻源未設置');
+            playBtn.dataset.state = 'play';
+            alert('音頻文件未載入，請稍後再試。');
+            return;
+          }
+          
           // 檢查音頻是否已加載
-          if (audio.readyState >= 2) {
-            // 音頻已加載，可以播放
-            audio.play().then(() => {
+          const attemptPlay = () => {
+            // 再次確保 iOS 屬性
+            audio.setAttribute('playsinline', '');
+            audio.setAttribute('webkit-playsinline', '');
+            
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+              playPromise.then(() => {
+                console.log('播放成功:', audio.src);
+                playBtn.dataset.state = 'pause';
+              }).catch(e => {
+                console.error("播放失敗:", e);
+                console.error("錯誤詳情:", {
+                  name: e.name,
+                  message: e.message,
+                  readyState: audio.readyState,
+                  networkState: audio.networkState,
+                  error: audio.error
+                });
+                playBtn.dataset.state = 'play';
+                
+                // iOS 特定的錯誤處理
+                let errorMsg = '';
+                if (e.name === 'NotAllowedError') {
+                  errorMsg = '無法播放音頻。\n\n請確保：\n1. 已點擊播放按鈕（iOS 需要用戶交互）\n2. 瀏覽器允許音頻播放';
+                } else if (e.name === 'NotSupportedError') {
+                  errorMsg = '瀏覽器不支援此音頻格式。\n\n請確認：\n1. 文件格式為 MP3\n2. 文件完整且未損壞';
+                } else if (audio.error) {
+                  errorMsg = `音頻載入錯誤 (錯誤代碼: ${audio.error.code})\n\n請檢查：\n1. 文件是否存在\n2. 網絡連接是否正常\n3. 文件是否完整`;
+                } else {
+                  errorMsg = '無法播放音頻。\n\n請檢查：\n1. 文件是否存在\n2. 瀏覽器是否支援此格式\n3. 網絡連接是否正常';
+                }
+                alert(errorMsg);
+              });
+            } else {
+              // 舊版瀏覽器不支持 Promise
               playBtn.dataset.state = 'pause';
-            }).catch(e => {
-              console.error("播放失敗:", e);
-              playBtn.dataset.state = 'play';
-              alert('無法播放音頻，請檢查文件是否存在或瀏覽器是否支援此格式。');
-            });
+            }
+          };
+          
+          if (audio.readyState >= 2) {
+            // 音頻已加載，可以直接播放
+            attemptPlay();
           } else {
             // 等待音頻加載完成
+            console.log('等待音頻加載，當前狀態:', audio.readyState);
+            
             const playWhenReady = () => {
               if (audio.readyState >= 2) {
-                audio.play().then(() => {
-                  playBtn.dataset.state = 'pause';
-                }).catch(e => {
-                  console.error("播放失敗:", e);
-                  playBtn.dataset.state = 'play';
-                  alert('無法播放音頻，請檢查文件是否存在或瀏覽器是否支援此格式。');
-                });
+                attemptPlay();
+                // 清理事件監聽器
                 audio.removeEventListener('canplay', playWhenReady);
-                audio.removeEventListener('error', playWhenReady);
+                audio.removeEventListener('canplaythrough', playWhenReady);
+                audio.removeEventListener('loadeddata', playWhenReady);
               }
             };
+            
+            // 監聽多個加載事件，確保兼容性
             audio.addEventListener('canplay', playWhenReady, { once: true });
-            audio.addEventListener('error', () => {
-              console.error('音頻載入失敗:', audio.src);
-              playBtn.dataset.state = 'play';
-              alert('音頻文件載入失敗，請檢查文件是否存在。');
-              audio.removeEventListener('canplay', playWhenReady);
-            }, { once: true });
+            audio.addEventListener('canplaythrough', playWhenReady, { once: true });
+            audio.addEventListener('loadeddata', playWhenReady, { once: true });
+            
+            // 設置超時，避免無限等待
+            setTimeout(() => {
+              if (audio.readyState < 2) {
+                console.warn('音頻加載超時，當前狀態:', audio.readyState);
+                audio.removeEventListener('canplay', playWhenReady);
+                audio.removeEventListener('canplaythrough', playWhenReady);
+                audio.removeEventListener('loadeddata', playWhenReady);
+                
+                // 即使未完全加載，也嘗試播放（某些情況下仍可播放）
+                if (audio.readyState >= 1) {
+                  console.log('嘗試播放部分加載的音頻');
+                  attemptPlay();
+                } else {
+                  playBtn.dataset.state = 'play';
+                  const track = currentPlaylist[currentTrackIndex];
+                  alert(`音頻文件載入超時: ${track ? track.title : '未知曲目'}\n\n請檢查：\n1. 網絡連接\n2. 文件是否存在\n3. 文件路徑是否正確\n\n文件: ${track ? track.file : ''}`);
+                }
+              }
+            }, 10000); // 10秒超時
           }
         } else {
           audio.pause();
@@ -702,12 +781,46 @@
         console.error('音頻載入錯誤:', e);
         const track = currentPlaylist[currentTrackIndex];
         console.error('無法載入音頻:', track ? track.file : '未知');
+        console.error('音頻錯誤詳情:', {
+          code: audio.error ? audio.error.code : 'unknown',
+          message: audio.error ? audio.error.message : 'unknown',
+          networkState: audio.networkState,
+          readyState: audio.readyState
+        });
         playBtn.dataset.state = 'play';
         cur.textContent = '0:00';
         dur.textContent = '0:00';
         seek.value = 0;
         seek.max = 0;
-        alert(`音頻文件載入失敗: ${track ? track.title : '未知曲目'}\n請檢查文件是否存在: ${track ? track.file : ''}`);
+        
+        // 提供更詳細的錯誤訊息
+        let errorMessage = `音頻文件載入失敗: ${track ? track.title : '未知曲目'}\n\n`;
+        if (audio.error) {
+          switch (audio.error.code) {
+            case audio.error.MEDIA_ERR_ABORTED:
+              errorMessage += '錯誤：播放被中止\n';
+              break;
+            case audio.error.MEDIA_ERR_NETWORK:
+              errorMessage += '錯誤：網絡連接問題\n';
+              break;
+            case audio.error.MEDIA_ERR_DECODE:
+              errorMessage += '錯誤：音頻解碼失敗（可能是格式不支援）\n';
+              break;
+            case audio.error.MEDIA_ERR_SRC_NOT_SUPPORTED:
+              errorMessage += '錯誤：音頻格式不被支援\n';
+              break;
+            default:
+              errorMessage += '錯誤：未知錯誤\n';
+          }
+        }
+        errorMessage += `\n文件路徑: ${track ? track.file : ''}\n\n`;
+        errorMessage += '建議：\n';
+        errorMessage += '1. 檢查文件是否存在\n';
+        errorMessage += '2. 確認文件格式為 MP3\n';
+        errorMessage += '3. 檢查網絡連接\n';
+        errorMessage += '4. 嘗試重新載入頁面';
+        
+        alert(errorMessage);
       });
 
       audio.addEventListener('loadedmetadata', () => {
@@ -1096,14 +1209,8 @@
       currentTrackIndex = 0;
       loadTrack(currentTrackIndex);
       addLyricsEventListeners();
-      // 嘗試自動播放（若被瀏覽器阻擋則靜默失敗）
-      setTimeout(() => {
-        try {
-          setPlayState(true);
-        } catch (e) {
-          console.log('自動播放被阻擋');
-        }
-      }, 0);
+      // 不自動播放（iOS Safari 不允許自動播放，需要用戶交互）
+      // 用戶需要手動點擊播放按鈕才能開始播放
     });
     
     // PWA 和 Service Worker 註冊

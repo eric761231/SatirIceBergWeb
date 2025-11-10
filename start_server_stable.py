@@ -18,6 +18,24 @@ from urllib.parse import urlparse
 class StableHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     """穩定的 HTTP 請求處理器，處理連接中斷等異常"""
     
+    def end_headers(self):
+        """設置正確的 MIME 類型，特別是音頻文件"""
+        # 獲取文件擴展名
+        path = self.path.split('?')[0]  # 移除查詢參數
+        if path.endswith('.mp3'):
+            self.send_header('Content-Type', 'audio/mpeg')
+            self.send_header('Accept-Ranges', 'bytes')  # 支持範圍請求
+            self.send_header('Cache-Control', 'public, max-age=3600')
+        elif path.endswith('.m4a'):
+            self.send_header('Content-Type', 'audio/mp4')
+            self.send_header('Accept-Ranges', 'bytes')
+            self.send_header('Cache-Control', 'public, max-age=3600')
+        elif path.endswith('.ogg'):
+            self.send_header('Content-Type', 'audio/ogg')
+            self.send_header('Accept-Ranges', 'bytes')
+            self.send_header('Cache-Control', 'public, max-age=3600')
+        super().end_headers()
+    
     def handle_one_request(self):
         """處理單個請求，捕獲所有異常"""
         try:
